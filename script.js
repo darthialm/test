@@ -8,7 +8,7 @@
 const CODE_PROF = 'prof6e';
 
 /** Version du site : doit être la même que dans index.html (sinon le navigateur utilise un ancien fichier) */
-const SITE_VERSION = '2026-10-17.2';
+const SITE_VERSION = '2026-10-17.3';
 
 /* =========================================================
    Outils
@@ -3533,6 +3533,31 @@ function revealAnswer(cur, q) {
   const out = q.querySelector('.ord-out'); if (out) out.innerHTML = '';
   return res;
 }
+/** Réponse courte et bien visible pour le vidéoprojecteur ; remplit aussi les cases avec la bonne réponse si on peut la vérifier */
+function projoShortAnswer(cur, q, res) {
+  try {
+    if (cur._correct !== undefined) { const t = document.createElement('div'); t.innerHTML = cur._opts[cur._correct]; return t.querySelector('svg, .p2-pose') ? '' : t.innerHTML; }
+    if (cur._items) { const ok = cur._items.filter((it) => it.ok); return ok.every((it) => !/<svg/.test(it.html)) ? ok.map((it) => it.html).join(' &nbsp;·&nbsp; ') : ''; }
+    const ins = [...q.querySelectorAll('.ans')];
+    if (!ins.length || !res || !res.msg) return '';
+    let vals = [];
+    if (ins.length === 1) {
+      const nums = [...res.msg.matchAll(/<b>([^<]*)<\/b>/g)].map((m) => { const x = m[1].replace(/[\s\u202f\u00a0]/g, '').match(/-?\d+(,\d+)?(\/\d+)?/); return x && x[0]; }).filter(Boolean);
+      vals = nums.length ? [nums[nums.length - 1]] : [];
+    } else vals = [...res.msg.matchAll(/<li>[^<]*=\s*([\d\s\u202f,]+)/g)].map((m) => m[1].replace(/[\s\u202f]/g, ''));
+    if (vals.length !== ins.length) return '';
+    // on vérifie sur une copie que ces valeurs sont bien acceptées
+    const box = document.createElement('div'); box.style.cssText = 'position:absolute;left:-9999px;top:0;width:800px';
+    document.body.appendChild(box); box.innerHTML = cur.q; if (cur.mount) cur.mount(box);
+    [...box.querySelectorAll('.ans')].forEach((i, j) => { i.value = vals[j]; });
+    const chk = cur.check(box); box.remove();
+    if (!chk || !chk.ok) return '';
+    ins.forEach((i, j) => { i.value = vals[j]; i.classList.add('right'); });
+    const last = ins[ins.length - 1], after = (last.nextSibling && last.nextSibling.nodeType === 3 ? last.nextSibling.textContent : '').trim().split(/\s/)[0];
+    const unit = /^(°|cm|m|€|mm|km)$/.test(after) ? (after === '°' ? '°' : ' ' + after) : '';
+    return vals[vals.length - 1] + unit;
+  } catch (e) { return ''; }
+}
 let projo = null;
 function routeProjo(spec) {
   const keys = (spec || '').split(',').filter((k) => GENS[k]);
@@ -3548,12 +3573,17 @@ function routeProjo(spec) {
       <button type="button" class="btn pj-full" title="Plein écran (F)">⛶ Plein écran</button>
       <a class="btn" href="#/prof" title="Quitter">✕</a>
     </div>
-    <div class="ex-q pj-q"></div>
-    <div class="ex-fb pj-fb"></div>
-    <div class="ex-anim pj-anim"></div>
-    <div class="ex-actions pj-actions">
-      <button type="button" class="btn primary pj-reveal">👁 Afficher la réponse <kbd>R</kbd></button>
-      <button type="button" class="btn pj-next">Question suivante <kbd>→</kbd></button>
+    <div class="pj-layout">
+      <div class="pj-main"><div class="ex-q pj-q"></div></div>
+      <aside class="pj-side">
+        <div class="pj-answer" aria-live="polite"></div>
+        <div class="ex-fb pj-fb"></div>
+        <div class="ex-anim pj-anim"></div>
+        <div class="ex-actions pj-actions">
+          <button type="button" class="btn primary pj-reveal">👁 Afficher la réponse <kbd>R</kbd></button>
+          <button type="button" class="btn pj-next">Question suivante <kbd>→</kbd></button>
+        </div>
+      </aside>
     </div>`;
   const $ = (s) => stage.querySelector(s);
   let cur = null, n = 0, last = null, t0 = 0, tick = null, revealed = false;
@@ -3574,18 +3604,22 @@ function routeProjo(spec) {
     $('.pj-tag').textContent = GENS[last].label; $('.pj-count').textContent = `Question ${n}`;
     $('.pj-q').innerHTML = cur.q; if (cur.mount) cur.mount($('.pj-q'));
     $('.pj-fb').className = 'ex-fb pj-fb'; $('.pj-fb').innerHTML = ''; $('.pj-anim').innerHTML = '';
-    $('.pj-reveal').disabled = false;
+    $('.pj-answer').className = 'pj-answer wait'; $('.pj-answer').innerHTML = '<p class="pj-wait">À vous de chercher…</p>';
+    $('.pj-reveal').disabled = false; $('.pj-reveal').hidden = false;
     timer();
   }
   function reveal() {
     if (revealed) return; revealed = true;
     clearInterval(tick);
     const res = revealAnswer(cur, $('.pj-q'));
+    const short = projoShortAnswer(cur, $('.pj-q'), res);
     $('.pj-q').querySelectorAll('input').forEach((i) => { i.disabled = true; });
     $('.pj-q').closest('.page').classList.add('done');
-    if (res.msg) { $('.pj-fb').className = 'ex-fb pj-fb ok'; $('.pj-fb').innerHTML = '<strong>Correction :</strong> ' + res.msg; }
+    $('.pj-answer').className = 'pj-answer';
+    $('.pj-answer').innerHTML = short ? `<p class="pj-kicker">Réponse</p><p class="pj-big">${short}</p>` : res.anim ? '<p class="pj-kicker">Correction</p><p class="pj-mid">Regardez la construction :</p>' : (cur._correct !== undefined || cur._items) ? '<p class="pj-kicker">Réponse</p><p class="pj-mid">La bonne réponse est entourée en vert.</p>' : '';
+    if (res.msg) { $('.pj-fb').className = 'ex-fb pj-fb pj-expl'; $('.pj-fb').innerHTML = res.msg; }
     if (res.anim) makePlayer($('.pj-anim'), cur.anim()).play();
-    $('.pj-reveal').disabled = true;
+    $('.pj-reveal').hidden = true;
   }
   const nextQ = () => { $('.pj-q').closest('.page').classList.remove('done'); next(); };
   $('.pj-reveal').addEventListener('click', reveal);

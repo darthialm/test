@@ -94,3 +94,33 @@ body[data-ch="triangles"] { --accent: #4d7a12; --accent-soft: #e9f3dc; }
 .ouv-box > summary h2 { margin: 0; }
 .ouv-box > summary h2::before { content: "▸ "; color: var(--accent); }
 .ouv-box[open] > summary h2::before { content: "▾ "; }
+
+/* =========================================================
+   Vidéoprojecteur : la question à gauche, la réponse à droite, tout tient à l'écran
+   ========================================================= */
+body.projo-mode main { padding-top: 8px; padding-bottom: 8px; }
+.projo-stage { min-height: calc(100vh - 24px); display: flex; flex-direction: column; padding: 14px 24px 18px; }
+.pj-layout { flex: 1; display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr); gap: 24px; align-items: start; min-height: 0; }
+.pj-main { min-width: 0; }
+.projo-stage .pj-q { margin-top: 4px; }
+.projo-stage .pj-q .fig, .projo-stage .pj-q .p2-protfig, .projo-stage .pj-q .figwrap .fig { max-height: calc(100vh - 380px); width: auto; max-width: 100%; display: block; margin: 0 auto; }
+.projo-stage .pj-q .choices.pics .choice svg { max-height: 22vh; }
+.projo-stage .pj-q .geo-svg { max-height: calc(100vh - 330px); width: auto; max-width: 100%; margin: 0 auto; }
+.pj-side { position: sticky; top: 8px; display: flex; flex-direction: column; gap: 12px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; min-height: 40vh; }
+.pj-answer { text-align: center; border-radius: 14px; padding: 14px 10px; background: var(--ok-soft); border: 2px solid var(--ok); }
+.pj-answer.wait { background: transparent; border: 2px dashed var(--line); }
+.pj-answer:empty { display: none; }
+.pj-wait { margin: 0; font-size: 1.3rem; color: var(--muted); }
+.pj-kicker { margin: 0; text-transform: uppercase; letter-spacing: .08em; font-size: .85rem; font-weight: 700; color: var(--ok); }
+.pj-big { margin: 4px 0 0; font-family: "Fredoka", sans-serif; font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.15; color: var(--ink); }
+.pj-big .frac { font-size: .8em; }
+.pj-mid { margin: 4px 0 0; font-size: 1.3rem; }
+.projo-stage .pj-fb.pj-expl { display: block; font-size: 1.25rem; line-height: 1.5; background: var(--surface); border-left: 4px solid var(--ok); padding: 12px 16px; margin: 0; }
+.projo-stage .pj-fb.pj-expl:empty { display: none; }
+.projo-stage .pj-fb.pj-expl .fig, .projo-stage .pj-fb .p2-pose { max-height: 32vh; }
+.projo-stage .pj-anim .anim-svg { max-height: 45vh; }
+.projo-stage .pj-actions { margin-top: auto; }
+.projo-stage .ans.right { border-color: var(--ok); background: var(--ok-soft); color: var(--ok); font-weight: 700; }
+@media (max-width: 900px) { .pj-layout { grid-template-columns: 1fr; } .pj-side { position: static; } }
+.projo-stage .choice.is-good { border: 3px solid var(--ok); background: var(--ok-soft); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 25%, transparent); }
+.projo-stage .choice.is-good::after { content: "✔"; color: var(--ok); font-weight: 700; font-size: 1.4rem; margin-left: 6px; }

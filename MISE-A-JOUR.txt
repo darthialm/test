@@ -1,4 +1,4 @@
-MISE À JOUR DU SITE — version 2026-10-17.2
+MISE À JOUR DU SITE — version 2026-10-17.3
 ==========================================
 
 Plus aucun dossier : tous les fichiers vont à la racine du dépôt GitHub, à côté de index.html.
