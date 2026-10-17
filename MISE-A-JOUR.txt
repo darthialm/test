@@ -1,4 +1,4 @@
-MISE À JOUR DU SITE — version 2026-10-17.1
+MISE À JOUR DU SITE — version 2026-10-17.2
 ==========================================
 
 À déposer dans ton dépôt GitHub (à la racine, à côté de index.html) :
@@ -6,10 +6,13 @@ MISE À JOUR DU SITE — version 2026-10-17.1
   REMPLACER   index.html          (3 nouveaux chapitres + lien vers le classeur)
   REMPLACER   script.js           (rapporteur ajouté à la planche, version du site)
   AJOUTER     chapitres-p2.js     (exercices des chapitres 5, 6 et 7)
+  AJOUTER     ouverture.js        (ce que voient les élèves : chapitres 5, 6, 7 fermés au départ)
   AJOUTER     chapitres-p2.css
   AJOUTER     classeur.html       (le classeur du professeur)
   AJOUTER     vendor/             (dossier : fabrication des PDF avec les prénoms)
-  AJOUTER     docs/               (dossier : tous les PDF, CHIFFRÉS)
+  AJOUTER     docs/               (dossier ENTIER, avec son sous-dossier parcours : tous les PDF, CHIFFRÉS)
+
+  Astuce : sur GitHub, « Add file → Upload files » accepte qu'on glisse des dossiers entiers.
 
   style.css et bilan.html : inchangés.
 
@@ -30,3 +33,10 @@ Le classeur
 Espace professeur → « Ouvrir le classeur » (ou directement /classeur.html).
 Tes classes, groupes et progressions restent sur l'appareil utilisé.
 Pense au bouton « Sauvegarder dans un fichier » de temps en temps.
+
+Ouvrir des pages aux élèves
+---------------------------
+Espace professeur → « Ce que voient les élèves » : coche ce qui a été vu,
+télécharge ouverture.js et dépose-le sur GitHub (il remplace l'ancien).
+Sur ton appareil (Espace professeur ouvert), tu vois tout, avec 🔒 sur ce qui est masqué.
+Pour voir comme un élève : fenêtre de navigation privée.

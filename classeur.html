@@ -605,7 +605,8 @@ function loadLocal(){try{const d=JSON.parse(localStorage.getItem(STORE_KEY)||"nu
 const KEYSTORE="revisions6e-classeur-cle";
 let cryptoKey=null,cleInfo=null;
 const b64u8=(t)=>Uint8Array.from(atob(t),(c)=>c.charCodeAt(0));
-async function loadInfo(){if(cleInfo)return cleInfo;const r=await fetch("docs/cle.json",{cache:"no-store"});if(!r.ok)throw new Error("cle.json introuvable");cleInfo=await r.json();return cleInfo}
+const CLE_INFO={"v": 1, "salt": "co1WBel0HO7XmpH86L6uRA==", "iter": 250000, "test": "XvAkhcTnUR9GIa+UfnNSEINsJGs/dQUV83ceL89g4FiurNvDRHZl"}; /* sel et témoin du chiffrement (ne contient pas le code) */
+async function loadInfo(){return cleInfo||(cleInfo=CLE_INFO)}
 async function deriveKey(code){
   const info=await loadInfo();
   const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(code),"PBKDF2",false,["deriveKey"]);
@@ -625,7 +626,8 @@ async function restoreKey(){
   return false;
 }
 async function connect(){
-  if(!window.crypto||!crypto.subtle){$("#gate").hidden=false;$("#gateMsg").textContent="Ce navigateur ne sait pas déchiffrer les documents. Ouvre le site en https (adresse GitHub Pages), pas depuis un fichier.";return}
+  if(!window.crypto||!crypto.subtle){$("#gate").hidden=false;$("#gateMsg").textContent=location.protocol==="file:"?"La page est ouverte depuis ton ordinateur : le navigateur refuse alors de déchiffrer. Ouvre-la depuis l'adresse du site en ligne (https://…github.io/…/classeur.html).":"Ce navigateur ne sait pas déchiffrer les documents : essaie avec Chrome, Edge, Firefox ou Safari à jour.";return}
+  fetch("docs/cle.json",{cache:"no-store"}).then(r=>{if(!r.ok)setStatus("⚠ Le dossier docs n'est pas sur GitHub : les documents ne pourront pas s'ouvrir. Dépose le dossier docs entier.")}).catch(()=>{});
   let ok=false;try{ok=await restoreKey()}catch(e){}
   if(ok)start();else{$("#gate").hidden=false;$("#gateCode").focus()}
 }
@@ -646,7 +648,8 @@ function nextSeance(c){return SEANCES.find(s=>!seanceFaite(c,s.id))||null}
 async function getBytes(path){
   if(pdfCache[path])return pdfCache[path];
   if(!cryptoKey)throw new Error("verrouillé");
-  const r=await fetch(path.replace(/\.pdf$/,".bin"));if(!r.ok)throw new Error("introuvable");
+  let r;try{r=await fetch(path.replace(/\.pdf$/,".bin"))}catch(e){throw new Error(location.protocol==="file:"?"fichier":"reseau")}
+  if(!r.ok)throw new Error(r.status===404?"absent":"reseau");
   const b=await decryptBytes(cryptoKey,new Uint8Array(await r.arrayBuffer()));pdfCache[path]=b;return b;
 }
 /** ouvre le PDF dans un nouvel onglet (lecture, impression) ; la fenêtre est ouverte tout de suite pour éviter le bloqueur */
@@ -662,7 +665,13 @@ function save(filename,bytes,win){return show(win||null,filename,bytes)}
 async function telecharger(key,win){
   const d=DOCS[key];if(!d)return;
   try{setStatus("Préparation de « "+d.label+" »…");const b=await getBytes(d.path);show(win,d.path.split("/").pop(),b)}
-  catch(e){if(win)win.close();setStatus("Impossible de charger « "+d.label+" ».")}
+  catch(e){if(win)win.close();setStatus(docErr(e,d.label))}
+}
+function docErr(e,label){
+  const m=e&&e.message;
+  if(m==="fichier")return "« "+label+" » : la page est ouverte depuis ton ordinateur. Les documents ne s'ouvrent que depuis l'adresse du site en ligne (https://…github.io/…).";
+  if(m==="absent")return "« "+label+" » est introuvable : le dossier docs n'est pas (ou pas entièrement) sur GitHub. Dépose le dossier docs entier, avec son sous-dossier parcours.";
+  return "Impossible de charger « "+label+" » (connexion ?).";
 }
 /* ---------- liens de devoir du site (mêmes réglages que l'Espace professeur) ---------- */
 function parsePrefill(url){const m=String(url).match(/forms\/d\/e\/([\w-]+)\/(?:viewform|formResponse)/);if(!m)return null;const entries=[...String(url).matchAll(/entry\.(\d+)=/g)].map((x)=>x[1]);return {id:m[1],entries}}
@@ -912,7 +921,7 @@ document.addEventListener("click",ev=>{
   if(t.dataset.point){ui.point=+t.dataset.point;saveUi();render();return}
   if(t.dataset.mode){ui.mode=t.dataset.mode;saveUi();render();return}
   if(t.dataset.doc){telecharger(t.dataset.doc,openWin());return}
-  if(t.dataset.pdoc){const k=t.dataset.pdoc,w=openWin();getBytes("docs/parcours/P"+k+".pdf").then(b=>save("Parcours_point"+k[0]+"_"+({R:"Je_reprends",E:"Je_m_entraine",D:"Je_releve_un_defi"})[k[1]]+".pdf",b,w)).catch(()=>{if(w)w.close();setStatus("Impossible de charger ce parcours.")});return}
+  if(t.dataset.pdoc){const k=t.dataset.pdoc,w=openWin();getBytes("docs/parcours/P"+k+".pdf").then(b=>save("Parcours_point"+k[0]+"_"+({R:"Je_reprends",E:"Je_m_entraine",D:"Je_releve_un_defi"})[k[1]]+".pdf",b,w)).catch(e=>{if(w)w.close();setStatus(docErr(e,"ce parcours"))});return}
   if(t.dataset.copylink){const v=t.dataset.copylink;(navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(()=>{t.textContent="Copié ✓";setTimeout(()=>{t.textContent="Copier le lien seul"},1500)}).catch(()=>{prompt("Copie ce lien :",v)});return}
   if(t.dataset.copy){copierDevoirs(t.dataset.copy,t);return}
   if(t.dataset.copyc){const c=cur(),i=+t.dataset.copyc,P=plan(c);copierHtml(devoirsCreneau(c,P,i).html,t,"devc-"+P.cr[i].id);return}
@@ -973,7 +982,7 @@ document.addEventListener("toggle",ev=>{
 $("#gateGo").addEventListener("click",async()=>{
   const v=$("#gateCode").value;if(!v.trim())return;
   $("#gateMsg").textContent="Vérification…";
-  let ok=false;try{ok=await unlock(v)}catch(e){$("#gateMsg").textContent="Impossible de lire docs/cle.json : le dossier docs est-il bien en ligne ?";return}
+  let ok=false;try{ok=await unlock(v)}catch(e){$("#gateMsg").textContent="Ce navigateur n'arrive pas à vérifier le code ("+(location.protocol==="file:"?"page ouverte depuis l'ordinateur : ouvre-la depuis l'adresse du site en ligne":"essaie avec Chrome, Edge, Firefox ou Safari à jour")+").";return}
   if(ok){$("#gateCode").value="";$("#gateMsg").textContent="";start()}else $("#gateMsg").textContent="Code incorrect.";
 });
 $("#gateCode").addEventListener("keydown",e=>{if(e.key==="Enter")$("#gateGo").click()});

@@ -61,3 +61,36 @@ body[data-ch="triangles"] { --accent: #4d7a12; --accent-soft: #e9f3dc; }
 
 .fig-row.p2-wide { grid-template-columns: 1fr minmax(260px, 440px); }
 @media (max-width: 680px) { .fig-row.p2-wide { grid-template-columns: 1fr; } }
+
+/* Chapitres fermés, pages masquées */
+.chapter-card.locked { opacity: .62; cursor: default; filter: grayscale(.5); }
+.chapter-card.locked:hover { transform: none; }
+.chapter-card .hidden-note, .hidden-banner { font-size: .82rem; font-weight: 700; color: var(--warn); }
+.hidden-banner { background: var(--warn-soft); border-radius: 10px; padding: 6px 12px; }
+
+/* Fiche, Mes erreurs et contrôle blanc : un peu différents des pages d'exercices */
+#nav a[href$="/fiche"]::before { content: "📖 "; }
+#nav a[href$="/erreurs"]::before { content: "📌 "; }
+#nav a[href$="/controle"]::before { content: "📝 "; }
+.tile[href$="/fiche"] { background: var(--accent-soft); border-color: transparent; }
+.tile[href$="/fiche"] h3::before { content: "📖 "; }
+.tile[href$="/erreurs"] h3::before { content: "📌 "; }
+.tile[href$="/controle"] { border: 2px dashed var(--accent); }
+.tile[href$="/controle"] h3::before { content: "📝 "; }
+
+/* Espace professeur : notions sur plusieurs colonnes, chapitres repliables */
+#prof-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0 16px; align-items: start; }
+.prof-ch.folded > :not(legend) { display: none; }
+.prof-fold { font: inherit; font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.05rem; background: none; border: 0; padding: 0; color: var(--ink); cursor: pointer; text-align: left; }
+.prof-fold::before { content: "▾ "; color: var(--accent); }
+.prof-ch.folded .prof-fold::before { content: "▸ "; }
+.prof-nb { font-family: "Atkinson Hyperlegible", sans-serif; font-size: .85rem; color: var(--accent); }
+.ouv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.ouv-ch { border: 1px solid var(--line); border-radius: 12px; padding: 6px 12px 10px; margin: 0; }
+.ouv-p { display: block; padding: 3px 0 3px 22px; font-size: .95rem; }
+
+.ouv-box > summary { cursor: pointer; list-style: none; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.ouv-box > summary::-webkit-details-marker { display: none; }
+.ouv-box > summary h2 { margin: 0; }
+.ouv-box > summary h2::before { content: "▸ "; color: var(--accent); }
+.ouv-box[open] > summary h2::before { content: "▾ "; }

@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
-  <meta name="site-version" content="2026-10-17.1">
-  <link rel="stylesheet" href="style.css?v=2026-10-17.1">
-  <link rel="stylesheet" href="chapitres-p2.css?v=2026-10-17.1">
+  <meta name="site-version" content="2026-10-17.2">
+  <link rel="stylesheet" href="style.css?v=2026-10-17.2">
+  <link rel="stylesheet" href="chapitres-p2.css?v=2026-10-17.2">
 </head>
 <body>
 
@@ -65,6 +65,7 @@
         <p class="small">Progression par classe (à cocher ou datée selon ton emploi du temps), déroulé des séances, devoirs à copier avec le lien du site déjà prêt, tous les documents (cours, corrigés, évaluations) et les <b>parcours avec les prénoms</b>, dans l'ordre du plan de classe.</p>
         <p><a class="btn primary" href="classeur.html">Ouvrir le classeur →</a> <span class="small muted">Les documents sont chiffrés : le classeur te demande leur code la première fois.</span></p>
       </div>
+      <div class="card" id="p2-ouverture"></div>
       <p id="bilan-open-row" hidden><a class="btn primary" id="bilan-open" target="_blank" rel="noopener">📊 Voir le bilan des devoirs (Grist)</a></p>
       <div class="prof-out card">
         <h2>1. Donner un devoir</h2>
@@ -116,7 +117,7 @@
         </details>
         <p class="small muted">Ensuite, les liens de devoir que tu copies plus haut utilisent ce formulaire. Ce réglage reste enregistré sur cet appareil. Données transmises : prénom, classe, devoir, score, date, code. Vérifie avec ton établissement que l'outil choisi est autorisé.</p>
       </div>
-      <div class="card">
+      <div class="card" hidden>
         <h2>3. Bilan des résultats</h2>
         <div class="grist-auto widget-box">
           <p class="small"><b>⭐ Le plus simple : le bilan directement dans Grist</b>, toujours à jour, sans rien copier. À régler une fois :</p>
@@ -150,7 +151,7 @@
         <div id="bilan-out"></div>
         <p class="small muted">Le bilan donne une ligne par élève, même s'il a fait le devoir plusieurs fois : tu choisis de retenir son meilleur essai, son premier ou son dernier. Chaque code est vérifié : une ligne tapée à la main ou recopiée sur un camarade est signalée à part. Rien de ce que tu colles n'est enregistré, sauf les listes de classe sur cet appareil.</p>
       </div>
-      <div class="card">
+      <div class="card" hidden>
         <h2>4. Vidéoprojecteur</h2>
         <p class="small">Coche des notions plus haut puis clique sur « 📽 Vidéoprojecteur ». Une question s'affiche en grand ; <kbd>R</kbd> affiche la réponse, <kbd>→</kbd> passe à la suivante, <kbd>F</kbd> met en plein écran. Un minuteur est disponible.</p>
       </div>
@@ -772,17 +773,6 @@
       <p class="lead">Le vocabulaire des opérations, les règles de calcul avec des parenthèses, les opérations posées avec des nombres décimaux et les problèmes.</p>
       <div class="hero-actions"><a class="btn primary" href="#/operations/fiche">Lire la fiche</a><a class="btn" href="#/operations/controle">Faire le contrôle blanc</a></div>
     </div>
-    <div class="card p2-eval">
-      <h2>🎯 Ce qui sera évalué</h2>
-      <ol class="p2-comp">
-        <li><a href="#/operations/vocabulaire">J'utilise le vocabulaire des opérations.</a></li>
-        <li><a href="#/operations/regles">Je calcule en respectant les règles (gauche à droite, parenthèses).</a></li>
-        <li><a href="#/operations/poser">Je pose une addition et une soustraction de nombres décimaux.</a></li>
-        <li><a href="#/operations/poser">Je pose une multiplication de nombres décimaux.</a></li>
-        <li><a href="#/operations/problemes">Je résous un problème.</a></li>
-      </ol>
-      <p class="small muted">Un exercice par compétence, comme le jour de l'évaluation. Entraîne-toi jusqu'à réussir sans indice.</p>
-    </div>
     <h2 class="section-title">Ta progression</h2>
     <div class="cards ch-cards"></div>
   </section>
@@ -907,17 +897,6 @@
       <h1>Les angles</h1>
       <p class="lead">Nommer un angle et donner sa nature, le mesurer, le construire, utiliser les relations entre angles et construire la bissectrice.</p>
       <div class="hero-actions"><a class="btn primary" href="#/angles/fiche">Lire la fiche</a><a class="btn" href="#/angles/controle">Faire le contrôle blanc</a></div>
-    </div>
-    <div class="card p2-eval">
-      <h2>🎯 Ce qui sera évalué</h2>
-      <ol class="p2-comp">
-        <li><a href="#/angles/nommer">Je nomme un angle et je donne sa nature.</a></li>
-        <li><a href="#/angles/mesurer">Je mesure un angle avec un rapporteur.</a></li>
-        <li><a href="#/angles/construire">Je construis un angle de mesure donnée.</a></li>
-        <li><a href="#/angles/relations">J'utilise les relations entre angles.</a></li>
-        <li><a href="#/angles/bissectrice">Je construis la bissectrice d'un angle.</a></li>
-      </ol>
-      <p class="small muted">Le jour de l'évaluation, apporte ton rapporteur, ta règle et ton équerre.</p>
     </div>
     <h2 class="section-title">Ta progression</h2>
     <div class="cards ch-cards"></div>
@@ -1083,18 +1062,6 @@
       <p class="lead">Construire un triangle, les triangles particuliers, la règle des 180° et le cercle circonscrit.</p>
       <div class="hero-actions"><a class="btn primary" href="#/triangles/fiche">Lire la fiche</a><a class="btn" href="#/triangles/controle">Faire le contrôle blanc</a></div>
     </div>
-    <div class="card p2-eval">
-      <h2>🎯 Ce qui sera évalué</h2>
-      <ol class="p2-comp">
-        <li><a href="#/triangles/vocabulaire">J'utilise le vocabulaire du triangle et je reconnais un triangle particulier.</a></li>
-        <li><a href="#/triangles/construire">Je construis un triangle connaissant ses trois côtés.</a></li>
-        <li><a href="#/triangles/construire">Je construis un triangle connaissant un côté et deux angles.</a></li>
-        <li><a href="#/triangles/particuliers">Je construis un triangle isocèle.</a></li>
-        <li><a href="#/triangles/angles">J'utilise la règle des 180° pour calculer un angle et trouver la nature d'un triangle.</a></li>
-        <li><a href="#/triangles/cercle">Je trace le cercle circonscrit à un triangle.</a></li>
-      </ol>
-      <p class="small muted">Le jour de l'évaluation, apporte tout ton matériel de géométrie : règle, équerre, rapporteur, compas. Laisse les traits de construction.</p>
-    </div>
     <h2 class="section-title">Ta progression</h2>
     <div class="cards ch-cards"></div>
   </section>
@@ -1247,7 +1214,8 @@
   <p>Révisions 6<sup>e</sup> — site libre, à modifier et partager. · <a href="#/prof">Espace professeur</a> · <span id="site-version" class="muted"></span></p>
 </footer>
 
-<script src="script.js?v=2026-10-17.1"></script>
-<script src="chapitres-p2.js?v=2026-10-17.1"></script>
+<script src="script.js?v=2026-10-17.2"></script>
+<script>document.write('<script src="ouverture.js?t=' + Date.now() + '"><\/script>');</script>
+<script src="chapitres-p2.js?v=2026-10-17.2"></script>
 </body>
 </html>

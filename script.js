@@ -8,7 +8,7 @@
 const CODE_PROF = 'prof6e';
 
 /** Version du site : doit être la même que dans index.html (sinon le navigateur utilise un ancien fichier) */
-const SITE_VERSION = '2026-10-17.1';
+const SITE_VERSION = '2026-10-17.2';
 
 /* =========================================================
    Outils
@@ -2871,6 +2871,9 @@ function chapterStats(ch) {
 }
 function renderChapters() {
   document.getElementById('chapters').innerHTML = CHAPTERS.map((c) => {
+    if (c.locked) return `<div class="chapter-card locked" data-ch="${c.id}" aria-disabled="true">
+      <span class="symbol">🔒</span><span class="num">Chapitre ${c.num}</span><h2>${c.title}</h2>
+      <p>${c.desc}</p><span class="stat">Bientôt : on le verra d'abord en classe.</span></div>`;
     const s = chapterStats(c.id);
     const pct = s.total ? Math.round((s.ok / s.total) * 100) : 0;
     const parts = [];
@@ -2883,7 +2886,7 @@ function renderChapters() {
       <h2>${c.title}</h2>
       <p>${c.desc}</p>
       <div class="bar"><span style="width:${pct}%"></span></div>
-      <span class="stat">${parts.length ? parts.join(' · ') : 'Pas encore commencé'}</span></a>`;
+      <span class="stat">${parts.length ? parts.join(' · ') : 'Pas encore commencé'}</span>${c.hiddenNote ? `<span class="hidden-note">${c.hiddenNote}</span>` : ''}</a>`;
   }).join('');
 }
 function renderChapterHome(ch) {
@@ -3209,9 +3212,12 @@ function renderProf() {
   const host = document.getElementById('prof-list');
   if (host.dataset.ready) return;
   host.dataset.ready = '1';
-  host.innerHTML = CHAPTERS.map((c) => {
+  let folded = {};
+  try { folded = JSON.parse(localStorage.getItem('revisions6e-prof-plie') || 'null') || {}; } catch (e) { folded = {}; }
+  host.innerHTML = CHAPTERS.slice().reverse().map((c) => {
     const keys = Object.keys(GENS).filter((k) => GENS[k].ch === c.id);
-    return `<fieldset class="prof-ch" data-ch="${c.id}"><legend>Chapitre ${c.num} · ${c.title}
+    const shut = c.id in folded ? folded[c.id] : c.num <= 4;
+    return `<fieldset class="prof-ch${shut ? ' folded' : ''}" data-ch="${c.id}"><legend><button type="button" class="prof-fold" aria-expanded="${!shut}">Chapitre ${c.num} · ${c.title} <span class="prof-nb"></span></button>
       <button type="button" class="mini prof-all">tout cocher</button></legend>
       ${keys.map((k) => `<label class="prof-k"><input type="checkbox" value="${k}"> <span>${GENS[k].label}${GENS[k].slow ? ' <span class="small muted">(tracé)</span>' : ''}</span>
         <button type="button" class="mini prof-one" data-k="${k}" title="Copier le lien de cette seule notion">🔗 lien seul</button></label>`).join('')}
@@ -3222,6 +3228,7 @@ function renderProf() {
   const sel = () => [...host.querySelectorAll('input[type=checkbox]:checked')].map((i) => i.value);
   const update = () => {
     const ks = sel();
+    host.querySelectorAll('.prof-ch').forEach((fs) => { const n = fs.querySelectorAll('input[type=checkbox]:checked').length; fs.querySelector('.prof-nb').textContent = n ? `(${n} cochée${n > 1 ? 's' : ''})` : ''; });
     if (!ks.length) { out.value = ''; out.placeholder = 'Coche au moins une notion ci-dessous.'; open.hidden = true; projo.hidden = true; return; }
     out.value = siteURL() + devoirHash(ks, nSel.value, profExtra());
     open.href = devoirHash(ks, nSel.value, profExtra()); open.hidden = false;
@@ -3309,6 +3316,12 @@ function renderProf() {
     const old = btn.textContent; btn.textContent = '✔ Copié'; setTimeout(() => { btn.textContent = old; }, 1500);
   };
   host.addEventListener('click', (e) => {
+    const fold = e.target.closest('.prof-fold');
+    if (fold) {
+      const fs = fold.closest('fieldset'); fs.classList.toggle('folded'); fold.setAttribute('aria-expanded', String(!fs.classList.contains('folded')));
+      try { const f = JSON.parse(localStorage.getItem('revisions6e-prof-plie') || 'null') || {}; f[fs.dataset.ch] = fs.classList.contains('folded'); localStorage.setItem('revisions6e-prof-plie', JSON.stringify(f)); } catch (_) { /* rien */ }
+      return;
+    }
     const all = e.target.closest('.prof-all');
     if (all) { const fs = all.closest('fieldset'), cbs = [...fs.querySelectorAll('input')], on = !cbs.every((c) => c.checked); cbs.forEach((c) => { c.checked = on; }); update(); return; }
     const one = e.target.closest('.prof-one');
@@ -3600,7 +3613,7 @@ const AUTO_N = 5, AUTO_WEAK = 3;
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
 const dayDiff = (a, b) => Math.round((new Date(b.replace(/-/g, '/')) - new Date(a.replace(/-/g, '/'))) / 86400000);
 function autoPlan() {
-  const quick = Object.keys(GENS).filter((k) => !GENS[k].slow);
+  const quick = Object.keys(GENS).filter((k) => !GENS[k].slow && !GENS[k].locked);
   const weak = shuffle(Object.keys(stats._weak || {}).filter((k) => quick.includes(k))).slice(0, AUTO_WEAK);
   const now = Date.now();
   const practiced = quick.filter((k) => stats[k]?.total && !weak.includes(k));
@@ -3691,7 +3704,7 @@ function route() {
   if (h === 'auto') { routeAuto(); special('auto', '', 'Automatismes du jour'); return; }
   if (h === 'accueil') h = '';
   let [ch, p] = h.split('/');
-  if (!CHAPTERS.some((c) => c.id === ch)) { ch = ''; p = ''; }
+  if (!CHAPTERS.some((c) => c.id === ch && !c.locked)) { ch = ''; p = ''; }
   p = p || 'accueil';
   let page = document.querySelector(`.page[data-ch="${ch}"][data-p="${p}"]`);
   if (!page) { p = 'accueil'; page = document.querySelector(`.page[data-ch="${ch}"][data-p="accueil"]`); }
@@ -3766,7 +3779,8 @@ document.addEventListener('DOMContentLoaded', () => {
       limit: 10, exam: true, ch,
       examKey: ch + ':controle',
       makeGen() {
-        const keys = Object.keys(GENS).filter((k) => GENS[k].ch === ch);
+        let keys = Object.keys(GENS).filter((k) => GENS[k].ch === ch && !GENS[k].locked);
+        if (!keys.length) keys = Object.keys(GENS).filter((k) => GENS[k].ch === ch);
         const queue = shuffle(keys).slice(0, 10);
         while (queue.length < 10) queue.push(pick(keys));
         shuffle(queue);

@@ -1141,3 +1141,80 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+/* =========================================================
+   CE QUE VOIENT LES ÉLÈVES (ouverture.js)
+   Les pages fermées sont retirées pour les élèves ; leur progression n'est pas touchée.
+   Sur l'appareil du professeur (Espace professeur déverrouillé), tout reste visible.
+   ========================================================= */
+const AUTO_PAGES = ['accueil', 'erreurs'];
+function ouv(ch) { const o = (window.OUVERTURE || {})[ch]; return o === undefined ? true : o; }
+function pageOuverte(ch, p) {
+  const o = ouv(ch);
+  if (o === true) return true;
+  if (!Array.isArray(o) || !o.length) return false;
+  return AUTO_PAGES.includes(p) || o.includes(p);
+}
+(function appliquerOuverture() {
+  let prof = false; try { prof = profOpen(); } catch (e) { prof = false; }
+  CHAPTERS.forEach((c) => {
+    const secs = [...document.querySelectorAll(`.page[data-ch="${c.id}"]`)];
+    const closed = secs.filter((sec) => !pageOuverte(c.id, sec.dataset.p));
+    if (!closed.length) return;
+    const allClosed = closed.length === secs.length;
+    if (prof) {
+      c.hiddenNote = allClosed ? '🔒 Masqué aux élèves' : `🔒 ${closed.length} page${closed.length > 1 ? 's' : ''} masquée${closed.length > 1 ? 's' : ''} aux élèves`;
+      closed.forEach((sec) => { sec.dataset.hiddenEleves = '1'; sec.insertAdjacentHTML('afterbegin', '<p class="hidden-banner">🔒 Page masquée aux élèves (tu la vois parce que l\'Espace professeur est ouvert sur cet appareil).</p>'); });
+      return;
+    }
+    const openKeys = new Set(secs.filter((sec) => !closed.includes(sec)).flatMap((sec) => [...sec.querySelectorAll('[data-gen]')].map((e) => e.dataset.gen)));
+    closed.forEach((sec) => { sec.querySelectorAll('[data-gen]').forEach((e) => { if (!openKeys.has(e.dataset.gen) && GENS[e.dataset.gen]) GENS[e.dataset.gen].locked = true; }); sec.remove(); });
+    if (allClosed) c.locked = true;
+  });
+}());
+
+/* ---------- Carte de l'Espace professeur ---------- */
+function renderOuvertureCard() {
+  const host = document.getElementById('p2-ouverture'); if (!host) return;
+  const state = {};
+  CHAPTERS.forEach((c) => {
+    const o = ouv(c.id), pages = [...document.querySelectorAll(`.page[data-ch="${c.id}"]`)].filter((sec) => !AUTO_PAGES.includes(sec.dataset.p));
+    state[c.id] = Object.fromEntries(pages.map((sec) => [sec.dataset.p, o === true || (Array.isArray(o) && o.includes(sec.dataset.p))]));
+  });
+  const title = (ch, p) => document.querySelector(`.page[data-ch="${ch}"][data-p="${p}"]`)?.dataset.title || p;
+  const fileText = () => {
+    const lines = CHAPTERS.map((c) => {
+      const ps = Object.entries(state[c.id]).filter(([, v]) => v).map(([k]) => k);
+      const all = ps.length === Object.keys(state[c.id]).length;
+      return `  ${JSON.stringify(c.id)}: ${all ? 'true' : JSON.stringify(ps)}`;
+    });
+    return `/* =========================================================\n   CE QUE VOIENT LES ÉLÈVES\n   Fichier fabriqué par l'Espace professeur (« Ce que voient les élèves »).\n   Pour chaque chapitre :  true = tout est ouvert ;  [] = chapitre fermé ;\n   ["fiche", "vocabulaire", …] = seulement ces pages.\n   ========================================================= */\nwindow.OUVERTURE = {\n${lines.join(',\n')}\n};\n`;
+  };
+  let opened = false;
+  const draw = () => {
+    host.innerHTML = `<details class="ouv-box"${opened ? ' open' : ''}><summary><h2>👁 Ce que voient les élèves</h2><span class="small muted">${CHAPTERS.filter((c) => Object.values(state[c.id]).every((v) => !v)).map((c) => 'ch. ' + c.num).join(', ') || 'rien'} masqué${CHAPTERS.filter((c) => Object.values(state[c.id]).every((v) => !v)).length > 1 ? 's' : ''}</span></summary>
+      <p class="small">Coche ce qui a été vu en classe. Une page non cochée est <b>invisible pour les élèves</b> (un chapitre sans aucune page cochée apparaît « 🔒 Bientôt »). Leur progression n'est jamais effacée. Les liens de devoir que tu donnes marchent toujours, même pour une notion masquée.</p>
+      <div class="ouv-grid">${CHAPTERS.slice().reverse().map((c) => {
+        const ps = Object.keys(state[c.id]), n = ps.filter((p) => state[c.id][p]).length;
+        return `<fieldset class="ouv-ch"><legend><label><input type="checkbox" data-ouvch="${c.id}" ${n === ps.length ? 'checked' : ''}> <b>Chapitre ${c.num} · ${c.title}</b></label> <span class="small muted">${n === ps.length ? 'tout ouvert' : n ? `${n} / ${ps.length}` : 'fermé'}</span></legend>
+          ${ps.map((p) => `<label class="ouv-p"><input type="checkbox" data-ouv="${c.id}|${p}" ${state[c.id][p] ? 'checked' : ''}> ${title(c.id, p)}</label>`).join('')}</fieldset>`;
+      }).join('')}</div>
+      <p><button type="button" class="btn primary" id="ouv-dl">⬇ Télécharger ouverture.js</button> <button type="button" class="btn" id="ouv-copy">Copier son contenu</button></p>
+      <ol class="small steps-form"><li>Télécharge le fichier <b>ouverture.js</b>.</li><li>Sur GitHub, dans ton dépôt : <b>Add file → Upload files</b>, dépose ouverture.js (il remplace l'ancien), puis <b>Commit changes</b>.</li><li>Les élèves voient le changement 1 à 2 minutes plus tard. Sur cet appareil, tu vois tout (avec 🔒 sur ce qui est masqué) ; pour voir comme un élève, ouvre le site dans une fenêtre de navigation privée.</li></ol></details>`;
+    host.querySelector('details').addEventListener('toggle', (e) => { opened = e.target.open; });
+  };
+  draw();
+  host.addEventListener('change', (e) => {
+    const t = e.target;
+    if (t.dataset.ouvch) { const on = t.checked; Object.keys(state[t.dataset.ouvch]).forEach((p) => { state[t.dataset.ouvch][p] = on; }); draw(); }
+    else if (t.dataset.ouv) { const [ch, p] = t.dataset.ouv.split('|'); state[ch][p] = t.checked; draw(); }
+  });
+  host.addEventListener('click', async (e) => {
+    if (e.target.id === 'ouv-dl') {
+      const url = URL.createObjectURL(new Blob([fileText()], { type: 'text/javascript' }));
+      const a = document.createElement('a'); a.href = url; a.download = 'ouverture.js'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 20000);
+    }
+    if (e.target.id === 'ouv-copy') { try { await navigator.clipboard.writeText(fileText()); e.target.textContent = '✔ Copié'; } catch (_) { e.target.textContent = 'Copie impossible'; } }
+  });
+}
+document.addEventListener('DOMContentLoaded', renderOuvertureCard);
