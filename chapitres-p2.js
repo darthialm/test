@@ -1155,8 +1155,11 @@ function pageOuverte(ch, p) {
   if (!Array.isArray(o) || !o.length) return false;
   return AUTO_PAGES.includes(p) || o.includes(p);
 }
+/* catalogue des pages (relevé avant de retirer quoi que ce soit) */
+const P2_PAGES = Object.fromEntries(CHAPTERS.map((c) => [c.id, [...document.querySelectorAll(`.page[data-ch="${c.id}"]`)].map((sec) => ({ p: sec.dataset.p, t: sec.dataset.title || sec.dataset.p }))]));
+let P2_PROF_AT_LOAD = false; try { P2_PROF_AT_LOAD = profOpen(); } catch (e) { P2_PROF_AT_LOAD = false; }
 (function appliquerOuverture() {
-  let prof = false; try { prof = profOpen(); } catch (e) { prof = false; }
+  const prof = P2_PROF_AT_LOAD;
   CHAPTERS.forEach((c) => {
     const secs = [...document.querySelectorAll(`.page[data-ch="${c.id}"]`)];
     const closed = secs.filter((sec) => !pageOuverte(c.id, sec.dataset.p));
@@ -1178,10 +1181,10 @@ function renderOuvertureCard() {
   const host = document.getElementById('p2-ouverture'); if (!host) return;
   const state = {};
   CHAPTERS.forEach((c) => {
-    const o = ouv(c.id), pages = [...document.querySelectorAll(`.page[data-ch="${c.id}"]`)].filter((sec) => !AUTO_PAGES.includes(sec.dataset.p));
-    state[c.id] = Object.fromEntries(pages.map((sec) => [sec.dataset.p, o === true || (Array.isArray(o) && o.includes(sec.dataset.p))]));
+    const o = ouv(c.id), pages = P2_PAGES[c.id].filter((x) => !AUTO_PAGES.includes(x.p));
+    state[c.id] = Object.fromEntries(pages.map((x) => [x.p, o === true || (Array.isArray(o) && o.includes(x.p))]));
   });
-  const title = (ch, p) => document.querySelector(`.page[data-ch="${ch}"][data-p="${p}"]`)?.dataset.title || p;
+  const title = (ch, p) => (P2_PAGES[ch].find((x) => x.p === p) || { t: p }).t;
   const fileText = () => {
     const lines = CHAPTERS.map((c) => {
       const ps = Object.entries(state[c.id]).filter(([, v]) => v).map(([k]) => k);
@@ -1218,3 +1221,7 @@ function renderOuvertureCard() {
   });
 }
 document.addEventListener('DOMContentLoaded', renderOuvertureCard);
+
+/* Espace professeur déverrouillé après le chargement : on recharge pour tout afficher (pages masquées comprises) */
+document.addEventListener('click', (e) => { if (e.target.closest('#prof-unlock')) setTimeout(() => { try { if (profOpen() && !P2_PROF_AT_LOAD) location.reload(); } catch (_) { /* rien */ } }, 80); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.id === 'prof-code') setTimeout(() => { try { if (profOpen() && !P2_PROF_AT_LOAD) location.reload(); } catch (_) { /* rien */ } }, 80); });

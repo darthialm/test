@@ -1,42 +1,25 @@
 MISE À JOUR DU SITE — version 2026-10-17.2
 ==========================================
 
-À déposer dans ton dépôt GitHub (à la racine, à côté de index.html) :
+Plus aucun dossier : tous les fichiers vont à la racine du dépôt GitHub, à côté de index.html.
+Sur GitHub : Add file → Upload files → sélectionne ces fichiers → Commit changes.
 
-  REMPLACER   index.html          (3 nouveaux chapitres + lien vers le classeur)
-  REMPLACER   script.js           (rapporteur ajouté à la planche, version du site)
+  REMPLACER   index.html
+  REMPLACER   script.js
   AJOUTER     chapitres-p2.js     (exercices des chapitres 5, 6 et 7)
-  AJOUTER     ouverture.js        (ce que voient les élèves : chapitres 5, 6, 7 fermés au départ)
   AJOUTER     chapitres-p2.css
+  AJOUTER     ouverture.js        (ce que voient les élèves : chapitres 5, 6, 7 fermés au départ)
   AJOUTER     classeur.html       (le classeur du professeur)
-  AJOUTER     vendor/             (dossier : fabrication des PDF avec les prénoms)
-  AJOUTER     docs/               (dossier ENTIER, avec son sous-dossier parcours : tous les PDF, CHIFFRÉS)
-
-  Astuce : sur GitHub, « Add file → Upload files » accepte qu'on glisse des dossiers entiers.
+  AJOUTER     documents.bin       (TOUS les PDF dans un seul fichier CHIFFRÉ)
+  AJOUTER     pdf-lib.min.js      (fabrication des PDF avec les prénoms)
 
   style.css et bilan.html : inchangés.
+  Les fichiers .bin déposés un par un auparavant ne servent plus : tu peux les supprimer.
 
-Ce qui ne change pas pour les élèves
-------------------------------------
-- Leur progression (chapitres 1 à 4, points faibles, contrôles blancs) reste sur leur appareil et n'est pas touchée.
-- Les exercices des chapitres 1 à 4 sont identiques.
-- Les liens de devoir déjà donnés continuent de marcher.
-
-Le code des documents
----------------------
-Les PDF du dossier docs/ sont chiffrés (AES-256). Sans le code, ils sont illisibles,
-même si quelqu'un trouve leur adresse. Le code n'est écrit nulle part sur le site.
-Le classeur le demande une fois par appareil.
-
-Le classeur
------------
-Espace professeur → « Ouvrir le classeur » (ou directement /classeur.html).
-Tes classes, groupes et progressions restent sur l'appareil utilisé.
-Pense au bouton « Sauvegarder dans un fichier » de temps en temps.
+Le code des documents n'est écrit nulle part sur le site. Le classeur le demande une fois par appareil.
 
 Ouvrir des pages aux élèves
 ---------------------------
 Espace professeur → « Ce que voient les élèves » : coche ce qui a été vu,
 télécharge ouverture.js et dépose-le sur GitHub (il remplace l'ancien).
-Sur ton appareil (Espace professeur ouvert), tu vois tout, avec 🔒 sur ce qui est masqué.
 Pour voir comme un élève : fenêtre de navigation privée.
