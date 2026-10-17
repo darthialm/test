@@ -1,0 +1,63 @@
+/* =========================================================
+   Période 2 : chapitres 5 (Opérations), 6 (Angles), 7 (Triangles)
+   ========================================================= */
+body[data-ch="operations"] { --accent: #0b6e99; --accent-soft: #dff0f7; }
+body[data-ch="angles"] { --accent: #a3366f; --accent-soft: #f8e4ee; }
+body[data-ch="triangles"] { --accent: #4d7a12; --accent-soft: #e9f3dc; }
+.chapter-card[data-ch="operations"] { --c: #0b6e99; --cs: #dff0f7; }
+.chapter-card[data-ch="angles"] { --c: #a3366f; --cs: #f8e4ee; }
+.chapter-card[data-ch="triangles"] { --c: #4d7a12; --cs: #e9f3dc; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body[data-ch="operations"] { --accent: #6cc4ea; --accent-soft: #15303d; }
+  :root:not([data-theme="light"]) body[data-ch="angles"] { --accent: #f08cc0; --accent-soft: #3a1c2c; }
+  :root:not([data-theme="light"]) body[data-ch="triangles"] { --accent: #a9d66a; --accent-soft: #24331a; }
+  :root:not([data-theme="light"]) .chapter-card[data-ch="operations"] { --c: #6cc4ea; --cs: #15303d; }
+  :root:not([data-theme="light"]) .chapter-card[data-ch="angles"] { --c: #f08cc0; --cs: #3a1c2c; }
+  :root:not([data-theme="light"]) .chapter-card[data-ch="triangles"] { --c: #a9d66a; --cs: #24331a; }
+}
+
+/* Ce qui sera évalué */
+.p2-eval { border-left: 6px solid var(--accent); }
+.p2-comp { margin: 6px 0; padding-left: 24px; }
+.p2-comp li { margin: 6px 0; }
+.p2-comp a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 3px; }
+.p2-comp a:hover { color: var(--accent); }
+
+/* Étapes de calcul */
+.p2-steps { display: grid; grid-template-columns: auto 1fr; column-gap: 6px; margin: 8px 0 2px; font-variant-numeric: tabular-nums; font-size: 1.08rem; }
+.p2-steps > div { display: contents; }
+.p2-n { font-weight: 700; text-align: right; }
+
+/* Opérations posées */
+.p2-pose { display: inline-flex; flex-direction: column; align-items: stretch; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 1.25rem; line-height: 1.5; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px; margin: 8px 8px 4px 0; min-width: 9ch; }
+.p2-pose > div { display: flex; justify-content: flex-end; white-space: pre; }
+.p2-pose .p2-op { margin-right: auto; padding-right: 1.2ch; color: var(--accent); font-weight: 700; }
+.p2-pose .p2-res { border-top: 2px solid var(--ink); }
+.p2-pose .p2-z { color: #e8590c; }
+.p2-pose.p2-left > div { justify-content: flex-start; }
+.p2-pose.p2-left .p2-op { margin-right: 0; }
+.p2-poses .choice { align-items: center; }
+.p2-poses .p2-pose { margin: 0; }
+.p2-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.p2-figbox { background: var(--surface-2); text-align: center; padding: 8px; }
+.ex-fb .p2-pose { background: var(--surface); }
+
+/* Angles : arcs de marquage et rapporteur */
+.fig .f-arcm { stroke: var(--accent); stroke-width: 1.8; fill: none; }
+.fig .f-arc-red { stroke: #d6336c; }
+.fig .f-arc-blue { stroke: #1c7ed6; }
+.fig .f-arc-green { stroke: #2b8a3e; }
+.fig .p2-prot-out { font-size: calc(var(--k, 1) * .2px); fill: #3451d1; text-anchor: middle; dominant-baseline: middle; font-family: "Atkinson Hyperlegible", sans-serif; font-weight: 700; }
+.fig .p2-prot-in { font-size: calc(var(--k, 1) * .17px); fill: #7a5cc7; text-anchor: middle; dominant-baseline: middle; font-family: "Atkinson Hyperlegible", sans-serif; }
+.p2-protfig { max-width: 520px; }
+.projo-stage .p2-protfig { max-width: 900px; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fig .p2-prot-out { fill: #a9b8ff; }
+  :root:not([data-theme="light"]) .fig .p2-prot-in { fill: #c7b3ff; }
+  :root:not([data-theme="light"]) .fig .f-arc-blue { stroke: #74c0fc; }
+}
+.ang { white-space: nowrap; }
+.pq .p2-pose { border-color: #999; }
+
+.fig-row.p2-wide { grid-template-columns: 1fr minmax(260px, 440px); }
+@media (max-width: 680px) { .fig-row.p2-wide { grid-template-columns: 1fr; } }

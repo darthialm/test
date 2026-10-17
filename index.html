@@ -1,0 +1,1253 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Révisions 6e — Mathématiques</title>
+  <meta name="description" content="Site de révision tout-en-un pour les élèves de 6e : droites, nombres décimaux, distance et cercle, opérations, angles, triangles. Fiches de cours et exercices corrigés.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
+  <meta name="site-version" content="2026-10-17.1">
+  <link rel="stylesheet" href="style.css?v=2026-10-17.1">
+  <link rel="stylesheet" href="chapitres-p2.css?v=2026-10-17.1">
+</head>
+<body>
+
+<header class="top">
+  <a href="#/" class="logo"><span class="logo-mark" id="logo-mark"><span>6<sup>e</sup></span></span><span>Révisions 6<sup>e</sup></span></a>
+  <a href="#/" class="chap-pill" id="chap-pill" hidden></a>
+  <nav id="nav" aria-label="Sections du chapitre"></nav>
+</header>
+
+<main>
+
+  <!-- ===================================================== -->
+  <!-- CHOIX DU CHAPITRE                                      -->
+  <!-- ===================================================== -->
+  <section class="page" data-ch="" data-p="accueil">
+    <div class="hero">
+      <p class="kicker">Mathématiques · 6<sup>e</sup></p>
+      <h1>Quel chapitre veux-tu réviser ?</h1>
+      <p class="lead">Choisis un chapitre : tu y trouveras la fiche de cours, des exercices corrigés qui changent à chaque fois, et un contrôle blanc noté sur 20.</p>
+    </div>
+    <div id="auto-card"></div>
+    <div class="chapters" id="chapters"></div>
+    <p class="small muted">Ta progression est enregistrée uniquement sur cet appareil.
+      <button type="button" id="reset" class="linkbtn">Tout remettre à zéro</button></p>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- DEVOIR (lien donné par le professeur)                  -->
+  <!-- ===================================================== -->
+  <section class="page" data-ch="_" data-p="devoir">
+    <div class="devoir-head hero"></div>
+    <div class="devoir-start card"></div>
+    <div class="exercise devoir-ex" hidden></div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- ESPACE PROFESSEUR                                      -->
+  <!-- ===================================================== -->
+  <section class="page" data-ch="_" data-p="prof">
+    <h1>Espace professeur</h1>
+    <div id="prof-lock" class="card lock">
+      <p class="lead">Cet espace est réservé au professeur.</p>
+      <label for="prof-code"><b>Code d'accès :</b></label>
+      <div class="prof-row"><input type="password" id="prof-code" autocomplete="off" aria-label="Code d'accès">
+      <button type="button" class="btn primary" id="prof-unlock">Entrer</button></div>
+      <p class="lock-msg"></p>
+    </div>
+    <div id="prof-content" hidden>
+      <p class="lead">Choisis une ou plusieurs notions, puis copie le lien du devoir pour tes élèves (ENT, Pronote…), ou lance-les au vidéoprojecteur. <button type="button" class="linkbtn" id="prof-relock">Verrouiller cet espace</button></p>
+      <div class="card p2-classeur">
+        <h2>📒 Classeur de la période</h2>
+        <p class="small">Progression par classe (à cocher ou datée selon ton emploi du temps), déroulé des séances, devoirs à copier avec le lien du site déjà prêt, tous les documents (cours, corrigés, évaluations) et les <b>parcours avec les prénoms</b>, dans l'ordre du plan de classe.</p>
+        <p><a class="btn primary" href="classeur.html">Ouvrir le classeur →</a> <span class="small muted">Les documents sont chiffrés : le classeur te demande leur code la première fois.</span></p>
+      </div>
+      <p id="bilan-open-row" hidden><a class="btn primary" id="bilan-open" target="_blank" rel="noopener">📊 Voir le bilan des devoirs (Grist)</a></p>
+      <div class="prof-out card">
+        <h2>1. Donner un devoir</h2>
+        <div class="prof-opts">
+          <span><label for="prof-n"><b>Nombre de questions :</b></label>
+          <select id="prof-n"><option>5</option><option selected>10</option><option>15</option><option>20</option></select></span>
+          <span><label for="prof-classe"><b>Classe :</b></label>
+          <select id="prof-classe" class="cl-select"></select>
+          <button type="button" class="mini" id="prof-classes-edit">✏️ Mes classes</button></span>
+          <label class="prof-chk"><input type="checkbox" id="prof-form-use" disabled> Envoyer les résultats dans mon formulaire (voir 2.)</label>
+          <label class="prof-chk"><input type="checkbox" id="prof-once"> Seul le premier essai compte (les suivants servent d'entraînement et ne sont pas envoyés)</label>
+        </div>
+        <div class="prof-row">
+          <input type="text" id="prof-link" readonly aria-label="Lien du devoir">
+          <button type="button" class="btn primary" id="prof-copy-link">Copier le lien</button>
+          <a class="btn" id="prof-open" hidden>Essayer</a>
+          <a class="btn" id="prof-projo" hidden>📽 Vidéoprojecteur</a>
+        </div>
+        <div id="prof-classes-box" class="classes-box" hidden>
+          <label for="prof-classes-list"><b>Mes classes</b> (une par ligne) :</label>
+          <textarea id="prof-classes-list" rows="5" placeholder="6A&#10;6B&#10;6C"></textarea>
+          <p><button type="button" class="btn primary" id="prof-classes-save">Enregistrer</button> <span class="small muted">La liste reste enregistrée sur cet ordinateur.</span></p>
+        </div>
+        <p class="small muted"><b>Classe :</b> choisis la classe dans le menu avant de copier le lien ; elle est fixée dans le lien, les élèves n'ont rien à choisir. Fais un lien par classe. L'élève écrit seulement son prénom avant de commencer. À la fin, il obtient une carte de résultat (prénom, score, aide utilisée, date, numéro d'essai, code). Si ton formulaire Google est relié, le résultat t'est <b>envoyé automatiquement</b> ; sinon, l'élève te montre une capture d'écran ou te recopie son code.</p>
+      </div>
+      <div id="prof-list"></div>
+      <div class="card">
+        <h2>2. Recevoir les résultats automatiquement</h2>
+        <p class="small">Les résultats de toute la classe arrivent dans un tableau, une ligne par élève, sans rien recopier. À faire <b>une seule fois</b>, avec <b>Grist</b> (apps.education.fr) :</p>
+        <ol class="small steps-form">
+          <li>Dans Grist, crée un document avec une table de <b>6 colonnes</b> nommées exactement : <b>Prénom, Code, Classe, Devoir, Score, Détail</b>.</li>
+          <li>Ajoute une vue <b>Formulaire</b> sur cette table, avec ces 6 champs, puis clique sur <b>Publier</b>.</li>
+          <li>Copie le lien du formulaire publié (il ressemble à <code>…/o/docs/forms/…/1</code>), colle-le ci-dessous, puis clique sur <b>Relier et tester</b>.</li>
+        </ol>
+        <div class="prof-row">
+          <input type="text" id="prof-form" class="wide-inp" placeholder="https://grist.numerique.gouv.fr/o/docs/forms/…/1" aria-label="Lien du formulaire">
+          <button type="button" class="btn primary" id="prof-form-test" hidden>Relier et tester</button>
+        </div>
+        <p id="prof-form-status" class="small muted"></p>
+        <p class="small">Le test envoie une ligne « TEST » dans ta table : si elle arrive, tout fonctionne. Sinon, le site passe tout seul en <b>mode manuel</b> : à la fin du devoir, l'élève a un lien vers ton formulaire pour y recopier son code, et tu vérifies ensuite tous les codes d'un coup (partie 3).</p>
+        <details class="howto small">
+          <summary>Utiliser plutôt un formulaire Google</summary>
+          <ol class="steps-form">
+            <li>Sur forms.google.com, crée un formulaire avec 6 questions « Réponse courte », dans cet ordre : Prénom, Code, Classe, Devoir, Score, Détail.</li>
+            <li>Paramètres → Réponses : ne collecte pas les e-mails, et décoche « Limiter aux utilisateurs de [ton établissement] ».</li>
+            <li>Réponses → Associer à Sheets.</li>
+            <li>⋮ → Obtenir le lien prérempli : écris <b>x</b> dans les 6 réponses, « Obtenir le lien », « Copier le lien », puis colle-le dans le champ ci-dessus.</li>
+          </ol>
+        </details>
+        <p class="small muted">Ensuite, les liens de devoir que tu copies plus haut utilisent ce formulaire. Ce réglage reste enregistré sur cet appareil. Données transmises : prénom, classe, devoir, score, date, code. Vérifie avec ton établissement que l'outil choisi est autorisé.</p>
+      </div>
+      <div class="card">
+        <h2>3. Bilan des résultats</h2>
+        <div class="grist-auto widget-box">
+          <p class="small"><b>⭐ Le plus simple : le bilan directement dans Grist</b>, toujours à jour, sans rien copier. À régler une fois :</p>
+          <ol class="small steps-form">
+            <li>Dans ton document Grist, clique sur <b>Ajouter</b> → <b>Ajouter un widget à la page</b>.</li>
+            <li>Choisis le widget <b>Personnalisé</b> et, comme données, ta table de résultats, puis <b>Ajouter à la page</b>.</li>
+            <li>Dans le panneau de droite, choisis « URL personnalisée » et colle cette adresse : <code id="widget-url"></code> <button type="button" class="mini" id="widget-copy">Copier</button></li>
+            <li>Règle l'accès du widget sur <b>Lecture de la table</b> (Grist te le demande : clique sur « Accepter »).</li>
+          </ol>
+          <p class="small muted">Le bilan s'affiche alors dans Grist : une ligne par élève, choix du meilleur, premier ou dernier essai, élèves qui n'ont pas fait le devoir, codes suspects.</p>
+          <p class="small"><b>Bouton d'accès rapide :</b> dans Grist, ouvre la page où se trouve le bilan, copie l'adresse en haut du navigateur et colle-la ici. Un bouton « 📊 Voir le bilan » apparaîtra en haut de cet espace.</p>
+          <input type="text" id="bilan-link" class="wide-inp" placeholder="https://grist.numerique.gouv.fr/o/docs/…/p/2" aria-label="Lien de la page du bilan dans Grist">
+        </div>
+        <div class="grist-auto">
+          <p class="small"><b>Chargement automatique depuis Grist</b> (avec une clé API ; refusé par le Grist de l'État) :</p>
+          <ol class="small steps-form">
+            <li>Dans Grist, ouvre ta table de résultats et copie l'adresse de la page (le lien du <b>document</b>) :
+              <input type="text" id="gr-doc" class="wide-inp" placeholder="https://grist.numerique.gouv.fr/o/docs/…" aria-label="Lien du document Grist"></li>
+            <li>Dans Grist, clique sur ton nom (en haut à droite) → <b>Paramètres du profil</b> → <b>Clé API</b> → <b>Créer</b>, puis copie la clé :
+              <input type="password" id="gr-key" class="wide-inp" autocomplete="off" placeholder="Clé API Grist" aria-label="Clé API Grist"></li>
+          </ol>
+          <p><button type="button" class="btn primary" id="gr-load">🔄 Charger les résultats</button> <button type="button" class="linkbtn" id="gr-forget" hidden>Oublier la clé sur cet appareil</button></p>
+          <p id="gr-status" class="gr-status muted">La clé reste uniquement sur cet appareil : elle n'est jamais mise dans les liens des élèves. Ne la donne à personne ; « Verrouiller cet espace » l'efface.</p>
+        </div>
+        <details class="howto small"${''}>
+          <summary>Sans clé : copier-coller depuis Grist ou Google Sheets</summary>
+          <p>Clique dans ta table, fais <kbd>Ctrl</kbd>+<kbd>A</kbd> pour tout sélectionner puis <kbd>Ctrl</kbd>+<kbd>C</kbd> pour copier, et colle ici avec <kbd>Ctrl</kbd>+<kbd>V</kbd> :</p>
+        <textarea id="bilan-in" rows="4" aria-label="Lignes copiées depuis la table des résultats" placeholder="Colle ici toute ta table de résultats…"></textarea>
+        <p><button type="button" class="linkbtn" id="bilan-clear">Effacer</button></p>
+        </details>
+        <div id="bilan-out"></div>
+        <p class="small muted">Le bilan donne une ligne par élève, même s'il a fait le devoir plusieurs fois : tu choisis de retenir son meilleur essai, son premier ou son dernier. Chaque code est vérifié : une ligne tapée à la main ou recopiée sur un camarade est signalée à part. Rien de ce que tu colles n'est enregistré, sauf les listes de classe sur cet appareil.</p>
+      </div>
+      <div class="card">
+        <h2>4. Vidéoprojecteur</h2>
+        <p class="small">Coche des notions plus haut puis clique sur « 📽 Vidéoprojecteur ». Une question s'affiche en grand ; <kbd>R</kbd> affiche la réponse, <kbd>→</kbd> passe à la suivante, <kbd>F</kbd> met en plein écran. Un minuteur est disponible.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- VIDÉOPROJECTEUR                                        -->
+  <!-- ===================================================== -->
+  <section class="page" data-ch="_" data-p="projo">
+    <div class="projo-stage"></div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- AUTOMATISMES DU JOUR                                   -->
+  <!-- ===================================================== -->
+  <section class="page" data-ch="_" data-p="auto">
+    <div class="hero">
+      <p class="kicker">Tous les chapitres</p>
+      <h1>⚡ Automatismes du jour</h1>
+      <p class="lead auto-info"></p>
+    </div>
+    <div class="exercise auto-ex" style="margin-top:18px"></div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- CHAPITRE 1 : DROITES                                   -->
+  <!-- ===================================================== -->
+  <section class="page" data-ch="droites" data-p="accueil" data-title="Accueil">
+    <div class="hero">
+      <p class="kicker">Chapitre 1</p>
+      <h1>Droites</h1>
+      <p class="lead">Codage des points, appartenance, droites parallèles et perpendiculaires, tracés à l'équerre et à la règle.</p>
+      <div class="hero-actions"><a class="btn primary" href="#/droites/fiche">Lire la fiche</a><a class="btn" href="#/droites/controle">Faire le contrôle blanc</a></div>
+    </div>
+    <h2 class="section-title">Ta progression</h2>
+    <div class="cards ch-cards"></div>
+  </section>
+
+  <section class="page" data-ch="droites" data-p="fiche" data-title="Fiche">
+    <h1>Fiche de révision — Droites</h1>
+    <p class="lead">Le point et son codage, la droite et ses notations, la position de deux droites, les méthodes de tracé.</p>
+
+    <article class="card">
+      <h2><span class="badge">1</span> Le point</h2>
+      <div class="rule"><b>Définition :</b> le point définit une <b>position</b> sur la feuille. On le nomme habituellement avec une <b>lettre majuscule</b>.</div>
+      <h3>Point seul</h3>
+      <div class="cd-grid">
+        <figure><div data-cd="seul:x"></div><figcaption class="yes">OUI — croix ×, lettre décalée</figcaption></figure>
+        <figure><div data-cd="seul:plus"></div><figcaption class="yes">OUI — croix +, lettre décalée</figcaption></figure>
+        <figure><div data-cd="seul:under"></div><figcaption class="no">NON — lettre collée sous la croix</figcaption></figure>
+        <figure><div data-cd="seul:glued"></div><figcaption class="no">NON — lettre collée à la croix</figcaption></figure>
+        <figure><div data-cd="seul:square"></div><figcaption class="no">NON — lettre sur un carré</figcaption></figure>
+        <figure><div data-cd="seul:letter"></div><figcaption class="no">NON — lettre seule</figcaption></figure>
+      </div>
+      <h3>Point sur une droite</h3>
+      <div class="cd-grid">
+        <figure><div data-cd="droite:dash"></div><figcaption class="yes">OUI — petit trait qui coupe la droite</figcaption></figure>
+        <figure><div data-cd="droite:xon"></div><figcaption class="no">NON — croix sur la droite</figcaption></figure>
+        <figure><div data-cd="droite:near"></div><figcaption class="no">NON — lettre sans marque</figcaption></figure>
+      </div>
+      <h3>Point à l'intersection de deux droites</h3>
+      <div class="cd-grid">
+        <figure><div data-cd="inter:plain"></div><figcaption class="yes">OUI — simple croisement nommé</figcaption></figure>
+        <figure><div data-cd="inter:xadd"></div><figcaption class="no">NON — croix ajoutée</figcaption></figure>
+        <figure><div data-cd="inter:vbar"></div><figcaption class="no">NON — trait ajouté</figcaption></figure>
+      </div>
+      <h3>Point comme sommet d'une figure</h3>
+      <div class="cd-grid">
+        <figure><div data-cd="sommet:plain"></div><figcaption class="yes">OUI — sommets nommés, sans croix</figcaption></figure>
+        <figure><div data-cd="sommet:xall"></div><figcaption class="no">NON — une croix sur chaque sommet</figcaption></figure>
+      </div>
+      <p class="tip">Dans ces situations, on considère que le point est tracé <b>après</b> la figure. Si le point est tracé <b>avant</b> la droite, on obtient une croix sur la droite ou sur le croisement : cela donne une indication sur l'ordre de construction dans le programme de construction !</p>
+      <a class="btn small-btn" href="#/droites/points">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">2</span> La droite</h2>
+      <div class="rule"><b>Définition et notations :</b>
+        <ul class="tight">
+          <li>Une droite est <b>illimitée</b> : il est impossible de la représenter entièrement. On la note entre <b>parenthèses</b>, par exemple (d).</li>
+          <li>Des points sont <b>alignés</b> lorsqu'ils se trouvent sur une même droite.</li>
+          <li><b>Appartenance :</b> si le point C est sur la droite (d), on note C ∈ (d) ; si le point D n'est pas sur (d), on note D ∉ (d).</li>
+        </ul>
+      </div>
+      <p class="example">Si A, B et C sont sur la droite (d), ils sont alignés. Deux points de la droite permettent de lui donner d'autres noms : (AB), (BA), (AC), (CA), (BC) ou (CB).</p>
+      <h3>Position de deux droites</h3>
+      <div class="table-wrap">
+        <table class="voc pos">
+          <thead><tr><th></th><th>Droites parallèles</th><th>Droites sécantes</th><th>Droites perpendiculaires</th></tr></thead>
+          <tbody>
+            <tr><th>Définition</th><td>(d) et (d′) ne se coupent jamais.</td><td>(d) et (d′) se coupent au point O.</td><td>(d) et (d′) se coupent en formant un angle droit.</td></tr>
+            <tr><th>Schéma</th><td><div class="fig-box" data-fig="pos-par"></div></td><td><div class="fig-box" data-fig="pos-sec"></div></td><td><div class="fig-box" data-fig="pos-perp"></div></td></tr>
+            <tr><th>Notation</th><td>(d) // (d′)</td><td>pas de notation</td><td>(d) ⊥ (d′)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Méthode : reconnaître la position des droites</h3>
+      <div class="fig-row">
+        <ul class="checklist">
+          <li>Noms de la droite (h) : (AC), (CA), (AE), (EA), (CE) ou (EC).</li>
+          <li>Droites perpendiculaires : (BD) ⊥ (d) et (BD) ⊥ (d′).</li>
+          <li>Droites parallèles : (d) // (d′).</li>
+          <li>Droites sécantes non perpendiculaires : (d) et (h) sont sécantes en A.</li>
+        </ul>
+        <div class="fig-box" data-fig="ex-noms"></div>
+      </div>
+      <a class="btn small-btn" href="#/droites/positions">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">3</span> Méthodes de tracés</h2>
+      <h3>Tracer la perpendiculaire à (d) passant par A</h3>
+      <div class="fig-row">
+        <ol class="steps">
+          <li>Tracer une première droite (d).</li>
+          <li>Bien aligner le petit côté de l'équerre avec cette droite, et faire glisser l'équerre jusqu'au point A.</li>
+          <li>Tracer la perpendiculaire le long de l'autre côté de l'angle droit.</li>
+        </ol>
+        <div class="fig-box" data-fig="anim-perp"></div>
+      </div>
+      <h3>Tracer la parallèle à (d) passant par A</h3>
+      <div class="fig-row">
+        <ol class="steps">
+          <li>Placer l'équerre le long de la droite (d) et la règle contre l'équerre.</li>
+          <li>Faire glisser l'équerre le long de la règle jusqu'au point A.</li>
+          <li>Tracer la droite parallèle à (d) passant par A.</li>
+        </ol>
+        <div class="fig-box" data-fig="anim-par"></div>
+      </div>
+      <div class="rule"><b>Propriété :</b> deux droites perpendiculaires à une même droite sont <b>toujours parallèles</b>. C'est sur elle que repose la méthode.</div>
+      <p class="tip"><b>Autre méthode possible :</b> on peut aussi tracer une parallèle uniquement à l'équerre, en construisant deux perpendiculaires successives.</p>
+      <a class="btn small-btn" href="#/droites/tracer">S'entraîner à tracer →</a>
+    </article>
+  </section>
+
+  <section class="page" data-ch="droites" data-p="points" data-title="Points et droites">
+    <h1>Points et droites</h1>
+    <p class="lead">Coder un point selon la situation, utiliser ∈ et ∉, reconnaître des points alignés et nommer une droite.</p>
+    <h2 class="ex-title">Coder un point</h2>
+    <div class="exercise" data-gen="d-codage"></div>
+    <div class="grid2">
+      <div><h2 class="ex-title">Appartenance et alignement</h2><div class="exercise" data-gen="d-appartient"></div></div>
+      <div><h2 class="ex-title">Nommer une droite</h2><div class="exercise" data-gen="d-noms"></div></div>
+    </div>
+  </section>
+
+  <section class="page" data-ch="droites" data-p="positions" data-title="Positions">
+    <h1>Position de deux droites</h1>
+    <p class="lead">Parallèles, sécantes ou perpendiculaires ? Attention : une droite est illimitée, il faut parfois la prolonger.</p>
+    <h2 class="ex-title">Reconnaître la position</h2>
+    <div class="exercise" data-gen="d-position"></div>
+    <h2 class="ex-title">Deux perpendiculaires à une même droite</h2>
+    <div class="exercise" data-gen="d-prop"></div>
+  </section>
+
+  <section class="page" data-ch="droites" data-p="tracer" data-title="Tracer">
+    <h1>Tracer des perpendiculaires et des parallèles</h1>
+    <p class="lead">Utilise les instruments comme sur ta feuille. Quand ta figure est finie, clique sur « Vérifier ».</p>
+    <details class="howto">
+      <summary>Comment utiliser les instruments ?</summary>
+      <ul>
+        <li><b>⊥ Équerre :</b> clique sur la droite de référence, puis sur le point par lequel doit passer la perpendiculaire.</li>
+        <li><b>∥ Parallèle (règle + équerre) :</b> clique sur la droite de référence, puis sur le point par lequel doit passer la parallèle.</li>
+        <li><b>📏 Règle, ⟷ Droite, ↗ Demi-droite :</b> clique sur le point de départ, puis à l'arrivée.</li>
+        <li><b>× Point :</b> se place exactement sur les intersections et les tracés.</li>
+        <li><b>✋ Déplacer :</b> si ta figure sort du cadre, fais glisser la feuille. <b>↶ Annuler</b> efface ton dernier tracé.</li>
+      </ul>
+    </details>
+    <h2 class="ex-title">Tracer une perpendiculaire</h2>
+    <div class="exercise" data-gen="d-perp"></div>
+    <h2 class="ex-title">Tracer une parallèle</h2>
+    <div class="exercise" data-gen="d-par"></div>
+  </section>
+
+  <section class="page" data-ch="droites" data-p="erreurs" data-title="Mes erreurs">
+    <h1>Mes erreurs — Droites</h1>
+    <p class="lead">Les types de questions que tu as ratés reviennent ici. Un point faible disparaît après 2 réussites d'affilée sans indice.</p>
+    <div class="weak-summary"></div>
+    <div class="exercise" data-weak="droites"></div>
+  </section>
+
+  <section class="page" data-ch="droites" data-p="controle" data-title="Contrôle blanc" data-exam="1">
+    <h1>Contrôle blanc — Droites</h1>
+    <p class="lead">10 questions, dont des tracés. Une seule tentative par question, comme le jour du devoir !</p>
+    <div class="exercise exam" data-exam="droites"></div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- CHAPITRE 2 : NOMBRES DÉCIMAUX (PARTIE 1)               -->
+  <!-- ===================================================== -->
+  <section class="page" data-ch="decimaux1" data-p="accueil" data-title="Accueil">
+    <div class="hero">
+      <p class="kicker">Chapitre 2</p>
+      <h1>Nombres décimaux (partie 1)</h1>
+      <p class="lead">Les nombres entiers et décimaux : rangs des chiffres, décomposition, zéros inutiles et fractions décimales.</p>
+      <div class="hero-actions"><a class="btn primary" href="#/decimaux1/fiche">Lire la fiche</a><a class="btn" href="#/decimaux1/controle">Faire le contrôle blanc</a></div>
+    </div>
+    <h2 class="section-title">Ta progression</h2>
+    <div class="cards ch-cards"></div>
+  </section>
+
+  <section class="page" data-ch="decimaux1" data-p="fiche" data-title="Fiche">
+    <h1>Fiche de révision — Nombres entiers et décimaux</h1>
+    <p class="lead">Écrire, lire et décomposer les nombres entiers et décimaux.</p>
+
+    <article class="card">
+      <h2><span class="badge">1</span> Les nombres entiers</h2>
+      <div class="rule"><b>Principes de numération :</b>
+        <ol class="tight">
+          <li>Notre numération utilise 10 symboles appelés <b>chiffres</b> : 0, 1, 2, 3, 4, 5, 6, 7, 8, 9.</li>
+          <li>La <b>position</b> d'un chiffre dans un nombre détermine sa valeur : c'est le principe de la numération de position.</li>
+          <li>Pour faciliter la lecture des grands nombres, on regroupe les chiffres par <b>tranches de trois</b> à partir de la <b>droite</b>.</li>
+        </ol>
+      </div>
+      <div data-numtab="4819035621"></div>
+      <p class="example">4819035621 s'écrit plus clairement 4 819 035 621. Dans ce nombre, 3 est le chiffre des dizaines de mille.</p>
+      <h3>Reconnaître le rang d'un chiffre et déterminer des quantités</h3>
+      <ul class="checklist">
+        <li>8 <u>3</u>92 : 3 est le chiffre des centaines.</li>
+        <li><u>5</u> 104 : 5 est le chiffre des unités de mille (ou milliers).</li>
+        <li>9 21<u>8</u> : 8 est le chiffre des unités.</li>
+        <li><u>7</u>2 450 000 : 7 est le chiffre des dizaines de millions.</li>
+        <li>Dans 9 382, il y a <b>938 dizaines</b> (938 × 10 = 9 380) et <b>93 centaines</b> (93 × 100 = 9 300).</li>
+      </ul>
+      <p class="warnbox"><b>Attention :</b> « le <b>chiffre</b> des dizaines » de 9 382 est 8 (un seul chiffre), mais « le <b>nombre</b> de dizaines » est 938.</p>
+      <h3>Décomposer un nombre entier selon ses rangs</h3>
+      <p class="example">7 418 = (7 × 1 000) + (4 × 100) + (1 × 10) + (8 × 1)<br>360 520 = (3 × 100 000) + (6 × 10 000) + (5 × 100) + (2 × 10)</p>
+      <a class="btn small-btn" href="#/decimaux1/rangs">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">2</span> Nombres décimaux</h2>
+      <div class="rule"><b>Définition :</b> un nombre décimal est composé de deux parties séparées par une virgule : la <b>partie entière</b> (à gauche de la virgule) et la <b>partie décimale</b> (à droite de la virgule).</div>
+      <p class="example">83,614 = 83 + 0,614. Ici, 83 est la partie entière et 0,614 est la partie décimale.</p>
+      <div data-numtab="83,614"></div>
+      <h3>Reconnaître le rang d'un chiffre décimal</h3>
+      <ul class="checklist">
+        <li>14,<u>8</u>2 : 8 est le chiffre des dixièmes.</li>
+        <li>309,1<u>7</u>5 : 7 est le chiffre des centièmes.</li>
+        <li><u>6</u>1,54 : 6 est le chiffre des dizaines.</li>
+        <li>0,00<u>9</u> : 9 est le chiffre des millièmes.</li>
+        <li>Dans 83,614, il y a <b>836 dixièmes</b> et <b>8 361 centièmes</b>.</li>
+      </ul>
+      <h3>Zéros inutiles</h3>
+      <div class="rule"><b>Règle :</b> on peut supprimer les zéros situés aux extrémités de la partie entière (à gauche) ou de la partie décimale (à droite) sans changer la valeur du nombre.</div>
+      <p class="example">067,30 = 67,3 &nbsp;·&nbsp; 402,080 = 402,08 &nbsp;·&nbsp; 09,500 = 9,5 &nbsp;·&nbsp; 180,00 = 180</p>
+      <p class="warnbox"><b>Attention :</b> les zéros <b>au milieu</b> d'un nombre sont utiles ! Dans 402,08, si on enlève un zéro, le nombre change.</p>
+      <a class="btn small-btn" href="#/decimaux1/decomposer">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">3</span> Fractions décimales</h2>
+      <div class="rule"><b>Définition :</b> une fraction décimale est une fraction dont le dénominateur est 10, 100, 1 000…</div>
+      <div class="table-wrap">
+        <table class="voc">
+          <thead><tr><th>En lettres</th><th>Fraction décimale</th><th>Écriture décimale</th></tr></thead>
+          <tbody>
+            <tr><td>Un dixième</td><td>[[1|10]]</td><td>0,1</td></tr>
+            <tr><td>Un centième</td><td>[[1|100]]</td><td>0,01</td></tr>
+            <tr><td>Un millième</td><td>[[1|1 000]]</td><td>0,001</td></tr>
+            <tr><td>Seize centièmes</td><td>[[16|100]]</td><td>0,16</td></tr>
+            <tr><td>Trois-cent-deux dixièmes</td><td>[[302|10]]</td><td>30,2</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <h3>Passer d'une écriture décimale à une fraction décimale</h3>
+      <ul class="checklist">
+        <li>3,7 = [[37|10]] (car 7 est le chiffre des dixièmes)</li>
+        <li>82,19 = [[8 219|100]] (car 9 est le chiffre des centièmes)</li>
+        <li>[[73|100]] = 0,73 et [[841|10]] = 84,1</li>
+      </ul>
+      <h3>Décomposer un nombre sous différentes formes</h3>
+      <ul class="tight">
+        <li>En lettres : 614 unités et 28 centièmes (ou 614 unités, 2 dixièmes et 8 centièmes)</li>
+        <li>Fraction décimale : 614,28 = [[61 428|100]]</li>
+        <li>Somme d'un entier et d'une fraction décimale : 614,28 = 614 + [[28|100]]</li>
+        <li>Décomposition selon les rangs : (6 × 100) + (1 × 10) + (4 × 1) + (2 × [[1|10]]) + (8 × [[1|100]])</li>
+      </ul>
+      <div class="tip"><b>À retenir — un même nombre décimal possède plusieurs écritures :</b>
+        <ol class="tight">
+          <li>l'écriture décimale : 12,35 ;</li>
+          <li>la fraction décimale : [[1 235|100]] ;</li>
+          <li>la somme d'un entier et d'une fraction décimale : 12 + [[35|100]] ;</li>
+          <li>la décomposition par rangs : (1 × 10) + (2 × 1) + (3 × [[1|10]]) + (5 × [[1|100]]).</li>
+        </ol>
+      </div>
+      <a class="btn small-btn" href="#/decimaux1/fractions">S'entraîner →</a>
+    </article>
+  </section>
+
+  <section class="page" data-ch="decimaux1" data-p="rangs" data-title="Rangs">
+    <h1>Rangs et classes</h1>
+    <p class="lead">Repère le rang d'un chiffre, compte les dizaines ou les dixièmes, regroupe les chiffres par tranches de trois.</p>
+    <h2 class="ex-title">Rang d'un chiffre</h2>
+    <div class="exercise" data-gen="n-rang"></div>
+    <div class="grid2">
+      <div><h2 class="ex-title">Combien de… ?</h2><div class="exercise" data-gen="n-combien"></div></div>
+      <div><h2 class="ex-title">Tranches de trois chiffres</h2><div class="exercise" data-gen="n-tranches"></div></div>
+    </div>
+  </section>
+
+  <section class="page" data-ch="decimaux1" data-p="decomposer" data-title="Décomposer">
+    <h1>Décomposer et simplifier l'écriture</h1>
+    <p class="lead">Décompose un nombre selon ses rangs (ou retrouve-le), puis repère les zéros inutiles.</p>
+    <h2 class="ex-title">Décomposer, recomposer</h2>
+    <div class="exercise" data-gen="n-decomp"></div>
+    <h2 class="ex-title">Zéros inutiles</h2>
+    <div class="exercise" data-gen="n-zeros"></div>
+  </section>
+
+  <section class="page" data-ch="decimaux1" data-p="fractions" data-title="Fractions décimales">
+    <h1>Fractions décimales</h1>
+    <p class="lead">Passe de l'écriture décimale à la fraction décimale, des lettres aux chiffres, et écris un même nombre de plusieurs façons. Tape une fraction avec une barre : <code>37/10</code>.</p>
+    <h2 class="ex-title">Écriture décimale ↔ fraction décimale</h2>
+    <div class="exercise" data-gen="n-fracdec"></div>
+    <div class="grid2">
+      <div><h2 class="ex-title">Des lettres aux chiffres</h2><div class="exercise" data-gen="n-lettres"></div></div>
+      <div><h2 class="ex-title">Différentes écritures</h2><div class="exercise" data-gen="n-formes"></div></div>
+    </div>
+  </section>
+
+  <section class="page" data-ch="decimaux1" data-p="erreurs" data-title="Mes erreurs">
+    <h1>Mes erreurs — Nombres décimaux (partie 1)</h1>
+    <p class="lead">Les types de questions que tu as ratés reviennent ici. Un point faible disparaît après 2 réussites d'affilée sans indice.</p>
+    <div class="weak-summary"></div>
+    <div class="exercise" data-weak="decimaux1"></div>
+  </section>
+
+  <section class="page" data-ch="decimaux1" data-p="controle" data-title="Contrôle blanc" data-exam="1">
+    <h1>Contrôle blanc — Nombres décimaux (partie 1)</h1>
+    <p class="lead">10 questions qui mélangent tous les savoir-faire. Une seule tentative par question, comme le jour du devoir !</p>
+    <div class="exercise exam" data-exam="decimaux1"></div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- CHAPITRE 3 : DISTANCE ET CERCLE                        -->
+  <!-- ===================================================== -->
+  <section class="page" data-ch="cercle" data-p="accueil" data-title="Accueil">
+    <div class="hero">
+      <p class="kicker">Chapitre 3</p>
+      <h1>Distance et cercle</h1>
+      <p class="lead">Segment, demi-droite et longueur, milieu, médiatrice, vocabulaire du cercle, cercle et disque.</p>
+      <div class="hero-actions"><a class="btn primary" href="#/cercle/fiche">Lire la fiche</a><a class="btn" href="#/cercle/controle">Faire le contrôle blanc</a></div>
+    </div>
+    <h2 class="section-title">Ta progression</h2>
+    <div class="cards ch-cards"></div>
+  </section>
+
+  <section class="page" data-ch="cercle" data-p="fiche" data-title="Fiche">
+    <h1>Fiche de révision — Distance et cercle</h1>
+    <p class="lead">Les notations, le milieu, la médiatrice et le vocabulaire du cercle.</p>
+
+    <article class="card">
+      <h2><span class="badge">1</span> Segment, demi-droite et milieu</h2>
+      <div class="table-wrap">
+        <table class="voc notat">
+          <thead><tr><th>Objet géométrique</th><th>Notation</th><th>Représentation</th></tr></thead>
+          <tbody>
+            <tr><td>Le segment d'extrémités A et B</td><td>[AB]</td><td><div data-fig="n-seg"></div></td></tr>
+            <tr><td>La demi-droite d'origine A passant par B</td><td>[AB)</td><td><div data-fig="n-ray"></div></td></tr>
+            <tr><td>La demi-droite d'origine B passant par A</td><td>[BA)</td><td><div data-fig="n-rayr"></div></td></tr>
+            <tr><td>La longueur (distance entre A et B)</td><td>AB = 3,5 cm</td><td><div data-fig="n-len"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="warnbox"><b>Attention aux notations !</b>
+        <ul class="tight">
+          <li>[AB] désigne l'<b>objet géométrique</b> (la figure), alors que AB désigne un <b>nombre</b> (la longueur).</li>
+          <li>On écrit AB = 5 cm, mais on n'écrit <b>jamais</b> [AB] = 5 cm.</li>
+          <li><b>Appartenance :</b> si un point M se trouve sur le segment [AB], on note M ∈ [AB]. S'il n'y est pas, on note M ∉ [AB].</li>
+        </ul>
+      </div>
+      <h3>Milieu d'un segment</h3>
+      <div class="fig-row">
+        <div class="rule">Le <b>milieu</b> d'un segment est le point qui appartient au segment et qui le partage en deux segments de même longueur. On code les longueurs égales avec le même symbole.<br><br><b>I est le milieu de [AB]</b> signifie que : <b>I ∈ [AB]</b> et <b>AI = IB</b>.</div>
+        <div class="fig-box" data-fig="milieu"></div>
+      </div>
+      <h3>Unité de longueur</h3>
+      <p>L'unité de référence pour mesurer une longueur est le <b>mètre</b> (m). On peut le découper (décimètre, centimètre, millimètre) ou le prendre plusieurs fois (décamètre, hectomètre, kilomètre) pour s'adapter à la taille de ce que l'on cherche à mesurer.</p>
+      <div class="units"><span>km</span><span>hm</span><span>dam</span><span class="m">m</span><span>dm</span><span>cm</span><span>mm</span></div>
+      <a class="btn small-btn" href="#/cercle/notations">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">2</span> Médiatrice d'un segment</h2>
+      <div class="rule"><b>Définition :</b> la médiatrice d'un segment est la droite qui passe par son <b>milieu</b> et qui lui est <b>perpendiculaire</b>.</div>
+      <div class="rule"><b>Propriété d'équidistance :</b> si un point appartient à la médiatrice d'un segment, alors il est situé à égale distance des deux extrémités de ce segment (il est <b>équidistant</b>).</div>
+      <div class="rule"><b>Réciproque :</b> si un point est équidistant des extrémités A et B, alors il se trouve sur la médiatrice du segment [AB].</div>
+      <h3>Méthode : tracer la médiatrice du segment [AB] au compas</h3>
+      <div class="fig-row">
+        <ol class="steps">
+          <li>On prend un écartement de compas <b>supérieur à la moitié</b> de la longueur du segment (on peut prendre beaucoup plus si l'on veut).</li>
+          <li>En piquant en A, on trace deux arcs de cercle (un au-dessus et un en dessous du segment).</li>
+          <li>En gardant le <b>même écartement</b>, on pique en B et on trace deux autres arcs de cercle.</li>
+          <li>Les arcs se coupent en deux points E et F. La droite (EF) est la <b>médiatrice</b> du segment [AB].</li>
+        </ol>
+        <div class="fig-box" data-fig="anim-med"></div>
+      </div>
+      <a class="btn small-btn" href="#/cercle/mediatrice">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">3</span> Cercle et disque</h2>
+      <div class="fig-row">
+        <div class="rule"><b>Vocabulaire du cercle :</b>
+          <ul class="tight">
+            <li>Un <b>cercle</b> de centre O est l'ensemble de tous les points situés à la <b>même distance</b> du centre O.</li>
+            <li>Un <b>rayon</b> est un segment reliant le centre O à un point du cercle.</li>
+            <li>Un <b>diamètre</b> est un segment passant par <b>le centre O</b> et reliant deux points du cercle.</li>
+            <li>Une <b>corde</b> est un segment reliant <b>deux points</b> du cercle.</li>
+            <li>Un <b>arc de cercle</b> est une portion de cercle comprise entre deux points.</li>
+          </ul>
+        </div>
+        <div class="fig-box" data-fig="voc"></div>
+      </div>
+      <div class="rule"><b>Propriétés des longueurs :</b>
+        <ul class="tight">
+          <li>La longueur d'un diamètre est égale au <b>double</b> de la longueur d'un rayon.</li>
+          <li>Le centre O est le <b>milieu</b> de tous les diamètres du cercle.</li>
+        </ul>
+      </div>
+      <h3>Différence entre cercle et disque</h3>
+      <p>Le cercle et le disque sont deux figures géométriques différentes qu'on a tendance à confondre…</p>
+      <div class="cd-grid two">
+        <figure><div class="fig-box" data-fig="cercle"></div><figcaption>Le <b>cercle</b> est le <b>contour</b> (la ligne) — comme un anneau.</figcaption></figure>
+        <figure><div class="fig-box" data-fig="disque"></div><figcaption>Le <b>disque</b> est la <b>surface intérieure</b> (le plein) — comme une pizza.</figcaption></figure>
+      </div>
+      <a class="btn small-btn" href="#/cercle/cercle">S'entraîner →</a>
+    </article>
+  </section>
+
+  <section class="page" data-ch="cercle" data-p="notations" data-title="Notations et milieu">
+    <h1>Notations et milieu</h1>
+    <p class="lead">Segment, demi-droite, droite, longueur : chaque objet a sa notation. Et le milieu, c'est deux conditions !</p>
+    <div class="grid2">
+      <div><h2 class="ex-title">Segment, demi-droite, droite</h2><div class="exercise" data-gen="c-notation"></div></div>
+      <div><h2 class="ex-title">Bien écrire</h2><div class="exercise" data-gen="c-ecrire"></div></div>
+    </div>
+    <h2 class="ex-title">Milieu d'un segment</h2>
+    <div class="exercise" data-gen="c-milieu"></div>
+    <h2 class="ex-title">Tracer une demi-droite ou un milieu</h2>
+    <div class="exercise" data-gen="c-tracer"></div>
+  </section>
+
+  <section class="page" data-ch="cercle" data-p="mediatrice" data-title="Médiatrice">
+    <h1>Médiatrice d'un segment</h1>
+    <p class="lead">Utilise la propriété d'équidistance et sa réciproque, puis trace la médiatrice au compas.</p>
+    <h2 class="ex-title">Propriété et réciproque</h2>
+    <div class="exercise" data-gen="c-med-prop"></div>
+    <h2 class="ex-title">Tracer la médiatrice au compas</h2>
+    <div class="exercise" data-gen="c-med-trace"></div>
+  </section>
+
+  <section class="page" data-ch="cercle" data-p="cercle" data-title="Cercle">
+    <h1>Le cercle</h1>
+    <p class="lead">Rayon, diamètre, corde, arc : reconnais-les. Puis trace des cercles au compas.</p>
+    <div class="grid2">
+      <div><h2 class="ex-title">Vocabulaire du cercle</h2><div class="exercise" data-gen="c-voc"></div></div>
+      <div><h2 class="ex-title">Rayon et diamètre</h2><div class="exercise" data-gen="c-rd"></div></div>
+    </div>
+    <h2 class="ex-title">Cercle et disque</h2>
+    <div class="exercise" data-gen="c-disque"></div>
+    <h2 class="ex-title">Tracer un cercle</h2>
+    <div class="exercise" data-gen="c-trace-cercle"></div>
+  </section>
+
+  <section class="page" data-ch="cercle" data-p="erreurs" data-title="Mes erreurs">
+    <h1>Mes erreurs — Distance et cercle</h1>
+    <p class="lead">Les types de questions que tu as ratés reviennent ici. Un point faible disparaît après 2 réussites d'affilée sans indice.</p>
+    <div class="weak-summary"></div>
+    <div class="exercise" data-weak="cercle"></div>
+  </section>
+
+  <section class="page" data-ch="cercle" data-p="controle" data-title="Contrôle blanc" data-exam="1">
+    <h1>Contrôle blanc — Distance et cercle</h1>
+    <p class="lead">10 questions, dont des tracés. Une seule tentative par question !</p>
+    <div class="exercise exam" data-exam="cercle"></div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- CHAPITRE 4 : NOMBRES DÉCIMAUX (PARTIE 2)               -->
+  <!-- ===================================================== -->
+  <section class="page" data-ch="decimaux2" data-p="accueil" data-title="Accueil">
+    <div class="hero">
+      <p class="kicker">Chapitre 4</p>
+      <h1>Nombres décimaux (partie 2)</h1>
+      <p class="lead">Demi-droite graduée, comparer et ranger, intercaler, encadrer et arrondir.</p>
+      <div class="hero-actions"><a class="btn primary" href="#/decimaux2/fiche">Lire la fiche</a><a class="btn" href="#/decimaux2/controle">Faire le contrôle blanc</a></div>
+    </div>
+    <h2 class="section-title">Ta progression</h2>
+    <div class="cards ch-cards"></div>
+  </section>
+
+  <section class="page" data-ch="decimaux2" data-p="fiche" data-title="Fiche">
+    <h1>Fiche de révision — Comparer et arrondir</h1>
+    <p class="lead">La demi-droite graduée, la comparaison des nombres décimaux, l'encadrement et l'arrondi.</p>
+
+    <article class="card">
+      <h2><span class="badge">1</span> La demi-droite graduée</h2>
+      <div class="rule"><b>Définition et vocabulaire :</b>
+        <ul class="tight">
+          <li>Une demi-droite graduée est une demi-droite sur laquelle on choisit une <b>origine</b> et une <b>unité de longueur</b> que l'on reporte régulièrement.</li>
+          <li>Chaque point d'une demi-droite graduée est repéré par un nombre appelé son <b>abscisse</b>.</li>
+          <li>L'origine de la demi-droite graduée correspond à l'abscisse 0.</li>
+          <li>Si un point A a pour abscisse 4, on note A(4).</li>
+        </ul>
+      </div>
+      <div class="nl" id="hl-intro"></div>
+      <h3>Méthode 1 : placer et lire des nombres</h3>
+      <p class="example">1) Quelles sont les abscisses des points A et B ? 2) Placer les points D(15) et E(17,5).</p>
+      <div class="nl" id="hl-m1a"></div>
+      <p>1) A a pour abscisse 13, soit A(13). B est situé au milieu entre 14 et 15, donc son abscisse est 14,5, soit B(14,5).<br>2) Les points D et E sont placés ci-dessous :</p>
+      <div class="nl" id="hl-m1b"></div>
+      <h3>Méthode 2 : adapter le pas de la graduation</h3>
+      <p class="example">a) Tracer une demi-droite graduée en plaçant 41,5 comme première graduation et en prenant 1 cm pour 1 dixième (0,1).<br>b) Placer les points A(42,8), B(41 + [[9|10]]) et C([[433|10]]).</p>
+      <p>a) On ajoute 0,1 à chaque graduation de 1 cm. b) Pour B : 41 + [[9|10]] = 41 + 0,9 = 41,9. Pour C : [[433|10]] = 43,3.</p>
+      <div class="nl" id="hl-m2"></div>
+      <p class="tip"><b>Astuce :</b> avant de lire ou de placer, cherche combien vaut <b>une</b> graduation : compte les graduations entre deux nombres écrits.</p>
+      <a class="btn small-btn" href="#/decimaux2/demidroite">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">2</span> Comparer et ordonner les nombres décimaux</h2>
+      <div class="rule"><b>Symboles :</b> &lt; signifie « est inférieur à » (ex. : 2,5 &lt; 2,8) ; &gt; signifie « est supérieur à » (ex. : 4,2 &gt; 3,9).</div>
+      <div class="rule"><b>Règle de comparaison :</b>
+        <ol class="tight">
+          <li>On compare d'abord les <b>parties entières</b>. Le plus grand nombre est celui qui a la plus grande partie entière.</li>
+          <li>Si les parties entières sont égales, on compare les parties décimales <b>rang par rang</b> (ou en complétant avec des zéros inutiles pour qu'elles aient le même nombre de chiffres après la virgule).</li>
+        </ol>
+      </div>
+      <h3>Méthode 3 : comparer deux nombres décimaux</h3>
+      <p class="example">Comparer 14,52 et 14,6. Les parties entières sont égales (14 = 14). On rajoute un zéro inutile : 14,6 = 14,60. Comme 52 &lt; 60, on en déduit que 14,52 &lt; 14,60, c'est-à-dire <b>14,52 &lt; 14,6</b>.</p>
+      <p class="warnbox"><b>Piège :</b> un nombre qui a plus de chiffres après la virgule n'est pas forcément plus grand !</p>
+      <h3>Méthode 4 : ordonner une liste de nombres</h3>
+      <ul class="tight">
+        <li>Ranger dans l'ordre <b>croissant</b> : du plus petit au plus grand. 6 ; 5,42 ; 5,7 ; 4,8 → 4,8 &lt; 5,42 &lt; 5,7 &lt; 6.</li>
+        <li>Ranger dans l'ordre <b>décroissant</b> : du plus grand au plus petit. 12,4 ; 11,8 ; 13 ; 11,75 → 13 &gt; 12,4 &gt; 11,8 &gt; 11,75.</li>
+      </ul>
+      <a class="btn small-btn" href="#/decimaux2/comparer">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">3</span> Intercaler, encadrer et arrondir</h2>
+      <div class="rule"><b>Définitions :</b>
+        <ul class="tight">
+          <li><b>Intercaler</b> un nombre entre deux nombres donnés, c'est en trouver un situé entre les deux.</li>
+          <li><b>Encadrer</b> un nombre, c'est le placer entre deux valeurs (l'une plus petite, l'autre plus grande).</li>
+          <li><b>Arrondir</b> un nombre à une précision donnée, c'est trouver la valeur la plus proche de ce nombre avec cette précision.</li>
+        </ul>
+      </div>
+      <h3>Méthode 5 : intercaler un nombre décimal</h3>
+      <p class="example">Intercaler un nombre entre 7,83 et 7,84. On ajoute un zéro inutile : 7,830 et 7,840. On peut choisir n'importe quelle partie décimale entre 830 et 840, par exemple 835. Ainsi : 7,83 &lt; 7,835 &lt; 7,84.</p>
+      <h3>Méthode 6 : encadrer et arrondir</h3>
+      <p>1) Encadrement à l'unité : <b>56 &lt; 56,7 &lt; 57</b>. 56,7 est compris entre 56 et 57 ; la valeur la plus proche de 56,7 est 57 : <b>57 est l'arrondi à l'unité</b> de 56,7.</p>
+      <div class="nl" id="hl-enc1"></div>
+      <p>2) Encadrement au dixième : <b>56,7 &lt; 56,73 &lt; 56,8</b>. 56,73 est compris entre 56,70 et 56,80 ; la valeur la plus proche est 56,70 : <b>56,7 est l'arrondi au dixième</b> de 56,73.</p>
+      <div class="nl" id="hl-enc2"></div>
+      <h3>Méthode technique : la règle du chiffre suivant</h3>
+      <div class="rule">1) On repère le chiffre du rang demandé (encadré). 2) On regarde le chiffre situé juste après (en orange) : si c'est 0, 1, 2, 3 ou 4, le chiffre du rang ne change pas ; si c'est 5, 6, 7, 8 ou 9, on lui ajoute 1.</div>
+      <div class="arr-grid">
+        <div><p class="small">Arrondi à l'unité de 56,7</p><p class="big" data-arr="567,1,0"></p><p>7 → +1 → <b>57</b></p></div>
+        <div><p class="small">Arrondi au dixième de 56,73</p><p class="big" data-arr="5673,2,1"></p><p>3 → inchangé → <b>56,7</b></p></div>
+        <div><p class="small">Arrondi au centième de 12,848</p><p class="big" data-arr="12848,3,2"></p><p>8 → +1 → <b>12,85</b></p></div>
+      </div>
+      <a class="btn small-btn" href="#/decimaux2/encadrer">S'entraîner →</a>
+    </article>
+  </section>
+
+  <section class="page" data-ch="decimaux2" data-p="demidroite" data-title="Demi-droite graduée">
+    <h1>Demi-droite graduée</h1>
+    <p class="lead">Cherche d'abord combien vaut une graduation, puis lis ou place le nombre.</p>
+    <h2 class="ex-title">Lire une abscisse</h2>
+    <div class="exercise" data-gen="e-lire"></div>
+    <h2 class="ex-title">Placer un point</h2>
+    <div class="exercise" data-gen="e-placer"></div>
+  </section>
+
+  <section class="page" data-ch="decimaux2" data-p="comparer" data-title="Comparer et ranger">
+    <h1>Comparer et ranger</h1>
+    <p class="lead">Compare les parties entières, puis les décimales rang par rang. Les zéros inutiles sont tes amis !</p>
+    <h2 class="ex-title">Comparer deux nombres</h2>
+    <div class="exercise" data-gen="e-comparer"></div>
+    <h2 class="ex-title">Ranger des nombres</h2>
+    <div class="exercise" data-gen="e-ranger"></div>
+  </section>
+
+  <section class="page" data-ch="decimaux2" data-p="encadrer" data-title="Intercaler, encadrer, arrondir">
+    <h1>Intercaler, encadrer et arrondir</h1>
+    <p class="lead">Trouve un nombre entre deux autres, encadre un nombre, puis arrondis-le avec la règle du chiffre suivant.</p>
+    <div class="grid2">
+      <div><h2 class="ex-title">Intercaler</h2><div class="exercise" data-gen="e-intercaler"></div></div>
+      <div><h2 class="ex-title">Encadrer</h2><div class="exercise" data-gen="e-encadrer"></div></div>
+    </div>
+    <h2 class="ex-title">Arrondir</h2>
+    <div class="exercise" data-gen="e-arrondir"></div>
+  </section>
+
+  <section class="page" data-ch="decimaux2" data-p="erreurs" data-title="Mes erreurs">
+    <h1>Mes erreurs — Nombres décimaux (partie 2)</h1>
+    <p class="lead">Les types de questions que tu as ratés reviennent ici. Un point faible disparaît après 2 réussites d'affilée sans indice.</p>
+    <div class="weak-summary"></div>
+    <div class="exercise" data-weak="decimaux2"></div>
+  </section>
+
+  <section class="page" data-ch="decimaux2" data-p="controle" data-title="Contrôle blanc" data-exam="1">
+    <h1>Contrôle blanc — Nombres décimaux (partie 2)</h1>
+    <p class="lead">10 questions qui mélangent tous les savoir-faire. Une seule tentative par question, comme le jour du devoir !</p>
+    <div class="exercise exam" data-exam="decimaux2"></div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- CHAPITRE 5 : ADDITIONNER, SOUSTRAIRE, MULTIPLIER       -->
+  <!-- ===================================================== -->
+  <section class="page" data-ch="operations" data-p="accueil" data-title="Accueil">
+    <div class="hero">
+      <p class="kicker">Chapitre 5</p>
+      <h1>Additionner, soustraire, multiplier</h1>
+      <p class="lead">Le vocabulaire des opérations, les règles de calcul avec des parenthèses, les opérations posées avec des nombres décimaux et les problèmes.</p>
+      <div class="hero-actions"><a class="btn primary" href="#/operations/fiche">Lire la fiche</a><a class="btn" href="#/operations/controle">Faire le contrôle blanc</a></div>
+    </div>
+    <div class="card p2-eval">
+      <h2>🎯 Ce qui sera évalué</h2>
+      <ol class="p2-comp">
+        <li><a href="#/operations/vocabulaire">J'utilise le vocabulaire des opérations.</a></li>
+        <li><a href="#/operations/regles">Je calcule en respectant les règles (gauche à droite, parenthèses).</a></li>
+        <li><a href="#/operations/poser">Je pose une addition et une soustraction de nombres décimaux.</a></li>
+        <li><a href="#/operations/poser">Je pose une multiplication de nombres décimaux.</a></li>
+        <li><a href="#/operations/problemes">Je résous un problème.</a></li>
+      </ol>
+      <p class="small muted">Un exercice par compétence, comme le jour de l'évaluation. Entraîne-toi jusqu'à réussir sans indice.</p>
+    </div>
+    <h2 class="section-title">Ta progression</h2>
+    <div class="cards ch-cards"></div>
+  </section>
+
+  <section class="page" data-ch="operations" data-p="fiche" data-title="Fiche">
+    <h1>Fiche de révision — Additionner, soustraire, multiplier</h1>
+    <p class="lead">Le vocabulaire, les trois règles de calcul et les opérations posées.</p>
+
+    <article class="card">
+      <h2><span class="badge">1</span> Le vocabulaire des opérations</h2>
+      <div class="table-wrap">
+        <table class="voc">
+          <thead><tr><th>Opération</th><th>Calcul</th><th>Nombres de départ</th><th>Résultat</th></tr></thead>
+          <tbody>
+            <tr><td>Addition</td><td>24,5 + 13,2 = 37,7</td><td>les termes</td><td>la somme</td></tr>
+            <tr><td>Soustraction</td><td>50,8 − 17,3 = 33,5</td><td>les termes</td><td>la différence</td></tr>
+            <tr><td>Multiplication</td><td>6,5 × 4 = 26</td><td>les facteurs</td><td>le produit</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rule"><b>À retenir — on dit :</b> « la somme de 7 et de 9 » ; « la différence de 11 et de 3 » ; « le produit de 4 par 10 ».</div>
+      <p class="example">La somme de 8 et de 15 : 8 + 15 = 23. Le produit de 6 par 7 : 6 × 7 = 42. La différence de 20 et de 9 : 20 − 9 = 11.</p>
+      <a class="btn small-btn" href="#/operations/vocabulaire">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">2</span> Les règles de calcul</h2>
+      <div class="rule"><b>Règle 1 :</b> lorsqu'il n'y a que des additions et des soustractions, on effectue les calculs <b>de la gauche vers la droite</b>.</div>
+      <p class="example">A = 18 + 7 − 5 = 25 − 5 = 20 &nbsp;·&nbsp; B = 40 − 12 + 3 = 28 + 3 = 31</p>
+      <div class="rule"><b>Règle 2 :</b> on commence toujours par effectuer les calculs <b>entre parenthèses</b>.</div>
+      <p class="example">A = 30 − (6 + 9) = 30 − 15 = 15 &nbsp;·&nbsp; B = 5 × (12 − 4) = 5 × 8 = 40</p>
+      <div class="rule"><b>Règle 3 :</b> on commence par les calculs entre les parenthèses <b>les plus intérieures</b>.</div>
+      <p class="example">A = 40 − (20 − (5 + 7)) = 40 − (20 − 12) = 40 − 8 = 32</p>
+      <p class="warnbox"><b>Attention :</b> à l'évaluation, écris <b>chaque étape</b> sur une nouvelle ligne, en commençant par « = ».</p>
+      <a class="btn small-btn" href="#/operations/regles">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">3</span> Les calculs posés</h2>
+      <h3>Addition et soustraction</h3>
+      <div class="rule"><b>À retenir :</b> on aligne les <b>virgules</b> les unes sous les autres ; si besoin, on complète avec des <b>zéros</b>.</div>
+      <div class="fig-box p2-figbox" data-fig="o-pose-add"></div>
+      <p class="small muted">47,6 + 28,35 et 63,2 − 25,47 : le zéro ajouté est en couleur.</p>
+      <h3>Multiplication</h3>
+      <div class="rule"><b>À retenir :</b>
+        <ul class="tight">
+          <li>On pose la multiplication <b>sans s'occuper des virgules</b>.</li>
+          <li>Dans les facteurs, on compte les chiffres après la virgule.</li>
+          <li>Le produit a <b>autant</b> de chiffres après la virgule.</li>
+        </ul>
+      </div>
+      <div class="fig-row"><div><p class="example">36,4 × 2,5 : 1 + 1 = 2 chiffres après la virgule dans les facteurs, donc 2 dans le produit : 91,00 = 91.</p>
+        <p class="tip"><b>Vérifier avec un ordre de grandeur :</b> 36,4 × 2,5 ≈ 40 × 2,5 = 100. Le résultat 91 est proche : il est plausible.</p></div>
+        <div class="fig-box p2-figbox" data-fig="o-pose-mul"></div></div>
+      <a class="btn small-btn" href="#/operations/poser">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">4</span> Résoudre un problème</h2>
+      <ol class="steps">
+        <li>Je lis l'énoncé deux fois et je repère ce qu'on cherche.</li>
+        <li>Je cherche les étapes : chaque calcul répond à une petite question.</li>
+        <li>J'écris chaque calcul, avec son unité (€, m…).</li>
+        <li>Je termine par une <b>phrase réponse</b>.</li>
+      </ol>
+      <p class="example">Léa achète 3 cahiers à 2,35 € et une trousse à 6,80 €. Elle paie avec 20 €. Cahiers : 3 × 2,35 = 7,05 €. Total : 7,05 + 6,80 = 13,85 €. Monnaie : 20 − 13,85 = 6,15 €. <b>On rend 6,15 € à Léa.</b></p>
+      <a class="btn small-btn" href="#/operations/problemes">S'entraîner →</a>
+    </article>
+  </section>
+
+  <section class="page" data-ch="operations" data-p="vocabulaire" data-title="Vocabulaire">
+    <h1>Le vocabulaire des opérations</h1>
+    <p class="lead">Somme, différence, produit, termes, facteurs : reconnais-les et utilise-les. Compétence 1 de l'évaluation.</p>
+    <div class="exercise" data-gen="o-voc"></div>
+  </section>
+
+  <section class="page" data-ch="operations" data-p="regles" data-title="Règles de calcul">
+    <h1>Les règles de calcul</h1>
+    <p class="lead">De gauche à droite, puis les parenthèses, puis les parenthèses les plus intérieures. Compétence 2 de l'évaluation.</p>
+    <h2 class="ex-title">De gauche à droite</h2>
+    <div class="exercise" data-gen="o-gauche"></div>
+    <h2 class="ex-title">Avec des parenthèses</h2>
+    <div class="exercise" data-gen="o-par"></div>
+    <h2 class="ex-title">Avec des parenthèses « doubles »</h2>
+    <div class="exercise" data-gen="o-par2"></div>
+  </section>
+
+  <section class="page" data-ch="operations" data-p="poser" data-title="Poser">
+    <h1>Poser une opération</h1>
+    <p class="lead">Pose sur ton cahier, puis écris le résultat. Virgules alignées pour + et −, virgule placée à la fin pour ×. Compétences 3 et 4 de l'évaluation.</p>
+    <h2 class="ex-title">Addition et soustraction</h2>
+    <div class="exercise" data-gen="o-add"></div>
+    <h2 class="ex-title">Multiplication</h2>
+    <div class="exercise" data-gen="o-mul"></div>
+  </section>
+
+  <section class="page" data-ch="operations" data-p="problemes" data-title="Problèmes">
+    <h1>Résoudre un problème</h1>
+    <p class="lead">Réponds aux étapes dans l'ordre. Sur ta copie, écris les calculs et une phrase réponse. Compétence 5 de l'évaluation.</p>
+    <div class="exercise" data-gen="o-pb"></div>
+  </section>
+
+  <section class="page" data-ch="operations" data-p="erreurs" data-title="Mes erreurs">
+    <h1>Mes erreurs — Opérations</h1>
+    <p class="lead">Les types de questions que tu as ratés reviennent ici. Un point faible disparaît après 2 réussites d'affilée sans indice.</p>
+    <div class="weak-summary"></div>
+    <div class="exercise" data-weak="operations"></div>
+  </section>
+
+  <section class="page" data-ch="operations" data-p="controle" data-title="Contrôle blanc" data-exam="1">
+    <h1>Contrôle blanc — Opérations</h1>
+    <p class="lead">10 questions qui couvrent les 5 compétences de l'évaluation. Une seule tentative par question, sans indice : comme le jour J !</p>
+    <div class="exercise exam" data-exam="operations"></div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- CHAPITRE 6 : LES ANGLES                                -->
+  <!-- ===================================================== -->
+  <section class="page" data-ch="angles" data-p="accueil" data-title="Accueil">
+    <div class="hero">
+      <p class="kicker">Chapitre 6</p>
+      <h1>Les angles</h1>
+      <p class="lead">Nommer un angle et donner sa nature, le mesurer, le construire, utiliser les relations entre angles et construire la bissectrice.</p>
+      <div class="hero-actions"><a class="btn primary" href="#/angles/fiche">Lire la fiche</a><a class="btn" href="#/angles/controle">Faire le contrôle blanc</a></div>
+    </div>
+    <div class="card p2-eval">
+      <h2>🎯 Ce qui sera évalué</h2>
+      <ol class="p2-comp">
+        <li><a href="#/angles/nommer">Je nomme un angle et je donne sa nature.</a></li>
+        <li><a href="#/angles/mesurer">Je mesure un angle avec un rapporteur.</a></li>
+        <li><a href="#/angles/construire">Je construis un angle de mesure donnée.</a></li>
+        <li><a href="#/angles/relations">J'utilise les relations entre angles.</a></li>
+        <li><a href="#/angles/bissectrice">Je construis la bissectrice d'un angle.</a></li>
+      </ol>
+      <p class="small muted">Le jour de l'évaluation, apporte ton rapporteur, ta règle et ton équerre.</p>
+    </div>
+    <h2 class="section-title">Ta progression</h2>
+    <div class="cards ch-cards"></div>
+  </section>
+
+  <section class="page" data-ch="angles" data-p="fiche" data-title="Fiche">
+    <h1>Fiche de révision — Les angles</h1>
+    <p class="lead">Définition, notation, nature, mesure, construction, relations entre angles et bissectrice.</p>
+
+    <article class="card">
+      <h2><span class="badge">1</span> Définition, notation et nature</h2>
+      <div class="fig-row">
+        <div>
+          <div class="rule"><b>Définition :</b> un angle est une ouverture délimitée par deux <b>demi-droites de même origine</b>.</div>
+          <ul class="checklist">
+            <li>Le <b>sommet</b> de l'angle est le point B.</li>
+            <li>Ses <b>côtés</b> sont les demi-droites [BA) et [BC).</li>
+            <li>Notation : <span class="ang">ABC</span>, avec le sommet <b>au milieu</b>. On peut aussi le noter <span class="ang">CBA</span>.</li>
+          </ul>
+        </div>
+        <div class="fig-box" data-fig="a-def"></div>
+      </div>
+      <h3>Nature d'un angle</h3>
+      <div class="table-wrap">
+        <table class="voc pos">
+          <thead><tr><th>Angle aigu</th><th>Angle droit</th><th>Angle obtus</th><th>Angle plat</th></tr></thead>
+          <tbody>
+            <tr><td><div class="fig-box" data-fig="a-nat-aigu"></div></td><td><div class="fig-box" data-fig="a-nat-droit"></div></td><td><div class="fig-box" data-fig="a-nat-obtus"></div></td><td><div class="fig-box" data-fig="a-nat-plat"></div></td></tr>
+            <tr><td>plus petit qu'un angle droit</td><td>côtés perpendiculaires</td><td>plus grand qu'un angle droit</td><td>côtés dans le prolongement l'un de l'autre</td></tr>
+            <tr><td>entre 0° et 90°</td><td>90°</td><td>entre 90° et 180°</td><td>180°</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <a class="btn small-btn" href="#/angles/nommer">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">2</span> Mesurer un angle</h2>
+      <div class="fig-row p2-wide">
+        <div class="rule"><b>À retenir :</b> l'unité de mesure des angles est le <b>degré</b>, noté °. Pour mesurer un angle :
+          <ol class="tight">
+            <li>on place le <b>centre</b> du rapporteur sur le sommet de l'angle ;</li>
+            <li>on place le <b>0°</b> du rapporteur sur un côté de l'angle ;</li>
+            <li>on suit la graduation qui part de 0° ;</li>
+            <li>on lit la mesure sur l'autre côté de l'angle.</li>
+          </ol>
+        </div>
+        <div class="fig-box" data-fig="a-mesure"></div>
+      </div>
+      <p class="example">Le centre est sur S, le 0° est sur [ST). On suit la graduation extérieure et on lit 48 sur [SR) : <span class="ang">RST</span> = 48°.</p>
+      <p class="warnbox"><b>Piège :</b> le rapporteur a deux graduations. Vérifie avec la nature : un angle aigu mesure moins de 90°.</p>
+      <a class="btn small-btn" href="#/angles/mesurer">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">3</span> Construire un angle</h2>
+      <div class="fig-row">
+        <div class="rule"><b>À retenir :</b> pour construire un angle de mesure donnée :
+          <ol class="tight">
+            <li>on trace une demi-droite : ce sera un côté de l'angle ;</li>
+            <li>on place le centre du rapporteur sur l'origine et le 0° sur la demi-droite ;</li>
+            <li>on fait une petite marque au niveau de la mesure voulue ;</li>
+            <li>on relie la marque à l'origine.</li>
+          </ol>
+        </div>
+        <div class="fig-box" data-fig="a-anim-construire"></div>
+      </div>
+      <a class="btn small-btn" href="#/angles/construire">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">4</span> Relations entre deux angles</h2>
+      <div class="table-wrap">
+        <table class="voc pos">
+          <thead><tr><th>Adjacents</th><th>Opposés par le sommet</th><th>Complémentaires</th><th>Supplémentaires</th></tr></thead>
+          <tbody>
+            <tr><td><div class="fig-box" data-fig="a-rel-adj"></div></td><td><div class="fig-box" data-fig="a-rel-opp"></div></td><td><div class="fig-box" data-fig="a-rel-comp"></div></td><td><div class="fig-box" data-fig="a-rel-supp"></div></td></tr>
+            <tr><td>même sommet, un côté commun, et de part et d'autre de ce côté</td><td>même sommet, les côtés de l'un prolongent les côtés de l'autre</td><td>la somme de leurs mesures vaut <b>90°</b></td><td>la somme de leurs mesures vaut <b>180°</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rule"><b>Propriété :</b> deux angles <b>opposés par le sommet</b> ont la même mesure.</div>
+      <p class="example">Les droites (AB) et (CD) se coupent en O et <span class="ang">AOC</span> = 50°. <span class="ang">AOC</span> et <span class="ang">BOD</span> sont opposés par le sommet, donc <span class="ang">BOD</span> = 50°. C, O et D sont alignés : <span class="ang">AOC</span> et <span class="ang">AOD</span> sont supplémentaires, donc <span class="ang">AOD</span> = 180° − 50° = 130°.</p>
+      <a class="btn small-btn" href="#/angles/relations">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">5</span> La bissectrice d'un angle</h2>
+      <div class="fig-row">
+        <div>
+          <div class="rule"><b>Définition :</b> la bissectrice d'un angle est la demi-droite qui partage cet angle en <b>deux angles de même mesure</b>.</div>
+          <ol class="steps"><li>On mesure l'angle : <span class="ang">xAy</span> = 70°.</li><li>On divise par 2 : 70° : 2 = 35°.</li><li>On construit un angle de 35° à partir de [Ax) : c'est la bissectrice.</li></ol>
+        </div>
+        <div class="fig-box" data-fig="a-anim-biss"></div>
+      </div>
+      <a class="btn small-btn" href="#/angles/bissectrice">S'entraîner →</a>
+    </article>
+  </section>
+
+  <section class="page" data-ch="angles" data-p="nommer" data-title="Nommer, nature">
+    <h1>Nommer un angle et donner sa nature</h1>
+    <p class="lead">Le sommet au milieu du nom ; aigu, droit, obtus ou plat. Compétence 1 de l'évaluation.</p>
+    <div class="grid2">
+      <div><h2 class="ex-title">Nommer un angle</h2><div class="exercise" data-gen="a-nom"></div></div>
+      <div><h2 class="ex-title">Nature d'un angle</h2><div class="exercise" data-gen="a-nature"></div></div>
+    </div>
+  </section>
+
+  <section class="page" data-ch="angles" data-p="mesurer" data-title="Mesurer">
+    <h1>Mesurer un angle</h1>
+    <p class="lead">Lis le rapporteur sur la bonne graduation, celle qui part de 0°. Compétence 2 de l'évaluation : à l'évaluation, tu mesureras avec ton propre rapporteur.</p>
+    <div class="exercise" data-gen="a-mesure"></div>
+  </section>
+
+  <section class="page" data-ch="angles" data-p="construire" data-title="Construire">
+    <h1>Construire un angle</h1>
+    <p class="lead">Utilise le Rapporteur de la planche : sommet, puis côté de départ, puis la mesure. Relie ensuite la marque au sommet. Compétence 3 de l'évaluation.</p>
+    <details class="howto">
+      <summary>Comment utiliser le rapporteur de la planche ?</summary>
+      <ul>
+        <li><b>◠ Rapporteur :</b> clique sur le sommet de l'angle, puis sur la demi-droite de départ. Tourne : la mesure s'affiche. Clique pour faire une marque ; les boutons − et + l'ajustent au degré près.</li>
+        <li><b>↗ Demi-droite :</b> clique sur le sommet, puis sur la marque.</li>
+      </ul>
+    </details>
+    <div class="exercise" data-gen="a-construire"></div>
+  </section>
+
+  <section class="page" data-ch="angles" data-p="relations" data-title="Relations">
+    <h1>Relations entre deux angles</h1>
+    <p class="lead">Adjacents, opposés par le sommet, complémentaires, supplémentaires : reconnais-les et calcule. Compétence 4 de l'évaluation.</p>
+    <h2 class="ex-title">Reconnaître</h2>
+    <div class="exercise" data-gen="a-reco"></div>
+    <h2 class="ex-title">Calculer</h2>
+    <div class="exercise" data-gen="a-calcul"></div>
+  </section>
+
+  <section class="page" data-ch="angles" data-p="bissectrice" data-title="Bissectrice">
+    <h1>La bissectrice</h1>
+    <p class="lead">Mesurer, diviser par 2, construire. Compétence 5 de l'évaluation.</p>
+    <div class="exercise" data-gen="a-biss"></div>
+  </section>
+
+  <section class="page" data-ch="angles" data-p="erreurs" data-title="Mes erreurs">
+    <h1>Mes erreurs — Les angles</h1>
+    <p class="lead">Les types de questions que tu as ratés reviennent ici. Un point faible disparaît après 2 réussites d'affilée sans indice.</p>
+    <div class="weak-summary"></div>
+    <div class="exercise" data-weak="angles"></div>
+  </section>
+
+  <section class="page" data-ch="angles" data-p="controle" data-title="Contrôle blanc" data-exam="1">
+    <h1>Contrôle blanc — Les angles</h1>
+    <p class="lead">10 questions, dont des constructions, sur les 5 compétences de l'évaluation. Une seule tentative par question !</p>
+    <div class="exercise exam" data-exam="angles"></div>
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- CHAPITRE 7 : LES TRIANGLES                             -->
+  <!-- ===================================================== -->
+  <section class="page" data-ch="triangles" data-p="accueil" data-title="Accueil">
+    <div class="hero">
+      <p class="kicker">Chapitre 7</p>
+      <h1>Les triangles</h1>
+      <p class="lead">Construire un triangle, les triangles particuliers, la règle des 180° et le cercle circonscrit.</p>
+      <div class="hero-actions"><a class="btn primary" href="#/triangles/fiche">Lire la fiche</a><a class="btn" href="#/triangles/controle">Faire le contrôle blanc</a></div>
+    </div>
+    <div class="card p2-eval">
+      <h2>🎯 Ce qui sera évalué</h2>
+      <ol class="p2-comp">
+        <li><a href="#/triangles/vocabulaire">J'utilise le vocabulaire du triangle et je reconnais un triangle particulier.</a></li>
+        <li><a href="#/triangles/construire">Je construis un triangle connaissant ses trois côtés.</a></li>
+        <li><a href="#/triangles/construire">Je construis un triangle connaissant un côté et deux angles.</a></li>
+        <li><a href="#/triangles/particuliers">Je construis un triangle isocèle.</a></li>
+        <li><a href="#/triangles/angles">J'utilise la règle des 180° pour calculer un angle et trouver la nature d'un triangle.</a></li>
+        <li><a href="#/triangles/cercle">Je trace le cercle circonscrit à un triangle.</a></li>
+      </ol>
+      <p class="small muted">Le jour de l'évaluation, apporte tout ton matériel de géométrie : règle, équerre, rapporteur, compas. Laisse les traits de construction.</p>
+    </div>
+    <h2 class="section-title">Ta progression</h2>
+    <div class="cards ch-cards"></div>
+  </section>
+
+  <section class="page" data-ch="triangles" data-p="fiche" data-title="Fiche">
+    <h1>Fiche de révision — Les triangles</h1>
+    <p class="lead">Vocabulaire, constructions, triangles particuliers, angles d'un triangle et cercle circonscrit.</p>
+
+    <article class="card">
+      <h2><span class="badge">1</span> Construire un triangle</h2>
+      <div class="fig-row">
+        <div>
+          <div class="rule"><b>Définition :</b> un triangle est un polygone qui a <b>trois côtés</b>.</div>
+          <ul class="checklist">
+            <li>D, E et F sont les <b>sommets</b> ; [DE], [EF] et [DF] sont les <b>côtés</b>.</li>
+            <li>Le sommet opposé au côté [EF] est D ; le côté opposé au sommet E est [DF].</li>
+          </ul>
+        </div>
+        <div class="fig-box" data-fig="t-def"></div>
+      </div>
+      <p class="tip"><b>Rappel :</b> avant toute construction, on fait une figure à <b>main levée</b> sur laquelle on code les informations et on écrit les mesures.</p>
+      <h3>Méthode : connaissant les trois côtés</h3>
+      <div class="fig-row">
+        <ol class="steps"><li>Tracer [AB] de 6 cm.</li><li>Arc de cercle de centre A, de rayon 4 cm.</li><li>Arc de cercle de centre B, de rayon 5 cm.</li><li>C est à l'intersection des deux arcs.</li><li>Tracer [AC] et [BC].</li></ol>
+        <div class="fig-box" data-fig="t-anim-3"></div>
+      </div>
+      <h3>Méthode : un côté et les deux angles qui lui sont adjacents</h3>
+      <div class="fig-row">
+        <ol class="steps"><li>Tracer [KL] de 6 cm.</li><li>Demi-droite d'origine K faisant 40° avec [KL).</li><li>Demi-droite d'origine L faisant 60° avec [LK).</li><li>M est à l'intersection des demi-droites.</li></ol>
+        <div class="fig-box" data-fig="t-anim-ang"></div>
+      </div>
+      <p class="example"><b>Deux côtés et l'angle compris :</b> RS = 5 cm, <span class="ang">SRT</span> = 50° et RT = 4 cm. On trace [RS], puis la demi-droite d'origine R qui fait 50° avec [RS), on place T à 4 cm de R et on trace [ST].</p>
+      <a class="btn small-btn" href="#/triangles/construire">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">2</span> Les triangles particuliers</h2>
+      <div class="remarkable">
+        <div class="rem-col"><h3>Isocèle</h3><div class="fig-box" data-fig="t-iso"></div><p>Un triangle <b>isocèle</b> a deux côtés de même longueur. MNP isocèle en M : M est le <b>sommet principal</b>, [NP] est la <b>base</b>.</p></div>
+        <div class="rem-col"><h3>Équilatéral</h3><div class="fig-box" data-fig="t-equi"></div><p>Un triangle <b>équilatéral</b> a trois côtés de même longueur.</p></div>
+        <div class="rem-col"><h3>Rectangle</h3><div class="fig-box" data-fig="t-rect"></div><p>Un triangle <b>rectangle</b> a deux côtés perpendiculaires. Le côté opposé à l'angle droit est l'<b>hypoténuse</b>.</p></div>
+      </div>
+      <h3>Méthode : construire un triangle isocèle</h3>
+      <p class="example">MNP isocèle en M avec MN = 5 cm et NP = 4 cm. Isocèle en M, donc MP = MN = 5 cm. On trace [NP] de 4 cm, puis deux arcs de rayon 5 cm, de centres N et P : M est à leur intersection. On trace [MN] et [MP], puis on <b>code</b>.</p>
+      <h3>Méthode : construire un triangle rectangle</h3>
+      <p class="example">ABC rectangle en A avec AB = 5 cm et AC = 3 cm : on trace [AB], puis la perpendiculaire à [AB] passant par A, on place C dessus à 3 cm de A et on trace [BC].<br>Si on connaît l'hypoténuse (KLM rectangle en K, KL = 3 cm, LM = 5 cm) : arc de centre L, de rayon 5 cm, qui coupe la perpendiculaire en M.</p>
+      <a class="btn small-btn" href="#/triangles/particuliers">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">3</span> Les angles d'un triangle</h2>
+      <div class="fig-row">
+        <div>
+          <div class="rule"><b>Propriété :</b> dans un triangle, la somme des mesures des trois angles est égale à <b>180°</b>.</div>
+          <p class="example">55° + 70° = 125°, donc le troisième angle mesure 180° − 125° = 55°.</p>
+        </div>
+        <div class="fig-box" data-fig="t-180"></div>
+      </div>
+      <div class="rule"><b>Propriétés :</b>
+        <ul class="tight">
+          <li>Dans un triangle <b>rectangle</b>, la somme des deux angles aigus est égale à 90°.</li>
+          <li>Dans un triangle <b>équilatéral</b>, les trois angles mesurent 60°.</li>
+          <li>Dans un triangle <b>isocèle</b>, les deux angles à la base ont la même mesure.</li>
+        </ul>
+      </div>
+      <p class="example">DEF tel que <span class="ang">EDF</span> = 40° et <span class="ang">DEF</span> = 70°. 40° + 70° = 110°, donc <span class="ang">DFE</span> = 180° − 110° = 70°. <span class="ang">DEF</span> et <span class="ang">DFE</span> ont la même mesure : DEF est <b>isocèle en D</b>.</p>
+      <a class="btn small-btn" href="#/triangles/angles">S'entraîner →</a>
+    </article>
+
+    <article class="card">
+      <h2><span class="badge">4</span> Le cercle circonscrit</h2>
+      <div class="fig-row">
+        <div>
+          <div class="rule"><b>Définition :</b> le cercle circonscrit à un triangle est le cercle qui passe par ses <b>trois sommets</b>.</div>
+          <div class="rule"><b>Propriété :</b> les trois médiatrices des côtés d'un triangle se coupent en un même point : c'est le <b>centre</b> du cercle circonscrit.</div>
+          <p class="tip">Quand trois droites passent par un même point, on dit qu'elles sont <b>concourantes</b>.</p>
+        </div>
+        <div class="fig-box" data-fig="t-anim-cercle"></div>
+      </div>
+      <a class="btn small-btn" href="#/triangles/cercle">S'entraîner →</a>
+    </article>
+  </section>
+
+  <section class="page" data-ch="triangles" data-p="vocabulaire" data-title="Vocabulaire">
+    <h1>Vocabulaire et triangles particuliers</h1>
+    <p class="lead">Sommets, côtés opposés, hypoténuse ; reconnaître un triangle grâce à son codage. Compétence 1 de l'évaluation.</p>
+    <div class="grid2">
+      <div><h2 class="ex-title">Vocabulaire</h2><div class="exercise" data-gen="t-voc"></div></div>
+      <div><h2 class="ex-title">Lire un codage</h2><div class="exercise" data-gen="t-nature"></div></div>
+    </div>
+  </section>
+
+  <section class="page" data-ch="triangles" data-p="construire" data-title="Construire">
+    <h1>Construire un triangle</h1>
+    <p class="lead">Au compas avec les trois côtés, au rapporteur avec des angles. Compétences 2 et 3 de l'évaluation : sur ta copie, laisse les traits de construction.</p>
+    <details class="howto">
+      <summary>Comment utiliser les instruments ?</summary>
+      <ul>
+        <li><b>◯ Compas :</b> clique sur le centre, écarte, clique. Les boutons − et + ajustent le rayon au millimètre.</li>
+        <li><b>◠ Rapporteur :</b> clique sur le sommet, puis sur le côté de départ ; tourne jusqu'à la mesure et clique pour faire une marque.</li>
+        <li><b>× Point :</b> choisis la lettre dans « Prochain point », puis clique sur l'intersection.</li>
+      </ul>
+    </details>
+    <h2 class="ex-title">Avec les trois côtés</h2>
+    <div class="exercise" data-gen="t-3cotes"></div>
+    <h2 class="ex-title">Avec des angles</h2>
+    <div class="exercise" data-gen="t-angles"></div>
+  </section>
+
+  <section class="page" data-ch="triangles" data-p="particuliers" data-title="Triangles particuliers">
+    <h1>Construire un triangle particulier</h1>
+    <p class="lead">Isocèle, équilatéral, rectangle. Compétence 4 de l'évaluation (isocèle) : pense à coder ta figure.</p>
+    <h2 class="ex-title">Isocèle ou équilatéral</h2>
+    <div class="exercise" data-gen="t-iso"></div>
+    <h2 class="ex-title">Rectangle</h2>
+    <div class="exercise" data-gen="t-rect"></div>
+  </section>
+
+  <section class="page" data-ch="triangles" data-p="angles" data-title="Règle des 180°">
+    <h1>Les angles d'un triangle</h1>
+    <p class="lead">La somme des trois angles vaut 180°. Calcule un angle, puis trouve la nature du triangle. Compétence 5 de l'évaluation.</p>
+    <h2 class="ex-title">Calculer un angle</h2>
+    <div class="exercise" data-gen="t-180"></div>
+    <h2 class="ex-title">Trouver la nature</h2>
+    <div class="exercise" data-gen="t-natang"></div>
+  </section>
+
+  <section class="page" data-ch="triangles" data-p="cercle" data-title="Cercle circonscrit">
+    <h1>Le cercle circonscrit</h1>
+    <p class="lead">Deux médiatrices suffisent pour trouver le centre. Compétence 6 de l'évaluation.</p>
+    <div class="exercise" data-gen="t-cercle"></div>
+  </section>
+
+  <section class="page" data-ch="triangles" data-p="erreurs" data-title="Mes erreurs">
+    <h1>Mes erreurs — Les triangles</h1>
+    <p class="lead">Les types de questions que tu as ratés reviennent ici. Un point faible disparaît après 2 réussites d'affilée sans indice.</p>
+    <div class="weak-summary"></div>
+    <div class="exercise" data-weak="triangles"></div>
+  </section>
+
+  <section class="page" data-ch="triangles" data-p="controle" data-title="Contrôle blanc" data-exam="1">
+    <h1>Contrôle blanc — Les triangles</h1>
+    <p class="lead">10 questions, dont des constructions, sur les 6 compétences de l'évaluation. Une seule tentative par question !</p>
+    <div class="exercise exam" data-exam="triangles"></div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <p>Révisions 6<sup>e</sup> — site libre, à modifier et partager. · <a href="#/prof">Espace professeur</a> · <span id="site-version" class="muted"></span></p>
+</footer>
+
+<script src="script.js?v=2026-10-17.1"></script>
+<script src="chapitres-p2.js?v=2026-10-17.1"></script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bilan des devoirs — Révisions 6e</title>
+<script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+<style>
+  :root { --ink: #1d2230; --muted: #5d6475; --line: #e2dfd5; --bg: #ffffff; --soft: #f6f4ee; --accent: #3451d1; --accent-soft: #e8ecff;
+    --ok: #237a3b; --ok-soft: #e4f4e8; --ko: #c0392b; --ko-soft: #fdeceb; --warn: #9a5b00; --warn-soft: #fff3df; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 14px 16px 30px; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  h1 { font-size: 1.25rem; margin: 0 0 8px; }
+  .muted { color: var(--muted); } .small { font-size: .88rem; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 8px 0 12px; }
+  select, textarea, input { font: inherit; padding: 5px 8px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--soft); color: var(--ink); max-width: 100%; }
+  textarea { width: 100%; margin-top: 6px; }
+  .sum { font-size: 1.05rem; margin: 6px 0 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+  th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; }
+  th { background: var(--accent-soft); position: sticky; top: 0; }
+  th.sortable { cursor: pointer; } th.sortable:hover { text-decoration: underline; }
+  .sc { display: inline-block; font-weight: 700; padding: 1px 9px; border-radius: 99px; }
+  .sc-ok { background: var(--ok-soft); color: var(--ok); } .sc-paper { background: var(--warn-soft); color: var(--warn); } .paper-row td { background: var(--warn-soft); } .sc-mid { background: var(--warn-soft); color: var(--warn); } .sc-ko { background: var(--ko-soft); color: var(--ko); }
+  .box { background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; margin: 12px 0; }
+  .ko-t { color: var(--ko); font-weight: 700; } .ok-t { color: var(--ok); font-weight: 700; } .warn-t { color: var(--warn); font-weight: 700; }
+  button { font: inherit; font-weight: 700; padding: 6px 14px; border-radius: 10px; border: 1.5px solid var(--line); background: #fff; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  .wrap { overflow-x: auto; }
+  .empty { padding: 30px 10px; text-align: center; color: var(--muted); }
+</style>
+</head>
+<body>
+<h1>📊 Bilan des devoirs</h1>
+<div id="app"><p class="empty">En attente des données de Grist…<br><span class="small">Si ce message reste affiché, vérifie que le widget a bien l'accès « Lecture de la table » (bouton « Accepter » en haut du widget).</span></p></div>
+
+<script>
+'use strict';
+/* =========================================================
+   Widget Grist : bilan des résultats envoyés par le site Révisions 6e.
+   Grist transmet lui-même les lignes de la table au widget (aucune clé, aucun appel au serveur).
+   ========================================================= */
+const fmt = (x) => String(Math.round(x * 10) / 10).replace('.', ',');
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const nowStr = (d = new Date()) => `le ${d.toLocaleDateString('fr-FR')} à ${d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`;
+
+const B32 = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+const EPOCH = Date.UTC(2026, 0, 1);
+function h8(s) { let h = 2166136261; for (const c of String(s)) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return ((h >>> 0) ^ (h >>> 8) ^ (h >>> 16) ^ (h >>> 24)) & 255; }
+const normName = (s) => String(s).trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z]/g, '');
+
+function readCode(str) {
+  const s = String(str).toUpperCase().replace(/O/g, '0').replace(/[IL]/g, '1').replace(/U/g, 'V').replace(/[^0-9A-Z]/g, '');
+  if (s.length !== 14) return null;
+  let v = 0n;
+  for (const c of s) { const i = B32.indexOf(c); if (i < 0) return null; v = (v << 5n) | BigInt(i); }
+  const take = (b) => { const x = Number(v & ((1n << BigInt(b)) - 1n)); v >>= BigInt(b); return x; };
+  const chk = take(8);
+  if (h8('v6e:' + v.toString(36)) !== chk) return { invalid: true };
+  const name = take(8), spec = take(8), mins = take(21), attempt = take(5), helped = take(6), n = take(6), good = take(6);
+  if (v !== 0n || good > n || helped > good || n === 0) return { invalid: true };
+  return { good, n, helped, attempt, time: EPOCH + mins * 60000, spec, name };
+}
+
+/** Regroupe par devoir puis par élève (les devoirs « sur papier » sont gardés à part, à vérifier) */
+function buildBilan(rows) {
+  const ok = rows.filter((x) => (x.valid && x.nameOk) || x.paper);
+  const devoirs = {};
+  for (const x of ok) {
+    const n = x.paper || x.r.n;
+    const dk = `${x.devoir || 'Devoir'} — ${n} questions`;
+    const D = devoirs[dk] || (devoirs[dk] = { label: dk, n, students: {}, last: 0 });
+    if (!x.paper) D.last = Math.max(D.last, x.r.time);
+    const sk = `${normName(x.classe)}|${normName(x.name)}`;
+    const S = D.students[sk] || (D.students[sk] = { name: x.name, classe: x.classe, tries: [], paper: false });
+    if (x.paper) S.paper = true; else S.tries.push(x.r);
+  }
+  for (const D of Object.values(devoirs)) {
+    for (const S of Object.values(D.students)) {
+      if (!S.tries.length) continue;
+      S.tries.sort((p, q) => p.time - q.time);
+      S.first = S.tries[0]; S.lastT = S.tries[S.tries.length - 1];
+      S.best = S.tries.reduce((m, t) => (t.good > m.good || (t.good === m.good && t.helped < m.helped) ? t : m), S.tries[0]);
+    }
+  }
+  return { devoirs: Object.values(devoirs).sort((p, q) => q.last - p.last), suspects: rows.filter((x) => !x.paper && (!x.valid || !x.nameOk)) };
+}
+
+/* ---------- Lecture des lignes de la table ----------
+   On reconnaît les colonnes par leur nom (Prénom, Code, Classe, Devoir) si elles sont nommées ainsi ;
+   sinon (colonnes A, B, C…), on trouve la colonne qui contient un code et on prend :
+   la colonne juste avant = prénom, juste après = classe, puis devoir (l'ordre du formulaire). */
+const CODE_RE = /^[0-9A-Za-z]{4}-?[0-9A-Za-z]{5}-?[0-9A-Za-z]{5}$/;
+const PAPER_RE = /^PAPIER-(\d+)$/;
+const str = (v) => (v === null || v === undefined ? '' : String(v)).trim();
+function toRows(records) {
+  return records.map((rec) => {
+    const keys = Object.keys(rec).filter((k) => k !== 'id' && !k.startsWith('gristHelper') && !k.startsWith('manualSort'));
+    const named = (w) => keys.find((k) => normName(k) === w);
+    let ck = named('code');
+    if (!ck || !(CODE_RE.test(str(rec[ck])) || PAPER_RE.test(str(rec[ck])))) ck = keys.find((k) => CODE_RE.test(str(rec[k])) || PAPER_RE.test(str(rec[k])));
+    if (!ck) return null;
+    const i = keys.indexOf(ck);
+    const get = (w, off) => { const k = named(w); return str(k ? rec[k] : rec[keys[i + off]]); };
+    const pm = str(rec[ck]).match(PAPER_RE);
+    if (pm) return { name: get('prenom', -1), classe: get('classe', 1), devoir: get('devoir', 2), paper: Number(pm[1]), valid: false, nameOk: false };
+    const code = str(rec[ck]);
+    const name = get('prenom', -1), classe = get('classe', 1), devoir = get('devoir', 2);
+    const r = readCode(code);
+    const valid = !!r && !r.invalid;
+    return { name, classe, devoir, code, r: valid ? r : null, valid, nameOk: valid && !!normName(name) && h8(normName(name)) === r.name };
+  }).filter(Boolean);
+}
+
+/* ---------- Affichage ---------- */
+const app = document.getElementById('app');
+let data = null, fDevoir = '', fClasse = '', crit = 'best', sortBy = 'name';
+try { const st = JSON.parse(localStorage.getItem('bilan6e-filtres') || '{}'); fDevoir = st.d || ''; fClasse = st.c || ''; crit = st.k || 'best'; sortBy = st.s || 'name'; } catch (e) { /* rien */ }
+const saveF = () => { try { localStorage.setItem('bilan6e-filtres', JSON.stringify({ d: fDevoir, c: fClasse, k: crit, s: sortBy })); } catch (e) { /* rien */ } };
+const scoreCls = (g, n) => { const r = g / n; return r >= 0.8 ? 'sc-ok' : r >= 0.5 ? 'sc-mid' : 'sc-ko'; };
+const pickT = (S) => (crit === 'first' ? S.first : crit === 'last' ? S.lastT : S.best);
+const ROSTER = (c) => 'bilan6e-liste-' + normName(c || 'sans');
+/** Classes ajoutées à la main (pour coller leur liste avant même le premier résultat) */
+const KNOWN = 'bilan6e-classes';
+const getKnown = () => { try { return JSON.parse(localStorage.getItem(KNOWN) || '[]'); } catch (e) { return []; } };
+const setKnown = (l) => { try { localStorage.setItem(KNOWN, JSON.stringify([...new Set(l)])); } catch (e) { /* rien */ } };
+/** Le prénom de la liste correspond-il au nom tapé par l'élève ? « Léa M. » = « Léa Martin » = « léa » (même prénom, initiale compatible) */
+function sameStudent(listName, typed) {
+  const tok = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[-']/g, '').replace(/[^a-z\s]/g, ' ').split(/\s+/).filter(Boolean);
+  const a = tok(listName), b = tok(typed);
+  if (!a.length || !b.length) return false;
+  if (a.join('') === b.join('')) return true;
+  if (a[0] !== b[0]) return false;
+  const ra = a.slice(1).join(''), rb = b.slice(1).join('');
+  return !ra || !rb || ra.startsWith(rb) || rb.startsWith(ra);
+}
+
+/* Listes d'élèves : enregistrées dans le document Grist (table « Listes »), donc les mêmes sur l'ordinateur et la tablette.
+   Si le widget n'a pas l'accès complet au document, elles restent seulement sur cet appareil. */
+const LISTS = { ok: false, rows: {} };
+const localRoster = (c) => { try { return localStorage.getItem(ROSTER(c)) || ''; } catch (e) { return ''; } };
+async function loadLists(migrate) {
+  if (!window.grist || !grist.docApi) return;
+  try {
+    let t;
+    try { t = await grist.docApi.fetchTable('Listes'); }
+    catch (e) { await grist.docApi.applyUserActions([['AddTable', 'Listes', [{ id: 'Classe', type: 'Text' }, { id: 'Eleves', type: 'Text' }]]]); t = await grist.docApi.fetchTable('Listes'); }
+    LISTS.rows = {};
+    (t.id || []).forEach((id, i) => { const c = String((t.Classe || [])[i] || '').trim(); if (c) LISTS.rows[normName(c)] = { id, classe: c, eleves: String((t.Eleves || [])[i] || '') }; });
+    LISTS.ok = true;
+    if (migrate) {
+      // les listes déjà collées sur cet appareil sont recopiées dans Grist (une seule fois)
+      const cls = new Set([...getKnown(), ...(data ? data.devoirs.flatMap((D) => Object.values(D.students).map((S) => S.classe)) : [])].filter(Boolean));
+      const acts = [];
+      for (const c of cls) { const loc = localRoster(c); if (loc.trim() && !LISTS.rows[normName(c)]) acts.push(['AddRecord', 'Listes', null, { Classe: c, Eleves: loc }]); else if (!LISTS.rows[normName(c)] && getKnown().includes(c)) acts.push(['AddRecord', 'Listes', null, { Classe: c, Eleves: '' }]); }
+      if (acts.length) { await grist.docApi.applyUserActions(acts); return loadLists(false); }
+    }
+  } catch (e) { LISTS.ok = false; }
+}
+const getRoster = (c) => (LISTS.ok ? (LISTS.rows[normName(c)]?.eleves || '') : localRoster(c));
+async function setRoster(c, text) {
+  try { localStorage.setItem(ROSTER(c), text); } catch (e) { /* rien */ }
+  if (!LISTS.ok) return;
+  const r = LISTS.rows[normName(c)];
+  try {
+    await grist.docApi.applyUserActions([r ? ['UpdateRecord', 'Listes', r.id, { Eleves: text }] : ['AddRecord', 'Listes', null, { Classe: c, Eleves: text }]]);
+    await loadLists(false);
+  } catch (e) { /* reste enregistré sur cet appareil */ }
+}
+
+function render() {
+  if (!data) return;
+  const { devoirs, suspects } = data;
+  if (!devoirs.length && !suspects.length) { app.innerHTML = '<p class="empty">Aucun résultat pour l\'instant. Les lignes arriveront ici dès que des élèves auront terminé un devoir.<br><span class="small">(La ligne « TEST » est ignorée.)</span></p>'; return; }
+  const classes = [...new Set([...devoirs.flatMap((D) => Object.values(D.students).map((S) => S.classe)), ...getKnown(), ...Object.values(LISTS.rows).map((r) => r.classe)].filter(Boolean))].sort((p, q) => p.localeCompare(q, 'fr'));
+  if (fClasse && !classes.includes(fClasse)) fClasse = '';
+  const D = devoirs.find((x) => x.label === fDevoir) || devoirs[0];
+  if (D) fDevoir = D.label;
+  let h = `<div class="filters">
+    <label>Devoir : <select id="f-dev">${devoirs.map((x) => `<option${x.label === fDevoir ? ' selected' : ''}>${esc(x.label)}</option>`).join('')}</select></label>
+    <label>Classe : <select id="f-cl"><option value="">Toutes</option>${classes.map((c) => `<option${c === fClasse ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></label>
+    <label class="small">＋ <input id="f-new" size="14" placeholder="autre classe" title="Ajoute une classe qui n'a encore aucun résultat, pour coller sa liste d'élèves"></label>
+    <label>Score retenu : <select id="f-crit"><option value="best"${crit === 'best' ? ' selected' : ''}>le meilleur essai</option><option value="first"${crit === 'first' ? ' selected' : ''}>le premier essai</option><option value="last"${crit === 'last' ? ' selected' : ''}>le dernier essai</option></select></label>
+  </div>`;
+  let studs = [];
+  if (D) {
+    studs = Object.values(D.students).filter((S) => !fClasse || S.classe === fClasse);
+    const sv = (S) => (S.tries.length ? pickT(S).good : -1);
+    studs.sort(sortBy === 'score' ? (p, q) => sv(p) - sv(q) || p.name.localeCompare(q.name, 'fr') : (p, q) => p.name.localeCompare(q.name, 'fr'));
+    const online = studs.filter((S) => S.tries.length), paperOnly = studs.filter((S) => !S.tries.length);
+    const avg = online.length ? online.reduce((m, S) => m + pickT(S).good, 0) / online.length : 0;
+    const low = online.filter((S) => pickT(S).good / D.n < 0.5);
+    h += `<p class="sum"><b>${online.length}</b> élève${online.length > 1 ? 's ont' : ' a'} fait ce devoir en ligne${fClasse ? ` en ${esc(fClasse)}` : ''}${online.length ? ` · moyenne <b>${fmt(avg)} / ${D.n}</b>` : ''}${low.length ? ` · <span class="ko-t">${low.length} sous la moitié</span>` : ''}${paperOnly.length ? ` · <span class="warn-t">📝 ${paperOnly.length} sur papier, à vérifier</span>` : ''}</p>
+      <div class="wrap"><table><thead><tr><th class="sortable" data-s="name" title="Trier par prénom">Élève${sortBy === 'name' ? ' ▲' : ''}</th><th>Classe</th><th class="sortable" data-s="score" title="Trier par score">Score retenu${sortBy === 'score' ? ' ▲' : ''}</th><th>Aide</th><th>Essais</th><th>Meilleur</th><th>Dernier envoi</th></tr></thead>
+      <tbody>${studs.map((S) => { if (!S.tries.length) return `<tr class="paper-row"><td><b>${esc(S.name)}</b></td><td>${esc(S.classe || '—')}</td><td colspan="5"><span class="sc sc-paper">📝 Sur papier — à vérifier</span></td></tr>`; const t = pickT(S); return `<tr><td><b>${esc(S.name)}</b></td><td>${esc(S.classe || '—')}</td><td><span class="sc ${scoreCls(t.good, D.n)}">${t.good} / ${D.n}</span>${S.paper ? ' <span class="small muted">+ papier</span>' : ''}</td><td>${t.helped ? `${t.helped} avec aide` : 'sans aide'}</td><td>${S.tries.length}</td><td>${S.best.good} / ${D.n}</td><td>${nowStr(new Date(S.lastT.time)).replace(/^le /, '')}</td></tr>`; }).join('')}</tbody></table></div>`;
+    if (fClasse) {
+      const roster = getRoster(fClasse);
+      const names = roster.split(/\n+/).map((x) => x.trim()).filter(Boolean);
+      const missing = names.filter((x) => !studs.some((S) => sameStudent(x, S.name)));
+      h += `<div class="box"><p>${names.length ? (missing.length ? `<span class="ko-t">Pas encore fait (${missing.length}) :</span> ${missing.map(esc).join(', ')}` : '<span class="ok-t">✔ Toute la classe a fait le devoir.</span>') : `Colle la liste des prénoms de la ${esc(fClasse)} pour voir qui n'a pas encore fait le devoir :`}</p>
+        <details${names.length ? '' : ' open'}><summary class="small">Liste des élèves de ${esc(fClasse)} (un prénom par ligne, à coller une seule fois : elle sert pour tous les devoirs${LISTS.ok ? ', sur tous tes appareils' : ', sur cet appareil'})</summary><textarea id="roster" rows="5">${esc(roster)}</textarea></details></div>`;
+    } else h += '<p class="small muted">Choisis une classe pour voir aussi qui n\'a pas encore fait le devoir.</p>';
+    h += '<p><button type="button" id="copy">Copier ce bilan</button> <span class="small muted">(à coller dans un tableur ou pour Pronote)</span></p>';
+  }
+  if (suspects.length) h += `<div class="box"><p><span class="warn-t">⚠ ${suspects.length} ligne${suspects.length > 1 ? 's' : ''} à vérifier</span> <span class="small muted">(non comptée${suspects.length > 1 ? 's' : ''} dans le bilan)</span></p><ul class="small">${suspects.map((x) => `<li><b>${esc(x.name || '—')}</b> ${x.classe ? `(${esc(x.classe)})` : ''} : ${!x.valid ? `code « ${esc(x.code)} » non valide (erreur de recopie ou code inventé)` : 'ce code a été obtenu avec un autre prénom'}</li>`).join('')}</ul></div>`;
+  h += `<p class="small muted">Mis à jour ${nowStr()} · une ligne par élève, même s'il a fait le devoir plusieurs fois · chaque code est vérifié.</p>`;
+  app.innerHTML = h;
+  app.querySelector('#f-dev')?.addEventListener('change', (e) => { fDevoir = e.target.value; saveF(); render(); });
+  app.querySelector('#f-cl')?.addEventListener('change', (e) => { fClasse = e.target.value; saveF(); render(); });
+  app.querySelector('#f-new')?.addEventListener('change', (e) => { const c = e.target.value.trim(); if (!c) return; setKnown([...getKnown(), c]); fClasse = c; saveF(); if (LISTS.ok && !LISTS.rows[normName(c)]) setRoster(c, '').then(render); render(); });
+  app.querySelector('#f-crit')?.addEventListener('change', (e) => { crit = e.target.value; saveF(); render(); });
+  app.querySelectorAll('th.sortable').forEach((th) => th.addEventListener('click', () => { sortBy = th.dataset.s; saveF(); render(); }));
+  app.querySelector('#roster')?.addEventListener('change', (e) => { setRoster(fClasse, e.target.value).then(render); });
+  app.querySelector('#copy')?.addEventListener('click', async (e) => {
+    const tsv = ['Élève\tClasse\tScore\tSur\tAide\tEssais', ...studs.map((S) => { if (!S.tries.length) return `${S.name}\t${S.classe}\tpapier (à vérifier)\t${D.n}\t\t0`; const t = pickT(S); return `${S.name}\t${S.classe}\t${t.good}\t${D.n}\t${t.helped}\t${S.tries.length}`; })].join('\n');
+    try { await navigator.clipboard.writeText(tsv); e.target.textContent = '✔ Copié'; } catch (_) { e.target.textContent = 'Copie impossible'; }
+  });
+}
+
+if (window.grist) {
+  // Pas de correspondance de colonnes à régler : on reconnaît Prénom, Code, Classe, Devoir par leur nom
+  // accès complet : pour lire les résultats ET garder les listes d'élèves dans le document (table « Listes »)
+  grist.ready({ requiredAccess: 'full' });
+  let listsLoaded = false;
+  grist.onRecords((records) => {
+    data = buildBilan(toRows(records)); render();
+    if (!listsLoaded) { listsLoaded = true; loadLists(true).then(render); }
+  });
+} else {
+  app.innerHTML = '<p class="empty">Cette page s\'utilise <b>à l\'intérieur de Grist</b>, comme widget personnalisé.<br><span class="small">Dans ton document Grist : Ajouter → Ajouter un widget à la page → Personnalisé → saisis l\'adresse de cette page.</span></p>';
+}
+</script>
+</body>
+</html>
