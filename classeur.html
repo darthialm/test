@@ -1,21 +1,22 @@
 <!doctype html>
 <html lang="fr">
 <head>
+<style id="gate-hide">html{visibility:hidden}</style>
+<script src="reglages.js"></script>
+<script>(function(){var c=(window.REGLAGES&&window.REGLAGES.codeProf)||'prof5e',ok=false;try{ok=localStorage.getItem('revisions5e-prof')===String(c).trim().toLowerCase()+':ok';}catch(e){}
+if(!ok){location.replace('index.html#/prof');}else{var s=document.getElementById('gate-hide');if(s)s.remove();}})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Classeur du professeur — Révisions 6e</title>
+<title>Classeur du professeur — Révisions 5e</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fredoka:wght@500;600&display=swap">
-<script src="pdf-lib.min.js"></script>
-</body>
-</html>
 <style>
-/* Layout : barre de classe + onglets (Séances, Groupes, Documents). Séances = cartes repliables par chapitre ; Groupes = grille élèves × 6 points + génération du PDF nominatif. */
+/* Classeur 5e : barre de classe + onglets (Par créneau, Par chapitre, Plickers, Devoirs, Vue d'ensemble). */
 :root{
   --bg:#f4f6f9; --surface:#ffffff; --ink:#1b2430; --muted:#5b6676; --line:#d7dde6;
-  --accent:#0b4f8a; --accent-soft:#e2ecf7;
+  --accent:#0e6b5c; --accent-soft:#dff1ed;
   --rep:#1e7f45; --rep-soft:#ddf1e4;
   --ent:#0b4f8a; --ent-soft:#dde9f6;
   --def:#6c3483; --def-soft:#efe2f5;
@@ -25,17 +26,12 @@
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#11161d; --surface:#19212b; --ink:#e8edf3; --muted:#9ba7b6; --line:#2c3846;
-  --accent:#7fb3e6; --accent-soft:#1d2e42;
+  --accent:#5fd4c1; --accent-soft:#17352f;
   --rep:#5fcf8c; --rep-soft:#173426; --ent:#7fb3e6; --ent-soft:#18304a; --def:#c895e0; --def-soft:#33213d;
   --ok:#e3b45a; --danger:#ff7b72; --done:#5fcf8c; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#11161d; --surface:#19212b; --ink:#e8edf3; --muted:#9ba7b6; --line:#2c3846;
-  --accent:#7fb3e6; --accent-soft:#1d2e42;
-  --rep:#5fcf8c; --rep-soft:#173426; --ent:#7fb3e6; --ent-soft:#18304a; --def:#c895e0; --def-soft:#33213d;
-  --ok:#e3b45a; --danger:#ff7b72; --done:#5fcf8c; color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.45;
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.45;margin:0;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
 .wrap{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
 h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
@@ -45,31 +41,33 @@ h3{font-size:1rem;font-weight:700}
 button,select,input,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+a{color:var(--accent)}
 .top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
 .status{font-size:.85rem;color:var(--muted)}
+.backlinks{font-size:.9rem;margin:0 0 4px}
 .bar,.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;min-height:44px}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:700}
-.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px;min-height:44px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 14px;min-height:44px;text-decoration:none;color:var(--ink);display:inline-flex;align-items:center}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface);font-weight:700}
 .btn.danger{color:var(--danger);border-color:var(--danger)}
 .btn.small{min-height:38px;padding:6px 10px;font-size:.92rem}
+.mini{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:2px 8px;font-size:.78rem;color:var(--muted);min-height:26px}
+.mini:hover{border-color:var(--accent);color:var(--accent)}
 .tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);overflow-x:auto}
 .tabs button{border:0;background:transparent;padding:10px 16px;min-height:44px;font-family:var(--f-display);font-weight:500;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
 .tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);font-weight:700}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
 .seg button{border:0;background:transparent;padding:10px 14px;min-height:44px}
 .seg button[aria-pressed="true"]{background:var(--accent-soft);font-weight:700;color:var(--accent)}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .hint{font-size:.9rem;color:var(--muted);margin:0}
 .warn{font-size:.9rem;color:var(--danger);margin:0}
 label{font-weight:700;font-size:.95rem}
-input[type=text],input[type=url],input[type=date],textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}
-input[type=date]{width:auto}
-textarea{min-height:220px;resize:vertical}
+input[type=text],input[type=url],textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}
+input[type=date]{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg)}
+select{border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg);min-height:38px}
 .confirm{border:1px solid var(--danger);border-radius:10px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-
-/* progression */
 .progress{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .meter{flex:1 1 200px;height:12px;border-radius:999px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
 .meter i{display:block;height:100%;background:var(--done)}
@@ -78,945 +76,972 @@ textarea{min-height:220px;resize:vertical}
 details.seance{background:var(--surface);border:1px solid var(--line);border-radius:12px;min-width:0}
 details.seance[open]{border-color:var(--accent)}
 details.seance.done{opacity:.86}
-details.seance>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;gap:12px;align-items:center}
+details.seance>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 details.seance>summary::-webkit-details-marker{display:none}
-.sid{font-family:var(--f-display);font-weight:700;font-variant-numeric:tabular-nums;min-width:3.2em;color:var(--accent)}
-.stitle{flex:1;min-width:0}
+.sid{font-family:var(--f-display);font-weight:700;font-variant-numeric:tabular-nums;min-width:4.6em;color:var(--accent)}
+.stitle{flex:1;min-width:200px}
 .stitle small{display:block;color:var(--muted);font-size:.85rem}
 .tag{font-size:.75rem;font-weight:700;border-radius:999px;padding:3px 9px;white-space:nowrap;border:1px solid currentColor}
-.tag.billet{color:var(--ok)}
-.tag.parc{color:var(--def)}
-.tag.eval{color:var(--danger)}
-.tag.fait{color:var(--done)}
+.tag.fait{color:var(--done)} .tag.eval{color:var(--danger)} .tag.extra{color:var(--accent)} .tag.plk{color:var(--ent)} .tag.dev{color:var(--def)}
+.tag .x{border:0;background:transparent;font-size:1rem;line-height:1;padding:0 2px;color:var(--muted)}
 .sbody{padding:0 14px 14px;display:flex;flex-direction:column;gap:12px}
 .sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
 .box{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .box h3{font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
-.docs{display:flex;flex-wrap:wrap;gap:6px}
-.doc{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 10px;min-height:38px;font-size:.9rem;text-align:left}
-.doc b{font-weight:700}
 .devoir{background:var(--bg);border-radius:8px;padding:10px 12px;line-height:1.55}
-.devoir p{margin:0 0 4px}
+.devoir p{margin:0 0 6px}
+.act p{margin:0 0 6px} .act ul{margin:0 0 6px;padding-left:20px}
 .now{font-family:var(--f-display);font-size:1.05rem;margin:0;padding:10px 12px;border-radius:10px;background:var(--accent-soft);color:var(--ink)}
 .now b{color:var(--accent)}
-.repere{font-weight:700;color:var(--accent)}
-.tag.extra{color:var(--accent)}
 ol.deroule{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
 ol.deroule li{display:flex;gap:10px;align-items:baseline;padding:4px 8px;border-radius:8px;border-left:4px solid var(--line);background:var(--bg)}
 ol.deroule .tps{font-variant-numeric:tabular-nums;color:var(--muted);min-width:4.6em;font-size:.9rem}
 ol.deroule .lib{font-weight:700;margin-right:4px}
-ol.deroule li.y-v{border-left-color:var(--danger)} ol.deroule li.y-p{border-left-color:var(--def)} ol.deroule li.y-b{border-left-color:var(--ok)} ol.deroule li.y-e{border-left-color:var(--rep)}
+ol.deroule li.y-v{border-left-color:var(--danger)} ol.deroule li.y-q{border-left-color:var(--ent)} ol.deroule li.y-a{border-left-color:var(--def)} ol.deroule li.y-e{border-left-color:var(--rep)}
 .edt{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px}
 .edtrows{display:flex;flex-direction:column;gap:8px}
-.seg{flex-wrap:wrap}
-select{border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--bg);min-height:38px}
 .check{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.check input[type=checkbox]{width:22px;height:22px;accent-color:var(--done)}
-
-/* grille */
-.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
-.count{border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
-.count b{font-family:var(--f-display);font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
-.count span{font-size:.9rem}
-.c-R{background:var(--rep-soft);color:var(--rep)}
-.c-E{background:var(--ent-soft);color:var(--ent)}
-.c-D{background:var(--def-soft);color:var(--def)}
-.c-0{background:var(--bg);color:var(--muted);border:1px dashed var(--line)}
-.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.9rem;color:var(--muted)}
-.legend i{display:inline-block;width:26px;height:22px;border-radius:6px;vertical-align:middle;margin-right:6px;font-style:normal;text-align:center;font-weight:700;line-height:22px;font-size:.8rem}
-.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
-table{border-collapse:separate;border-spacing:0;width:100%;min-width:640px}
-th,td{border-bottom:1px solid var(--line);padding:4px;text-align:center}
-thead th{background:var(--surface);vertical-align:bottom}
-th.name,td.name{text-align:left;position:sticky;left:0;background:var(--surface);z-index:2;padding:6px 12px;min-width:150px;max-width:220px;border-right:1px solid var(--line)}
-td.name{font-weight:700;overflow-wrap:anywhere}
-td.name small{color:var(--muted);font-weight:400;font-variant-numeric:tabular-nums;margin-right:6px}
-.colhead{width:100%;border:0;background:transparent;border-radius:10px;padding:6px 4px;display:flex;flex-direction:column;align-items:center;gap:1px;min-height:60px}
-.colhead .n{font-family:var(--f-display);font-weight:700;font-size:1.05rem}
-.colhead .t{font-size:.75rem;color:var(--muted);line-height:1.15}
-.colhead .s{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.colhead[aria-pressed="true"]{background:var(--accent-soft)}
-.colhead[aria-pressed="true"] .n{color:var(--accent)}
-td.sel{background:var(--accent-soft)}
-.cell{width:100%;min-width:64px;height:46px;border-radius:10px;border:1.5px dashed var(--line);background:transparent;font-weight:700;font-size:1rem;position:relative}
-.cell.R{background:var(--rep-soft);border:1.5px solid var(--rep);color:var(--rep)}
-.cell.E{background:var(--ent-soft);border:1.5px solid var(--ent);color:var(--ent)}
-.cell.D{background:var(--def-soft);border:1.5px solid var(--def);color:var(--def)}
-.cell .tick{position:absolute;top:2px;right:5px;font-size:.85rem;color:var(--ok)}
-tfoot td{font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums;border-bottom:0;line-height:1.3}
-tfoot b.R{color:var(--rep)} tfoot b.E{color:var(--ent)} tfoot b.D{color:var(--def)}
-ol.ordre{margin:0;padding-left:28px;columns:2 220px;column-gap:24px}
-ol.ordre li{break-inside:avoid;padding:2px 0}
-ol.ordre .g{font-weight:700;font-size:.8rem;border-radius:6px;padding:1px 6px;margin-left:6px}
+details.inner>summary{cursor:pointer;font-weight:700;color:var(--accent);padding:4px 0}
+.quiz{display:flex;flex-direction:column;gap:10px;padding-top:6px}
+.qz{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--bg)}
+.qline{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.qn{font-family:var(--f-display);font-weight:700;color:var(--accent)}
+.qt{flex:1;min-width:200px;font-weight:700}
+ul.qopts{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:4px 12px}
+ul.qopts li{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+ul.qopts li b{color:var(--ent)}
+ul.qopts li.good span:not(.chk){font-weight:700}
+.chk{color:var(--done);font-weight:700}
+ul.lignes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+ul.lignes li{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;padding:4px 8px;border-radius:8px;background:var(--bg)}
 .empty{text-align:center;padding:28px 16px;display:flex;flex-direction:column;gap:12px;align-items:center}
-.empty p{max-width:52ch;margin:0}
-.docgroup{display:flex;flex-direction:column;gap:8px}
-@media (max-width:520px){h1{font-size:1.3rem}.count b{font-size:1.6rem}details.seance>summary{flex-wrap:wrap}}
-@media (prefers-reduced-motion:no-preference){.cell{transition:background-color .12s,border-color .12s}}
-.backlinks{font-size:.9rem;margin:0 0 4px}
-.backlinks a{color:var(--accent)}
-.gate{max-width:560px;margin:40px auto}
-.gate input[type=password]{font-size:1.1rem}
-.linkrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.92rem}
-.linkrow code{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:4px 8px;word-break:break-all;font-size:.82rem;max-width:100%}
+.empty p{max-width:56ch;margin:0}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table.ov{border-collapse:collapse;width:100%;min-width:760px;font-size:.92rem}
+table.ov th,table.ov td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+table.ov thead th{background:var(--accent-soft)}
+table.ov tr.dn td{color:var(--muted)}
 .filebtn{position:relative;overflow:hidden}
 .filebtn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+@media (max-width:520px){h1{font-size:1.3rem}details.seance>summary{flex-wrap:wrap}}
+@media print{
+  body{background:#fff;color:#000;padding:0}
+  .noprint,.tabs,.bar,.backlinks,#manage,.savebox,.status{display:none!important}
+  .panel,.scroll{border:0;padding:0}
+  table.ov{min-width:0;font-size:11pt}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div id="gate" class="panel gate" hidden>
-    <p class="backlinks"><a href="index.html#/prof">← Espace professeur</a></p>
-    <h1>Classeur du professeur</h1>
-    <p>Les documents (cours, corrigés, évaluations, parcours) sont <b>chiffrés</b> sur le site : sans le code, ils sont illisibles, même pour quelqu'un qui trouverait leur adresse.</p>
-    <div><label for="gateCode">Code des documents</label>
-    <div class="row"><input type="password" id="gateCode" autocomplete="off" style="flex:1 1 220px"><button class="btn primary" id="gateGo">Ouvrir</button></div></div>
-    <p class="warn" id="gateMsg" aria-live="polite"></p>
-    <p class="hint">Le code est retenu sur cet appareil : tu ne le taperas qu'une fois. « Verrouiller » (en bas de page) l'efface.</p>
-  </div>
-  <div id="app" hidden>
   <div class="top">
     <div>
-      <p class="backlinks"><a href="index.html#/prof">← Espace professeur</a> · <a href="index.html">Site des élèves</a></p>
-      <h1>Classeur · Période 2</h1>
-      <div class="status" id="status" aria-live="polite">Chargement…</div>
+      <p class="backlinks"><a href="index.html#/prof">← Espace professeur</a> · <a href="index.html">Retour au site</a></p>
+      <h1>Classeur · 5e · du 4 novembre au 17 décembre</h1>
     </div>
-    <div class="bar" id="classBar"></div>
+    <div class="status" id="status" aria-live="polite">Chargement…</div>
   </div>
+  <div class="bar" id="classBar"></div>
   <div id="manage" class="panel" hidden></div>
   <div class="tabs" role="tablist" id="tabs"></div>
   <div id="main"></div>
-  <div class="panel" style="margin-top:8px">
+  <div class="panel savebox">
     <h2>Sauvegarde</h2>
-    <p class="hint">Tes classes, groupes et progressions sont enregistrés <b>sur cet appareil seulement</b> (rien n'est envoyé sur Internet). Fais de temps en temps une sauvegarde : si le navigateur efface ses données, tu pourras tout restaurer.</p>
+    <p class="hint">Tes classes et ton suivi sont enregistrés dans ce navigateur, sur cet appareil. Pour les garder ailleurs ou les passer sur un autre appareil, fais une sauvegarde dans un fichier.</p>
     <div class="row"><button class="btn" id="btnExport">💾 Sauvegarder dans un fichier</button>
-    <label class="btn filebtn">📂 Restaurer une sauvegarde<input type="file" id="fileImport" accept="application/json,.json"></label>
-    <button class="btn danger" id="btnLock">🔒 Verrouiller (oublier le code sur cet appareil)</button></div>
-  </div>
+    <label class="btn filebtn">📂 Restaurer une sauvegarde<input type="file" id="fileImport" accept="application/json,.json"></label></div>
   </div>
 </div>
-
 <script>
-/* ======================= DONNÉES DE LA PÉRIODE ======================= */
-const D=(label,path,sub)=>({label,path,sub:sub||""});
-const DOCS={
- coursO:D("Cours Opérations","docs/Operations_eleve.pdf","élève"),coursOp:D("Cours Opérations","docs/Operations_enseignant.pdf","à projeter"),
- coursA:D("Cours Angles","docs/Angles_eleve.pdf","élève"),coursAp:D("Cours Angles","docs/Angles_enseignant.pdf","à projeter"),
- coursT:D("Cours Triangles","docs/Triangles_eleve.pdf","élève"),coursTp:D("Cours Triangles","docs/Triangles_enseignant.pdf","à projeter"),
- actO:D("Activités Opérations","docs/Activites_Operations_eleve.pdf","élève"),actOc:D("Activités Opérations","docs/Activites_Operations_enseignant.pdf","corrigé"),
- actA:D("Activités Angles","docs/Activites_Angles_eleve.pdf","élève"),actAc:D("Activités Angles","docs/Activites_Angles_enseignant.pdf","corrigé"),
- actT:D("Activités Triangles","docs/Activites_Triangles_eleve.pdf","élève"),actTc:D("Activités Triangles","docs/Activites_Triangles_enseignant.pdf","corrigé"),
- projO:D("Écrans Opérations","docs/Projection_Operations.pdf","à projeter"),projA:D("Écrans Angles (estimathon)","docs/Projection_Angles.pdf","à projeter"),
- billets:D("Billets de sortie","docs/Billets_eleve.pdf","à couper"),billetsC:D("Billets de sortie","docs/Billets_enseignant.pdf","corrigé"),
- parcO:D("Parcours Opérations","docs/Parcours_Operations_enseignant.pdf","corrigé + organisation"),
- parcA:D("Parcours Angles","docs/Parcours_Angles_enseignant.pdf","corrigé + organisation"),
- parcT:D("Parcours Triangles","docs/Parcours_Triangles_enseignant.pdf","corrigé + organisation"),
- evalO:D("Évaluation Opérations","docs/Eval_Operations_eleve.pdf","élève"),evalOc:D("Évaluation Opérations","docs/Eval_Operations_enseignant.pdf","corrigé"),
- evalA:D("Évaluation Angles","docs/Eval_Angles_eleve.pdf","élève"),evalAc:D("Évaluation Angles","docs/Eval_Angles_enseignant.pdf","corrigé"),
- evalT:D("Évaluation Triangles","docs/Eval_Triangles_eleve.pdf","élève"),evalTc:D("Évaluation Triangles","docs/Eval_Triangles_enseignant.pdf","corrigé"),
- rappo:D("Le rapporteur","docs/Le_rapporteur.pdf","ton document"),
- oeuvre:D("Crée ton œuvre d'art","docs/Cree_ton_oeuvre_d_art.pdf","ton document"),
- multcur:D("Multiplications curieuses","docs/Multiplications_curieuses.pdf","ton document"),
-};
-const DOC_GROUPS=[
- ["Cours à trous",["coursO","coursOp","coursA","coursAp","coursT","coursTp"]],
- ["Activités",["actO","actOc","actA","actAc","actT","actTc","rappo","oeuvre","multcur"]],
- ["Écrans à projeter",["projO","projA"]],
- ["Différenciation",["billets","billetsC","parcO","parcA","parcT"]],
- ["Évaluations",["evalO","evalOc","evalA","evalAc","evalT","evalTc"]],
-];
-const POINTS=[
- {n:1,t:"Calculer avec les règles",b:"S2",p:"S3"},
- {n:2,t:"Poser + et −",b:"S3",p:"S4"},
- {n:3,t:"Mesurer un angle",b:"S7",p:"S8"},
- {n:4,t:"Relations entre angles",b:"S10",p:"S11"},
- {n:5,t:"Construire un triangle",b:"S14",p:"S15"},
- {n:6,t:"Règle des 180°",b:"S17",p:"S18"}];
-// position du « Nom : » sur chaque parcours (points PDF, origine en bas à gauche)
-const NOM={R:{x:92,y:751},E:{x:92,y:753.5},D:{x:92,y:753.5}};
-const LIEN="{{LIEN}}";
-/* Notions du site travaillées à chaque séance (pour le lien du devoir et les questions flash au vidéoprojecteur) */
-const NOTIONS={S1:["o-voc"],S2:["o-gauche","o-par"],S3:["o-par2","o-add"],S4:["o-voc","o-gauche","o-par","o-par2","o-add","o-mul","o-pb"],
- S5:["a-nom"],S6:["a-nom","a-nature"],S7:["a-mesure"],S8:["a-mesure","a-nature"],S9:["a-construire"],S10:["a-reco","a-calcul"],
- S11:["a-nom","a-nature","a-mesure","a-construire","a-reco","a-calcul","a-biss"],S12:["a-nom","a-nature","a-mesure","a-reco","a-calcul"],
- S13:["t-voc","t-3cotes"],S14:["t-angles"],S15:["t-nature","t-iso"],S16:["t-rect"],S17:["t-180"],S18:["t-natang"],
- S19:["t-voc","t-nature","t-3cotes","t-angles","t-iso","t-180","t-natang","t-cercle"],S20:["t-180","t-natang","t-voc"]};
-const NB_Q={S4:15,S11:15,S19:15};
-const SEANCES=[
- {id:"S1",chap:"Opérations",k:"Opérations · séance 1",t:"Le vocabulaire des opérations",cours:"Partie 1, méthode comprise",docs:["coursO","coursOp","actO","actOc"],act:"Qui suis-je ? (cartes à découper)",
-  dev:"<p><b>Apprendre la partie 1 du cours : le vocabulaire des opérations.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire seul la méthode « Utiliser le vocabulaire des opérations », puis vérifier avec la correction.</p><p><b>Apporter : ciseaux et colle.</b></p>"},
- {id:"S2",chap:"Opérations",k:"Opérations · séance 2",t:"Calculer de gauche à droite, avec parenthèses",cours:"Partie 2, règles 1 et 2 avec leurs méthodes",docs:["coursO","coursOp","actO","actOc","billets","billetsC"],act:"Horloge 1-2-3-4",billet:1,
-  dev:"<p><b>Apprendre les règles 1 et 2 du cours.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire seul la méthode « Calculer une expression avec des parenthèses ».</p><p><b>Apporter : ardoise et feutre, ciseaux et colle.</b></p>"},
- {id:"S3",chap:"Opérations",k:"Opérations · séance 3",t:"Parenthèses doubles, addition et soustraction posées",cours:"Règle 3, puis partie 3.1",docs:["coursO","coursOp","projO","actO","actOc","parcO","billets","billetsC"],act:"Le compte est bon (écrans), horloges",parcours:1,billet:2,
-  dev:"<p><b>Apprendre la règle 3 et la partie 3.1 du cours (poser une addition, une soustraction).</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire seul la méthode « Poser une addition et une soustraction ».</p><p><b>Apporter : ardoise et feutre.</b></p>"},
- {id:"S4",chap:"Opérations",k:"Opérations · séance 4",t:"La multiplication posée",cours:"Partie 3.2, fin du cours",docs:["coursO","coursOp","actO","actOc","projO","parcO","multcur"],act:"Ticket de caisse, Les élèves corrigent le prof (écrans)",parcours:2,
-  dev:"<p><b>Réviser tout le chapitre pour l'évaluation : les règles et les méthodes du cours.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire seul toutes les méthodes du cours, puis vérifier avec les corrections.</p><p><b>Apporter : de quoi écrire.</b></p>"},
- {id:"S5",chap:"Opérations",k:"Évaluation Opérations, puis Angles · séance 1",t:"Évaluation Opérations (45 min) · Qu'est-ce qu'un angle ?",cours:"Angles : partie 1.1 (définition, notation)",docs:["evalO","evalOc","coursA","coursAp","actA","actAc"],act:"Découverte « le plus grand angle »",eval:true,
-  dev:"<p><b>Apprendre la partie 1.1 du cours sur les angles (définition et notation).</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Tracer trois angles sur le cahier et les nommer.</p><p><b>Apporter : équerre et ciseaux.</b></p>"},
- {id:"S6",chap:"Angles",k:"Angles · séance 2",t:"Nommer un angle, nature des angles",cours:"Méthode « Nommer », partie 1.2",docs:["coursA","coursAp","actA","actAc"],act:"Trier les angles",
-  dev:"<p><b>Apprendre la partie 1.2 du cours : la nature des angles.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p><b>Chasse aux angles : photographier un angle aigu, un droit, un obtus et un plat (aucune personne sur les photos), et les déposer ici avant la séance du [date]. Sans appareil, dessiner les 4 objets.</b></p><p>Refaire seul la méthode « Nommer un angle ».</p><p><b>Apporter : rapporteur, papier calque et ciseaux.</b></p>"},
- {id:"S7",chap:"Angles",k:"Angles · séance 3",t:"Mesurer un angle (1)",cours:"Partie 2.1 et méthode « Mesurer un angle »",docs:["coursA","coursAp","rappo","billets","billetsC"],act:"Le rapporteur (ton activité)",billet:3,
-  dev:"<p><b>Apprendre les 4 étapes pour mesurer un angle (partie 2.1).</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire seul la méthode « Mesurer un angle ».</p><p><b>Apporter : ardoise et feutre, rapporteur.</b></p>"},
- {id:"S8",chap:"Angles",k:"Angles · séance 4",t:"Mesurer un angle (2), angles particuliers",cours:"Partie 2.2 et méthode du triangle KLM",docs:["coursA","coursAp","projA","actA","actAc","parcA"],act:"Estimathon (écrans), photos de la chasse, permis rapporteur",parcours:3,
-  dev:"<p><b>Apprendre la partie 2.2 : les mesures des angles particuliers.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire seul la méthode « Mesurer les angles d'une figure ».</p><p><b>Apporter : rapporteur, règle, crayons de couleur et calculatrice.</b></p>"},
- {id:"S9",chap:"Angles",k:"Angles · séance 5",t:"Construire un angle",cours:"Partie 3 (construction dans le cahier)",docs:["coursA","coursAp","oeuvre"],act:"Crée ton œuvre d'art (ton activité)",
-  dev:"<p><b>Apprendre la partie 3 : construire un angle.</b></p><p><b>Finir « Crée ton œuvre d'art ».</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Construire sur le cahier un angle de 75° et un angle de 140°.</p><p><b>Apporter : rapporteur et règle.</b></p>"},
- {id:"S10",chap:"Angles",k:"Angles · séance 6",t:"Relations entre deux angles",cours:"Partie 4 et ses deux méthodes",docs:["coursA","coursAp","actA","actAc","billets","billetsC"],act:"Découverte « deux droites sécantes »",billet:4,
-  dev:"<p><b>Apprendre la partie 4 : le tableau des relations entre angles et la propriété.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire seul la méthode « Reconnaître des angles adjacents, complémentaires, supplémentaires ».</p><p><b>Apporter : rapporteur, règle et ciseaux.</b></p>"},
- {id:"S11",chap:"Angles",k:"Angles · séance 7",t:"La bissectrice",cours:"Partie 5, fin du cours",docs:["coursA","coursAp","actA","actAc","parcA"],act:"Pliage, chasse au trésor",parcours:4,
-  dev:"<p><b>Réviser tout le chapitre pour l'évaluation : définitions, propriétés et méthodes.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire seul toutes les méthodes du cours.</p><p><b>Apporter : rapporteur, règle et équerre.</b></p>"},
- {id:"S12",chap:"Angles",k:"Angles · évaluation",t:"Révisions (45 min) et évaluation Angles (45 min)",cours:"—",docs:["evalA","evalAc"],act:"",eval:true,
-  dev:"<p><b>Apporter : compas et règle.</b></p>"},
- {id:"S13",chap:"Triangles",k:"Triangles · séance 1",t:"Vocabulaire, construction à partir des trois côtés",cours:"Partie 1.1, rappel, méthode des 3 côtés",docs:["coursT","coursTp","actT","actTc"],act:"Défi du compas",
-  dev:"<p><b>Apprendre la partie 1.1 du cours sur les triangles et le rappel.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire sur le cahier la construction du triangle ABC (6 cm, 4 cm, 5 cm).</p><p><b>Apporter : compas, rapporteur et règle.</b></p>"},
- {id:"S14",chap:"Triangles",k:"Triangles · séance 2",t:"Construction à partir de côtés et d'angles",cours:"Partie 1.2 et ses deux méthodes",docs:["coursT","coursTp","actT","actTc","billets","billetsC"],act:"Dictée de construction",billet:5,
-  dev:"<p><b>Apprendre la partie 1.2 : construire un triangle avec des angles.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire sur le cahier la construction du triangle KLM.</p><p><b>Apporter : compas, règle et ciseaux.</b></p>"},
- {id:"S15",chap:"Triangles",k:"Triangles · séance 3",t:"Triangles isocèle et équilatéral",cours:"Parties 2.1 et 2.2",docs:["coursT","coursTp","actT","actTc","parcT"],act:"Trier les triangles, carte au trésor",parcours:5,
-  dev:"<p><b>Apprendre les définitions du triangle isocèle et du triangle équilatéral.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire sur le cahier la construction du triangle isocèle MNP.</p><p><b>Apporter : équerre, compas et règle.</b></p>"},
- {id:"S16",chap:"Triangles",k:"Triangles · séance 4",t:"Le triangle rectangle",cours:"Partie 2.3 et ses deux méthodes",docs:["coursT","coursTp","actT","actTc"],act:"Figures à décrire",
-  dev:"<p><b>Apprendre la partie 2.3 : le triangle rectangle et l'hypoténuse.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire sur le cahier une des deux constructions du triangle rectangle.</p><p><b>Apporter : ciseaux et rapporteur.</b></p>"},
- {id:"S17",chap:"Triangles",k:"Triangles · séance 5",t:"La règle des 180°",cours:"Partie 3.1",docs:["coursT","coursTp","actT","actTc","billets","billetsC"],act:"Pliage du triangle",billet:6,
-  dev:"<p><b>Apprendre la règle des 180°.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire seul la méthode « Calculer la mesure du troisième angle ».</p><p><b>Apporter : rapporteur et règle.</b></p>"},
- {id:"S18",chap:"Triangles",k:"Triangles · séance 6",t:"Angles des triangles particuliers",cours:"Partie 3.2",docs:["coursT","coursTp","actT","actTc","parcT"],act:"Qui est-ce ? (si le temps le permet)",parcours:6,
-  dev:"<p><b>Apprendre les propriétés des angles des triangles particuliers.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire seul la méthode « Trouver la nature d'un triangle à partir de ses angles ».</p><p><b>Apporter : compas, équerre et règle.</b></p>"},
- {id:"S19",chap:"Triangles",k:"Triangles · séance 7",t:"Le cercle circonscrit, révisions",cours:"Partie 4, fin du cours",docs:["coursT","coursTp","actT","actTc"],act:"Le puits des trois villages",
-  dev:"<p><b>Réviser tout le chapitre pour l'évaluation : définitions, propriétés et constructions.</b></p><p><b>Exercices en ligne : "+LIEN+"</b></p><p>Refaire sur le cahier toutes les constructions du cours.</p><p><b>Apporter : tout le matériel de géométrie (règle, équerre, rapporteur, compas).</b></p>"},
- {id:"S20",chap:"Triangles",k:"Triangles · évaluation",t:"Évaluation Triangles (45 min), puis remédiation",cours:"—",docs:["evalT","evalTc"],act:"",eval:true,dev:""},
-];
-const G={R:"Je reprends",E:"Je m'entraîne",D:"Je relève un défi"};
-const CYCLE=["","R","E","D"];
-const EXEMPLE=["Adam B.","Alice M.","Amir K.","Chloé D.","Emma L.","Enzo R.","Inès T.","Jade P.","Léo G.","Lina S.","Louis F.","Lucas V.","Manon C.","Nathan H.","Noah A.","Rose N.","Sacha J.","Tom E.","Yanis O.","Zoé W."];
+/* =========================================================
+   CLASSEUR 5e — données de la période et moteur de planification
+   (15 séances de 1h30 : mer. 4 nov. → jeu. 17 déc. 2026)
+   Ordre : Proportionnalité → Angles → Fractions 2 → Divisibilité.
+   Le moteur est celui du classeur 6e : les séances forment un « flux » de blocs minutés
+   que les créneaux de la classe consomment dans l'ordre ; si un créneau est annulé ou
+   pas fini, la suite se décale, et les temps d'exercices (blocs souples) se raccourcissent.
+   ========================================================= */
+const B = (m, y, t, o) => Object.assign({ m, y, t }, o || {});
+// y : r = cours / oral · a = activité, jeu · e = exercices (souple) · v = évaluation · q = Plickers
 
-/* ======================= EMPLOI DU TEMPS ET PLANIFICATION ======================= */
-const BL=(m,t,y,min)=>({m,t,y:y||"r",min:min==null?(y==="e"?10:m):min});
-const BLOCS={
- S1:[BL(10,"Questions flash : tables de multiplication"),BL(20,"Activité « Qui suis-je ? » en binôme"),BL(20,"Cours : tableau du vocabulaire, méthode « Utiliser le vocabulaire »"),BL(20,"Cahier d'activités","e"),BL(20,"Suite du cahier d'activités, bilan","e")],
- S2:[BL(10,"Questions flash : vocabulaire des opérations"),BL(20,"Débat : deux résultats pour 20 − 5 + 3"),BL(20,"Cours : règles 1 et 2, méthodes"),BL(20,"Cahier d'activités","e"),BL(15,"Horloge 1-2-3-4 en binôme (début)","e"),BL(5,"Billet de sortie n°1","b")],
- S3:[BL(10,"Le compte est bon (à projeter)"),BL(20,"Cours : règle 3 et sa méthode ; fin de l'horloge 1-2-3-4"),BL(20,"Cours : partie 3.1, poser une addition et une soustraction"),BL(35,"Parcours point 1 et mini re-test","p"),BL(5,"Billet de sortie n°2","b")],
- S4:[BL(10,"Questions flash : additions et soustractions de décimaux"),BL(20,"Cours : partie 3.2, méthode « Poser une multiplication »"),BL(20,"Les élèves corrigent le prof (à projeter)"),BL(40,"Parcours point 2 et mini re-test ; ticket de caisse pour ceux qui ont fini","p")],
- S5:[BL(45,"Évaluation Opérations","v"),BL(20,"Angles : découverte « le plus grand angle »"),BL(20,"Cours : définition et notation d'un angle"),BL(5,"Bilan, devoirs","e",0)],
- S6:[BL(10,"Questions flash : calcul mental"),BL(20,"Cours : méthode « Nommer un angle »"),BL(20,"Classer des angles avec le coin de l'équerre, puis tableau des natures"),BL(20,"Cahier d'activités","e"),BL(20,"Repérer des angles dans la classe ; donner la chasse photo, bilan","e")],
- S7:[BL(10,"Questions flash : nature d'angles"),BL(40,"Activité « Le rapporteur » (les portes, le gabarit)"),BL(20,"Cours : les 4 étapes, méthode"),BL(15,"Cahier d'activités","e"),BL(5,"Billet de sortie n°3","b")],
- S8:[BL(10,"L'estimathon (à projeter)"),BL(20,"Chasse photo : projection des photos des élèves"),BL(20,"Cours : mesures des angles particuliers, méthode KLM"),BL(40,"Parcours point 3 et mini re-test ; permis rapporteur pour ceux qui ont fini","p")],
- S9:[BL(10,"Questions flash : mesurer deux angles"),BL(20,"Cours : construire un angle (dans le cahier)"),BL(20,"Cahier d'activités","e"),BL(40,"Crée ton œuvre d'art (à finir à la maison)","e",20)],
- S10:[BL(10,"Questions flash : compléments à 90 et à 180"),BL(20,"Découverte : deux droites sécantes, mesurer les 4 angles"),BL(20,"Cours : tableau des relations, propriété, méthode « Reconnaître »"),BL(20,"Cours : méthode « Angles opposés par le sommet »"),BL(15,"Cahier d'activités","e"),BL(5,"Billet de sortie n°4","b")],
- S11:[BL(10,"Questions flash : diviser par 2"),BL(20,"Découverte : plier un angle découpé"),BL(20,"Cours : la bissectrice, définition et méthode"),BL(40,"Parcours point 4 et mini re-test ; chasse au trésor pour ceux qui ont fini","p")],
- S12:[BL(45,"Révisions : cahier d'activités, méthodes du cours","e",20),BL(45,"Évaluation Angles","v")],
- S13:[BL(10,"Questions flash : angles (mesurer, nommer)"),BL(20,"Recherche en binôme : triangle de côtés 6 ; 3,5 et 5 cm"),BL(20,"Cours : définition, vocabulaire, rappel, méthode"),BL(20,"Cahier d'activités","e"),BL(20,"Défi : un triangle 3, 4, 8 cm est-il possible ? Bilan","e")],
- S14:[BL(10,"Questions flash : construire un angle"),BL(20,"Cours : méthode « deux côtés et l'angle compris »"),BL(20,"Cours : méthode « un côté et deux angles »"),BL(20,"Cahier d'activités","e"),BL(15,"Dictée de construction en binôme","e"),BL(5,"Billet de sortie n°5","b")],
- S15:[BL(10,"Questions flash : vocabulaire du triangle"),BL(20,"Trier des triangles en mesurant leurs côtés"),BL(20,"Cours : triangles isocèle et équilatéral"),BL(40,"Parcours point 5 et mini re-test ; carte au trésor pour ceux qui ont fini","p")],
- S16:[BL(10,"Questions flash : tracer une perpendiculaire"),BL(20,"Cours : définition, méthode « côtés de l'angle droit »"),BL(20,"Cours : méthode « avec l'hypoténuse »"),BL(20,"Cahier d'activités","e"),BL(20,"Figures à décrire, bilan","e")],
- S17:[BL(10,"Questions flash : compléments à 180"),BL(20,"Pliage d'un triangle découpé"),BL(20,"Cours : la règle des 180°, méthode rédigée"),BL(20,"Cahier d'activités","e"),BL(15,"Débat : un triangle peut-il avoir deux angles droits ?","e"),BL(5,"Billet de sortie n°6","b")],
- S18:[BL(10,"Questions flash : calcul du troisième angle"),BL(20,"Mesurer les angles des triangles particuliers déjà construits"),BL(20,"Cours : propriétés, méthode"),BL(40,"Parcours point 6 et mini re-test ; Qui est-ce ? pour ceux qui ont fini","p")],
- S19:[BL(10,"Questions flash : rappel de la médiatrice"),BL(20,"Problème : un point à égale distance de trois villages"),BL(20,"Cours : cercle circonscrit, définition, propriété, méthode"),BL(20,"Exercices du cahier d'activités","e"),BL(20,"Révisions du chapitre","e")],
- S20:[BL(45,"Évaluation Triangles","v"),BL(45,"Remédiation à partir des évaluations","e",0)],
+const CH = {
+  prop: { nom: 'Proportionnalité (partie 1)', n: 1, site: 'proportionnalite', poids: '2 semaines' },
+  ang: { nom: 'Angles', n: 2, site: 'angles', poids: '1 semaine' },
+  fr: { nom: 'Fractions (partie 2)', n: 3, site: 'fractions2', poids: '1,5 semaine' },
+  div: { nom: 'Divisibilité', n: 4, site: 'divisibilite', poids: '1,5 semaine' },
 };
-const PERIODE={debut:"2026-11-02",fin:"2026-12-18",feries:["2026-11-11"]};
-const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-const pdate=s=>{const [y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d,12)};
-function lundi(s){const d=pdate(s);d.setDate(d.getDate()-((d.getDay()+6)%7));return d}
-function creneaux(edt){
-  const out=[];if(!edt)return out;
-  const d0=lundi(PERIODE.debut),fin=pdate(PERIODE.fin);
-  const x=edt.extra&&edt.extra.on?edt.extra:null;const x0=x?lundi(x.first||PERIODE.debut):null;
-  for(let d=new Date(d0);d<=fin;d.setDate(d.getDate()+1)){
-    const s=iso(d);if(s<PERIODE.debut||PERIODE.feries.includes(s))continue;
-    const j=(d.getDay()+6)%7+1;// 1=lundi
-    const here=[];
-    (edt.hebdo||[]).forEach(h=>{if(+h.j===j)here.push(+h.d)});
-    if(x&&+x.j===j){const w=Math.round((lundi(s)-x0)/(7*864e5));if(w>=0&&w%(+x.every||3)===0)here.push(+x.d)}
-    here.forEach((m,i)=>out.push({id:s+(i?"#"+i:""),date:s,j,d:m,extra:!!(x&&+x.j===j&&i===here.length-1&&(edt.hebdo||[]).filter(h=>+h.j===j).length<here.length)}));
+
+/* pages du site (index.html) : [chapitre, page, libellé] */
+const PAGES = {
+  proportionnalite: { tableaux: 'Tableaux de proportionnalité', problemes: 'Problèmes', pourcentages: 'Pourcentages', echelles: 'Échelles, durées et vitesses' },
+  angles: { triangles: 'Angles dans un triangle', parallelisme: 'Angles et parallèles' },
+  fractions2: { denominateur: 'Même dénominateur', comparer: 'Comparer et encadrer', addsub: 'Additionner et soustraire' },
+  divisibilite: { division: 'Division euclidienne', multiples: 'Multiples et diviseurs', criteres: 'Critères et nombres premiers' },
+};
+
+const SEANCES = [
+  /* ============ PROPORTIONNALITÉ (2 semaines) ============ */
+  { id: 'N1', ch: 'prop', k: 'Proportionnalité · séance 1', t: 'Reconnaître un tableau de proportionnalité, coefficient',
+    cours: 'Partie 1 (1.1 et début du 1.2)', mat: 'calculatrice',
+    prep: 'Imprimer le cours à trous « Proportionnalité » (un par élève). Rien d\'autre.',
+    act: 'Thalès et la pyramide',
+    actD: '<p>Lire le texte d\'ouverture : « À l\'instant où mon ombre sera égale à ma taille, l\'ombre de la pyramide sera égale à sa hauteur. » Question : une perche de 1 m a une ombre de 80 cm ; un arbre a une ombre de 6 m. Quelle est sa hauteur ? Les élèves réalisent que <b>la hauteur et l\'ombre sont proportionnelles</b>.</p>',
+    b: [
+      B(8, 'q', 'Plickers (début) : prérequis, multiplier et diviser, vitesse de 6e'),
+      B(12, 'a', 'Accroche « Thalès et la pyramide » : ombre et hauteur'),
+      B(20, 'r', 'Cours à trous partie 1.1 : tableau de proportionnalité, coefficient, méthode « Reconnaître »'),
+      B(30, 'e', 'Cahier d\'activités : proportionnel ou non ?', { min: 10 }),
+      B(20, 'r', 'Cours à trous partie 1.2 : compléter un tableau (coefficient, ÷ coefficient)'),
+    ] },
+  { id: 'N2', ch: 'prop', k: 'Proportionnalité · séance 2', t: 'Les quatre méthodes, problèmes de proportionnalité',
+    cours: 'Partie 1.2', mat: 'calculatrice',
+    prep: 'Rien à imprimer. Quatre affiches ou quatre zones du tableau pour les groupes. Le devoir de cette séance est à donner en fin de journée.',
+    act: 'Violette va au cinéma',
+    actD: '<p>Situation du cours : « 4 places de cinéma coûtent 28 €. Combien coûtent 6 places ? » Quatre groupes, <b>une méthode chacun</b> : coefficient de proportionnalité, multiplication (× 1,5), addition (4 + 2), passage à l\'unité. Chaque groupe présente au tableau ; la classe compare et choisit la méthode la plus rapide selon les nombres.</p>',
+    b: [
+      B(8, 'r', 'Questions flash : × 1,5 ; × 0,25 ; ÷ 0,5'),
+      B(15, 'a', 'Activité « Violette va au cinéma » : une méthode par groupe'),
+      B(17, 'r', 'Cours à trous partie 1.2 : les quatre méthodes, synthèse'),
+      B(42, 'e', 'Cahier d\'activités : carrelage, location de voiture électrique, recettes', { min: 14 }),
+      B(8, 'q', 'Plickers (fin) : compléter un tableau de proportionnalité'),
+    ] },
+  { id: 'N3', ch: 'prop', k: 'Proportionnalité · séance 3', t: 'Les pourcentages',
+    cours: 'Partie 2', mat: 'calculatrice',
+    prep: 'Projeter la liste des 6 articles soldés (voir l\'activité). Ramasser les mesures de la chambre (devoir du jeudi précédent).',
+    act: 'Les soldes',
+    actD: '<p>Au tableau, six articles : <b>casque 80 € (−25 %) · jeu 45 € (−20 %) · sac 60 € (−30 %) · baskets 90 € (−40 %) · sweat 35 € (−10 %) · montre 120 € (−50 %)</b>. Les élèves calculent chaque prix soldé (sans calculatrice pour 10 %, 25 %, 50 %), puis classent les articles de la plus forte à la plus faible économie en euros.</p>',
+    b: [
+      B(6, 'r', 'Ramasser les mesures de la chambre ; correction rapide'),
+      B(14, 'a', 'Activité « Les soldes » : calculer les prix soldés'),
+      B(22, 'r', 'Cours à trous partie 2.1 : appliquer un pourcentage (72 % de 9 000 = 0,72 × 9 000)'),
+      B(18, 'r', 'Cours à trous partie 2.2 : calculer un pourcentage (351 sur 650 = 54 %)'),
+      B(22, 'e', 'Cahier d\'activités : pourcentages', { min: 10 }),
+      B(8, 'q', 'Plickers (fin) : pourcentages'),
+    ] },
+  { id: 'N4', ch: 'prop', k: 'Proportionnalité · séance 4', t: 'Les échelles : le plan de ma chambre',
+    cours: 'Partie 3.1', mat: 'règle graduée, papier quadrillé ou millimétré, crayons de couleur, calculatrice',
+    prep: 'Papier quadrillé ou millimétré (une feuille par élève). Les élèves ont leurs mesures de chambre (devoir du 5 novembre). Le devoir de cette séance (révision) est à donner en fin de journée.',
+    act: 'Le plan de ma chambre',
+    actD: '<p>Avec les mesures relevées à la maison (longueur et largeur de la chambre, trois meubles), chaque élève <b>choisit une échelle</b> (1/50 conseillée), calcule dans un tableau de proportionnalité les dimensions sur le plan, puis trace le plan à la règle sur papier quadrillé ou millimétré. Il indique l\'échelle et nomme les meubles.</p><p>Bilan : que se passe-t-il avec l\'échelle 1/10 ? avec 1/200 ? (feuille trop grande ou trop petite).</p>',
+    b: [
+      B(8, 'r', 'Questions flash : 10 %, 25 %, 50 % de 80, 120, 200'),
+      B(20, 'r', 'Cours à trous partie 3.1 : échelle 1/1000, appliquer une échelle, calculer une échelle'),
+      B(36, 'a', 'Activité « Le plan de ma chambre » : calculs et tracé à l\'échelle', { min: 20 }),
+      B(18, 'e', 'Cahier d\'activités : cartes et modèles réduits', { min: 6 }),
+      B(8, 'q', 'Plickers (fin) : échelles'),
+    ] },
+  { id: 'N5', ch: 'prop', k: 'Proportionnalité · révisions et évaluation', t: 'Durées et vitesse, puis évaluation Proportionnalité',
+    cours: 'Partie 3.2', mat: 'calculatrice',
+    prep: 'Imprimer l\'évaluation de Proportionnalité.',
+    act: '',
+    b: [
+      B(8, 'q', 'Plickers (début) : échelles, pourcentages, vitesse'),
+      B(12, 'r', 'Cours à trous partie 3.2 : durées et distances (12 km en trois quarts d\'heure)'),
+      B(29, 'e', 'Révisions : fiche bilan, exercices au choix, dernières questions', { min: 10 }),
+      B(41, 'v', 'Évaluation Proportionnalité (40 min) et ramassage', { g: 'Proportionnalité · évaluation' }),
+    ] },
+
+  /* ============ ANGLES (1 semaine) ============ */
+  { id: 'N6', ch: 'ang', k: 'Angles · séance 1', t: 'Somme des angles, triangles rectangle, équilatéral, isocèle',
+    cours: 'Parties 1 et 2', mat: 'ciseaux, rapporteur',
+    prep: 'Imprimer le cours à trous « Angles ». Chaque élève trace un triangle sur une feuille blanche. Le devoir de cette séance est à donner en fin de journée.',
+    act: 'Le triangle déchiré',
+    actD: '<p>Chaque élève trace un grand triangle (un aigu, un obtus), colore ses trois angles, <b>déchire</b> les trois coins et les place côte à côte sur une droite : ils forment un angle plat. Conclusion : A + B + C = 180°.</p>',
+    b: [
+      B(12, 'a', 'Activité « Le triangle déchiré » : trois angles qui forment un angle plat'),
+      B(14, 'r', 'Cours à trous partie 1 : la somme des angles est 180°, méthode « Appliquer la règle des 180° »'),
+      B(18, 'r', 'Cours à trous partie 2 : triangle rectangle (angles aigus = 90°), triangle équilatéral (60°)'),
+      B(16, 'r', 'Cours à trous partie 2 : triangle isocèle (angles à la base), méthode « nature du triangle ABC »'),
+      B(22, 'e', 'Cahier d\'activités : calculer des angles', { min: 10 }),
+      B(8, 'q', 'Plickers (fin) : angles d\'un triangle'),
+    ] },
+  { id: 'N7', ch: 'ang', k: 'Angles · séance 2', t: 'Angles alternes-internes, correspondants et parallélisme',
+    cours: 'Parties 3 et 4', mat: 'règle, équerre, rapporteur',
+    prep: 'Si possible, vidéoprojecteur pour une figure de deux parallèles et d\'une sécante.',
+    act: 'Les bandes parallèles',
+    actD: '<p>Chaque élève trace deux droites parallèles (règle et équerre) coupées par une sécante, numérote les 8 angles et les <b>mesure</b>. Il complète un tableau : quels angles sont égaux ? Conjecture écrite par la classe : les angles alternes-internes sont égaux, les angles correspondants sont égaux. Vérification avec une autre sécante.</p>',
+    b: [
+      B(8, 'q', 'Plickers (début) : 180° et triangles particuliers'),
+      B(6, 'r', 'Correction du devoir « Angles et triangles »'),
+      B(15, 'a', 'Activité « Les bandes parallèles » : mesurer 8 angles, conjecture'),
+      B(15, 'r', 'Cours à trous partie 3 : angles alternes-internes et correspondants (reconnaître)'),
+      B(16, 'r', 'Cours à trous partie 4 : propriétés de parallélisme (directes et réciproques), méthodes rédigées'),
+      B(30, 'e', 'Cahier d\'activités : calculer, prouver que deux droites sont parallèles', { min: 12 }),
+    ] },
+
+  /* ============ FRACTIONS 2 (1,5 semaine) ============ */
+  { id: 'N8', ch: 'fr', k: 'Fractions 2 · séance 1', t: 'Mettre au même dénominateur, comparer des fractions',
+    cours: 'Partie 1 et début de la partie 2', mat: 'bandes de papier, ciseaux, crayons de couleur',
+    prep: 'Imprimer le cours à trous « Fractions 2 ». Préparer des bandes de papier (environ 24 cm × 3 cm), 4 par élève. Le devoir de cette séance (révision Angles) est à donner en fin de journée.',
+    act: 'Qui a la plus grande part ?',
+    actD: '<p>Chaque élève reçoit 4 bandes identiques. Il plie en 2, 4, 8, puis en 3, 6, 12 et colorie <b>3/4, 5/8, 2/3 et 7/12</b>. En superposant les bandes il range les fractions.</p><p>Conclusion à écrire : pour comparer, on les met <b>au même dénominateur</b>, puis on compare les numérateurs.</p>',
+    b: [
+      B(7, 'r', 'Questions flash : fractions égales, simplifier (fractions 1)'),
+      B(15, 'r', 'Cours à trous partie 1 : mettre au même dénominateur (multiplier, ou diviser)'),
+      B(20, 'e', 'Cahier d\'activités : mettre au même dénominateur (dont un cas où l\'on divise)', { min: 8 }),
+      B(20, 'a', 'Activité « Qui a la plus grande part ? » (bandes de papier)'),
+      B(20, 'r', 'Cours à trous partie 2 : comparer deux fractions, méthode'),
+      B(8, 'q', 'Plickers (fin) : mettre au même dénominateur, comparer'),
+    ] },
+  { id: 'N9', ch: 'fr', k: 'Évaluation Angles · Fractions 2, séance 2', t: 'Évaluation Angles, puis encadrer une fraction',
+    cours: 'Partie 2 (encadrer)', mat: 'de quoi écrire',
+    prep: 'Imprimer l\'évaluation d\'Angles.',
+    act: '',
+    b: [
+      B(8, 'q', 'Plickers (début) : révision Angles avant l\'évaluation', { ch: 'ang', g: 'Angles · évaluation' }),
+      B(6, 'r', 'Correction du devoir de révision « Angles : l\'essentiel »', { ch: 'ang', g: 'Angles · évaluation' }),
+      B(41, 'v', 'Évaluation Angles (40 min) et ramassage', { ch: 'ang', g: 'Angles · évaluation' }),
+      B(12, 'r', 'Cours à trous partie 2 : encadrer une fraction par deux entiers consécutifs (18/5)', { g: 'Fractions 2 · séance 2' }),
+      B(23, 'e', 'Cahier d\'activités : comparer, ranger, encadrer', { g: 'Fractions 2 · séance 2', min: 8 }),
+    ] },
+  { id: 'N10', ch: 'fr', k: 'Fractions 2 · séance 3', t: 'Additionner et soustraire des fractions',
+    cours: 'Partie 3 (3.1 et 3.2)', mat: 'ardoise et feutre',
+    prep: 'Écrire au tableau les 12 résultats du bingo (voir l\'activité).',
+    act: 'Bingo des fractions',
+    actD: '<p>Au tableau, 12 résultats : <b>1/2 ; 3/4 ; 3/2 ; 5/6 ; 7/8 ; 1 ; 13/12 ; 5/4 ; 7/6 ; 2 ; 5/3 ; 1/4</b>. Chaque élève en choisit 9 et les place dans une grille 3 × 3.</p><p>Calculs à projeter, un par un : 1/4 + 1/4 · 1/2 + 1/4 · 3/4 + 3/4 · 1/3 + 1/2 · 3/8 + 1/2 · 5/6 + 1/6 · 7/12 + 1/2 · 3/4 + 1/2 · 1/2 + 2/3 · 5/4 + 3/4 · 1 + 2/3 · 3/4 − 1/2. Les élèves barrent le résultat s\'il est dans leur grille ; une ligne complète gagne (vérification au tableau).</p>',
+    b: [
+      B(8, 'r', 'Questions flash : comparer, encadrer'),
+      B(12, 'r', 'Cours à trous partie 3.1 : même dénominateur (4/5 + 7/5, 9/3 − 5/3)'),
+      B(18, 'r', 'Cours à trous partie 3.2, méthode 1 : une seule fraction à modifier (3/8 + 3/4, 4/5 + 1)'),
+      B(14, 'r', 'Cours à trous partie 3.2, méthode 2 : les deux fractions changent (7/6 + 3/4, 3/5 − 1/7)'),
+      B(18, 'e', 'Cahier d\'activités : additions et soustractions', { min: 8 }),
+      B(12, 'a', 'Jeu « Bingo des fractions »', { min: 0 }),
+      B(8, 'q', 'Plickers (fin) : additionner et soustraire'),
+    ] },
+  { id: 'N11', ch: 'div', k: 'Révisions Fractions · Divisibilité, séance 1', t: 'Révisions Fractions, puis division euclidienne',
+    cours: 'Divisibilité, partie 1.1', mat: 'jeu de cartes (un par groupe de 2), de quoi écrire',
+    prep: 'Un jeu de 32 ou 52 cartes par groupe de 2. Imprimer le cours à trous « Divisibilité ». Le devoir de cette séance (révision Fractions) est à donner en fin de journée.',
+    act: 'Bataille de fractions, puis « Combien de minibus ? »',
+    actD: '<p><b>1. Bataille de fractions.</b> Avec un jeu de cartes (as = 1, de 1 à 10 seulement) : chaque joueur retourne <b>deux cartes</b> et forme une fraction (une carte au numérateur, l\'autre au dénominateur). La <b>plus grande fraction</b> gagne les quatre cartes ; en cas d\'égalité, bataille. Les élèves doivent justifier en mettant au même dénominateur. Puis relais par équipes : une addition à chaque rang au tableau.</p><p><b>2. Entrée en Divisibilité : « Combien de minibus ? »</b> Au tableau : « 73 élèves partent en sortie. Chaque minibus a 8 places. Combien faut-il de minibus ? Combien de places restent vides ? » Les élèves cherchent seuls (ardoise), puis en binôme. À faire ressortir : 73 = 8 × 9 + 1, <b>il reste 1 élève</b> donc il faut <b>10</b> minibus (le reste se « lit » dans le contexte). Introduit dividende, diviseur, quotient, reste.</p>',
+    b: [
+      B(18, 'a', 'Jeu « Bataille de fractions », puis relais par équipes', { ch: 'fr', g: 'Fractions 2 · révisions', min: 8 }),
+      B(15, 'e', 'Fiche bilan Fractions et dernières questions', { ch: 'fr', g: 'Fractions 2 · révisions', min: 0 }),
+      B(12, 'a', 'Problème d\'entrée « Combien de minibus ? » (ardoise, puis binômes)', { g: 'Divisibilité · séance 1' }),
+      B(17, 'r', 'Cours à trous partie 1.1 : poser une division euclidienne, vocabulaire, égalité euclidienne', { g: 'Divisibilité · séance 1' }),
+      B(20, 'e', 'Cahier d\'activités : poser 4 divisions et écrire l\'égalité euclidienne', { g: 'Divisibilité · séance 1', min: 8 }),
+      B(8, 'q', 'Plickers (fin) : division euclidienne', { g: 'Divisibilité · séance 1' }),
+    ] },
+  { id: 'N12', ch: 'div', k: 'Évaluation Fractions · Divisibilité, séance 2', t: 'Évaluation Fractions, puis diviser par un décimal',
+    cours: 'Divisibilité, partie 1.2', mat: 'calculatrice (pour vérifier)',
+    prep: 'Imprimer l\'évaluation de Fractions.',
+    act: '',
+    b: [
+      B(8, 'q', 'Plickers (début) : révision Fractions avant l\'évaluation', { ch: 'fr', g: 'Fractions 2 · évaluation' }),
+      B(5, 'r', 'Correction du devoir de révision « Fractions : l\'essentiel »', { ch: 'fr', g: 'Fractions 2 · évaluation' }),
+      B(41, 'v', 'Évaluation Fractions 2 (40 min) et ramassage', { ch: 'fr', g: 'Fractions 2 · évaluation' }),
+      B(15, 'r', 'Cours à trous partie 1.2 : diviser par un nombre décimal (1,5 : 0,3)', { g: 'Divisibilité · séance 2' }),
+      B(21, 'e', 'Cahier d\'activités : 1,5 : 0,3 ; 4,8 : 0,6 ; 2,4 : 0,08', { g: 'Divisibilité · séance 2', min: 6 }),
+    ] },
+  { id: 'N13', ch: 'div', k: 'Divisibilité · séance 3', t: 'Multiples et diviseurs',
+    cours: 'Partie 2', mat: 'papier quadrillé, ciseaux',
+    prep: 'Photocopier du papier quadrillé 1 cm (une feuille par élève). Le devoir de cette séance est à donner en fin de journée.',
+    act: 'Les rectangles de 24 carreaux',
+    actD: '<p>Chaque élève dessine, sur du papier quadrillé, <b>tous les rectangles</b> formés de 24 carreaux, puis de 36, puis de 13. Il note les dimensions dans un tableau : 1 × 24, 2 × 12, 3 × 8, 4 × 6.</p><p>Bilan : les dimensions sont les <b>diviseurs</b> de 24 (par couples). Pour 13 il n\'y a qu\'un rectangle, 1 × 13 : annonce des nombres premiers de la séance suivante.</p>',
+    b: [
+      B(8, 'r', 'Questions flash : multiples de 6, 7, 8, 9'),
+      B(14, 'a', 'Activité « Les rectangles de 24 carreaux » (papier quadrillé)'),
+      B(18, 'r', 'Cours à trous partie 2 : diviseur, multiple, divisible ; 0 n\'est pas un diviseur ; méthode « Reconnaître un multiple »'),
+      B(14, 'r', 'Cours à trous : méthode « Déterminer les diviseurs d\'un nombre » (par couples)'),
+      B(28, 'e', 'Cahier d\'activités : multiples de 14, diviseurs de 28, 36, 48', { min: 10 }),
+      B(8, 'q', 'Plickers (fin) : division euclidienne, multiples et diviseurs'),
+    ] },
+  { id: 'N14', ch: 'div', k: 'Divisibilité · séance 4', t: 'Critères de divisibilité, nombres premiers, Juniper Green',
+    cours: 'Partie 3 et nombres premiers', mat: 'de quoi écrire',
+    prep: 'Écrire au tableau la grille 1 à 20 (puis 1 à 40) pour Juniper Green.',
+    act: 'Juniper Green',
+    actD: '<p><b>Juniper Green</b> (jeu de ton idée), en binôme, nombres de 1 à 20 puis de 1 à 40 :</p><ul><li>le premier joueur choisit <b>un nombre pair</b> et le barre ;</li><li>chacun à son tour choisit un nombre non barré qui est <b>un multiple ou un diviseur</b> du nombre que l\'adversaire vient de jouer, et le barre ;</li><li>celui qui ne peut plus jouer a perdu.</li></ul><p>Jouer deux parties (on échange les rôles), puis bilan collectif : jouer 1 est-il une bonne idée ? les nombres premiers sont-ils des coups dangereux ? (règles à ajuster à celles de ton exemplaire.)</p>',
+    b: [
+      B(8, 'q', 'Plickers (début) : multiples, diviseurs et critères déjà vus'),
+      B(10, 'r', 'Ramasser et corriger le devoir (diviseurs de 36) ; questions flash'),
+      B(12, 'a', 'Découverte : multiples de 3 et de 9, somme de leurs chiffres, conjecture'),
+      B(20, 'r', 'Cours à trous partie 3 : critères par 2, 5, 10, 3, 9 ; méthode « Reconnaître un multiple ou un diviseur » (456)'),
+      B(8, 'r', 'Cours à trous : les nombres premiers (jusqu\'à 30)'),
+      B(22, 'a', 'Jeu « Juniper Green » : deux parties en binôme, bilan', { min: 12 }),
+      B(10, 'e', 'Exercices flash avant l\'évaluation', { min: 5 }),
+    ] },
+  { id: 'N15', ch: 'div', k: 'Bilan de la période', t: 'Évaluation Divisibilité, puis quiz par équipes',
+    cours: '—', mat: 'ardoise et feutre',
+    prep: 'Imprimer l\'évaluation de Divisibilité. Prévoir les Plickers des séances précédentes à rejouer.',
+    act: 'Quiz par équipes',
+    actD: '<p>Rejouer en équipes les meilleures questions Plickers des quatre chapitres (proportionnalité, angles, fractions, divisibilité) : 4 équipes, un point par bonne réponse, bonus pour la justification.</p>',
+    b: [
+      B(41, 'v', 'Évaluation Divisibilité (40 min) et ramassage', { g: 'Divisibilité · évaluation' }),
+      B(33, 'a', 'Quiz par équipes sur les quatre chapitres', { min: 0 }),
+      B(8, 'r', 'Ce qu\'il faut retenir de la période (cahier)', { min: 0 }),
+      B(8, 'q', 'Plickers (fin) : bilan de la période', { min: 0 }),
+    ] },
+];
+
+/* ---------- Plickers : 5 questions par séance (4 choix maximum, texte seul) ---------- */
+const QUIZ = {
+  N1: { quand: 'début', titre: 'Prérequis : multiplier, diviser, vitesse', q: [
+    ['Que vaut 4 × 2,5 ?', ['6,5', '10', '8', '12'], 1],
+    ['Que vaut 18 ÷ 4 ?', ['4,5', '4', '3,5', '5'], 0],
+    ['3 stylos coûtent 6 €. Combien coûtent 6 stylos (prix proportionnel) ?', ['9 €', '12 €', '10 €', '18 €'], 1],
+    ['5 kg de pommes coûtent 10 €. Combien coûte 1 kg ?', ['2 €', '5 €', '50 €', '0,5 €'], 0],
+    ['Un coureur parcourt 2 km en 20 min. À la même vitesse, en 40 min il parcourt…', ['22 km', '4 km', '40 km', '2,5 km'], 1]] },
+  N2: { quand: 'fin', titre: 'Reconnaître et compléter un tableau de proportionnalité', q: [
+    ['Tableau : 2 → 6 ; 4 → 12 ; 5 → 15. Est-il proportionnel ?', ['Oui, coefficient 3', 'Oui, coefficient 4', 'Non', 'On ne peut pas savoir'], 0],
+    ['Tableau : 1 → 3 ; 2 → 5 ; 3 → 7. Est-il proportionnel ?', ['Oui', 'Non'], 1],
+    ['4 places coûtent 28 €. Combien coûtent 6 places (prix proportionnel) ?', ['32 €', '40 €', '42 €', '36 €'], 2],
+    ['Tableau : 3 → 4,5 ; 4 → ?', ['5', '6', '5,5', '7'], 1],
+    ['300 g de farine pour 4 personnes. Pour 6 personnes il faut…', ['350 g', '400 g', '450 g', '500 g'], 2]] },
+  N3: { quand: 'fin', titre: 'Les pourcentages', q: [
+    ['Que vaut 50 % de 80 ?', ['40', '50', '30', '160'], 0],
+    ['25 % correspond à la fraction…', ['1/4', '1/2', '1/5', '2/5'], 0],
+    ['Que vaut 20 % de 150 ?', ['20', '30', '15', '75'], 1],
+    ['Sur 50 élèves, 30 sont demi-pensionnaires. Quel pourcentage ?', ['30 %', '50 %', '60 %', '80 %'], 2],
+    ['Remise de 30 % sur un article à 80 €. Le prix après remise est…', ['50 €', '56 €', '24 €', '54 €'], 1]] },
+  N4: { quand: 'fin', titre: 'Les échelles', q: [
+    ['À l\'échelle 1/100, 1 cm sur le plan représente en réalité…', ['1 cm', '10 cm', '100 cm', '1 000 cm'], 2],
+    ['Carte à l\'échelle 1/1000 : 8 cm sur la carte représentent…', ['80 cm', '800 cm', '8 000 cm', '8 cm'], 2],
+    ['Plan à l\'échelle 1/50 : une table de 120 cm mesure sur le plan…', ['2,4 cm', '6 cm', '24 cm', '0,4 cm'], 0],
+    ['Un bateau de 25 m (2 500 cm) est représenté par 10 cm. L\'échelle est…', ['1/25', '1/250', '1/2 500', '1/10'], 1],
+    ['Sur une carte à l\'échelle 1/200 000, 3 cm représentent en réalité…', ['600 m', '6 km', '60 km', '600 km'], 1]] },
+  N5: { quand: 'début', titre: 'Révision avant l\'évaluation', q: [
+    ['Un athlète parcourt 12 km en 45 min. En 15 min il parcourt…', ['3 km', '4 km', '5 km', '6 km'], 1],
+    ['Combien de minutes dans trois quarts d\'heure ?', ['30', '40', '45', '75'], 2],
+    ['Un cycliste roule 15 km en 20 min à vitesse constante. En 1 h il parcourt…', ['30 km', '45 km', '60 km', '50 km'], 1],
+    ['45 élèves sur 150 sont absents. Quel pourcentage ?', ['15 %', '30 %', '45 %', '3 %'], 1],
+    ['Carte à l\'échelle 1/1000 : une longueur réelle de 80 m est représentée par…', ['8 cm', '80 cm', '0,8 cm', '800 cm'], 0]] },
+  N6: { quand: 'fin', titre: 'Angles d\'un triangle', q: [
+    ['Dans un triangle, deux angles mesurent 50° et 70°. Le troisième mesure…', ['60°', '70°', '120°', '40°'], 0],
+    ['Dans un triangle rectangle, la somme des deux angles aigus est…', ['180°', '90°', '60°', '100°'], 1],
+    ['Chaque angle d\'un triangle équilatéral mesure…', ['30°', '45°', '60°', '90°'], 2],
+    ['ABC est isocèle en A et l\'angle A mesure 40°. Chaque angle à la base mesure…', ['70°', '140°', '40°', '80°'], 0],
+    ['Un triangle a des angles de 90°, 45° et 45°. Sa nature :', ['rectangle seulement', 'isocèle seulement', 'rectangle et isocèle', 'équilatéral'], 2]] },
+  N7: { quand: 'début', titre: 'Retour sur les angles du triangle', q: [
+    ['Dans ABC, A = 35° et B = 65°. L\'angle C mesure…', ['80°', '100°', '90°', '70°'], 0],
+    ['Les angles d\'un triangle équilatéral mesurent…', ['60°', '45°', '90°', '30°'], 0],
+    ['Un triangle isocèle a des angles à la base de 55°. L\'angle au sommet vaut…', ['70°', '55°', '110°', '125°'], 0],
+    ['Un angle plat mesure…', ['90°', '180°', '360°', '120°'], 1],
+    ['Un angle de 112° : pour faire un angle plat, il manque…', ['68°', '78°', '248°', '112°'], 0]] },
+  N8: { quand: 'fin', titre: 'Même dénominateur et comparaison', q: [
+    ['3/4 = ?/12', ['3', '6', '9', '12'], 2],
+    ['Quelle fraction est égale à 2/5 ?', ['4/10', '4/5', '2/10', '3/6'], 0],
+    ['5/6 et 7/12 : quel dénominateur commun choisir ?', ['12', '18', '13', '11'], 0],
+    ['5/6 écrit avec le dénominateur 12 :', ['5/12', '10/12', '11/12', '7/12'], 1],
+    ['Quelle fraction est la plus grande ?', ['5/9', '7/9', '4/9', '2/9'], 1]] },
+  N9: { quand: 'début', titre: 'Révision Angles avant l\'évaluation', q: [
+    ['Dans un triangle, deux angles mesurent 50° et 70°. Le troisième mesure…', ['60°', '70°', '120°', '40°'], 0],
+    ['Deux droites parallèles et une sécante : les angles alternes-internes sont…', ['égaux', 'supplémentaires', 'toujours droits', 'complémentaires'], 0],
+    ['Deux angles correspondants sont égaux. On peut en déduire que…', ['les droites sont parallèles', 'les droites sont perpendiculaires', 'le triangle est isocèle', 'les droites sont sécantes'], 0],
+    ['ABC est isocèle en A et l\'angle A mesure 40°. Chaque angle à la base mesure…', ['70°', '140°', '40°', '80°'], 0],
+    ['Un triangle rectangle a un angle de 35°. Son troisième angle mesure…', ['55°', '45°', '65°', '145°'], 0]] },
+  N10: { quand: 'fin', titre: 'Additionner et soustraire des fractions', q: [
+    ['4/7 + 2/7 = ?', ['6/14', '6/7', '8/7', '2/7'], 1],
+    ['9/5 − 3/5 = ?', ['6/5', '6/0', '12/5', '6/10'], 0],
+    ['1/2 + 1/4 = ?', ['2/6', '2/4', '3/4', '1/6'], 2],
+    ['Pour 3/8 + 1/4, on écrit 1/4 avec le dénominateur 8 :', ['2/8', '1/8', '4/8', '3/8'], 0],
+    ['3/5 + 1 = ?', ['4/5', '8/5', '3/6', '4/6'], 1]] },
+  N11: { quand: 'fin', titre: 'Division euclidienne', q: [
+    ['Dans la division de 73 par 3, combien de fois 3 dans 7 ?', ['1', '2', '3', '4'], 1],
+    ['Quel est le reste de la division de 17 par 5 ?', ['2', '3', '4', '1'], 0],
+    ['Quelle égalité est la division euclidienne de 50 par 7 ?', ['50 = 7 × 6 + 8', '50 = 7 × 7 + 1', '50 = 7 × 8 − 6', '50 = 7 × 5 + 15'], 1],
+    ['Dans une division euclidienne, le reste est…', ['strictement inférieur au diviseur', 'égal au diviseur', 'supérieur au diviseur', 'toujours égal à 0'], 0],
+    ['Quelle égalité est vraie ?', ['56 = 8 × 7', '56 = 6 × 8', '56 = 9 × 6', '56 = 7 × 7'], 0]] },
+  N12: { quand: 'début', titre: 'Révision Fractions avant l\'évaluation', q: [
+    ['5/6 + 7/6 = ?', ['12/12', '12/6', '2/6', '35/6'], 1],
+    ['3/4 − 1/8 = ?', ['2/4', '5/8', '2/8', '3/8'], 1],
+    ['Quelle fraction est la plus petite ?', ['3/4', '2/3', '5/8', '7/12'], 3],
+    ['Encadrer 17/5 par deux entiers consécutifs :', ['2 < 17/5 < 3', '3 < 17/5 < 4', '4 < 17/5 < 5', '17 < 17/5 < 18'], 1],
+    ['7/6 + 3/4 = ?', ['10/10', '23/12', '10/24', '21/12'], 1]] },
+  N13: { quand: 'fin', titre: 'Multiples et diviseurs', q: [
+    ['Quel nombre est un multiple de 14 ?', ['141', '154', '160', '135'], 1],
+    ['Quels sont tous les diviseurs de 12 ?', ['1, 2, 3, 4, 6, 12', '2, 3, 4, 6', '1, 2, 4, 6, 12', '1, 3, 4, 12'], 0],
+    ['0 est un diviseur de 10.', ['Vrai', 'Faux'], 1],
+    ['Quel nombre est un diviseur de 45 ?', ['6', '9', '12', '8'], 1],
+    ['48 est un multiple de…', ['5', '7', '6', '9'], 2]] },
+  N14: { quand: 'début', titre: 'Retour sur multiples et diviseurs', q: [
+    ['Lequel de ces nombres est un multiple de 6 ?', ['16', '26', '36', '46'], 2],
+    ['Les diviseurs de 20 sont…', ['1, 2, 4, 5, 10, 20', '2, 4, 5, 10', '1, 2, 4, 10, 20', '1, 4, 5, 20'], 0],
+    ['Quel est le reste de la division euclidienne de 29 par 4 ?', ['1', '2', '3', '5'], 0],
+    ['15 est un diviseur de 45.', ['Vrai', 'Faux'], 0],
+    ['Combien de diviseurs possède 13 ?', ['1', '2', '3', '4'], 1]] },
+  N15: { quand: 'fin', titre: 'Bilan de la période', q: [
+    ['Tableau de proportionnalité : 4 → 28. À 6 correspond…', ['34', '42', '36', '40'], 1],
+    ['ABC est isocèle en A et l\'angle A mesure 100°. Chaque angle à la base mesure…', ['40°', '80°', '100°', '50°'], 0],
+    ['2/3 + 1/6 = ?', ['3/9', '5/6', '3/6', '2/9'], 1],
+    ['Quel nombre est divisible par 9 ?', ['252', '253', '250', '251'], 0],
+    ['Lequel de ces nombres est premier ?', ['21', '23', '25', '27'], 1]] },
+};
+const LET = ['A', 'B', 'C', 'D'];
+
+/* ---------- Devoirs : donnés le jeudi, à rendre à la première séance de la semaine suivante ---------- */
+const DEV = {
+  N2: { fiche: 'Le plan de ma chambre', h: '<p><b>Coller la fiche « Le plan de ma chambre »</b> et la compléter : mesurer, <b>en centimètres</b>, la longueur et la largeur de ta chambre et de trois meubles (lit, bureau, armoire ou autres).</p><p>Ces mesures serviront à faire un plan à l\'échelle en classe (séance sur les échelles).</p>', site: [['proportionnalite', 'tableaux']] },
+  N4: { fiche: 'Proportionnalité : l\'essentiel', revise: true, h: '<p><b>Réviser pour l\'évaluation de Proportionnalité (mercredi) : coller la fiche « Proportionnalité, l\'essentiel »</b> (tableaux, pourcentages, échelles, vitesse) et l\'apprendre.</p><p>Exercice, au dos de la fiche : 4 exercices de révision (tableau à compléter, pourcentage, échelle, vitesse).</p>', site: [['proportionnalite', 'problemes'], ['proportionnalite', 'pourcentages'], ['proportionnalite', 'echelles']] },
+  N6: { fiche: 'Angles et triangles', h: '<p><b>Coller la fiche « Angles et triangles »</b> (180°, rectangle, équilatéral, isocèle) et l\'apprendre.</p><p>Exercice, au dos de la fiche : trois triangles dont il faut calculer un angle (180°, rectangle, isocèle).</p>', site: [['angles', 'triangles']] },
+  N8: { fiche: 'Angles : l\'essentiel', revise: true, h: '<p><b>Réviser pour l\'évaluation d\'Angles (mercredi) : coller la fiche « Angles, l\'essentiel »</b> (triangles, angles alternes-internes et correspondants, parallélisme) et l\'apprendre.</p><p>Exercice, au dos de la fiche : calculer des angles dans une figure avec deux parallèles, et justifier que deux droites sont parallèles.</p>', site: [['angles', 'triangles'], ['angles', 'parallelisme']] },
+  N11: { fiche: 'Fractions : l\'essentiel', revise: true, h: '<p><b>Réviser pour l\'évaluation de Fractions (mercredi) : coller la fiche « Fractions, l\'essentiel »</b> (comparer, encadrer, additionner, soustraire) et l\'apprendre.</p><p>Exercice, au dos de la fiche : 5/6 + 7/6 ; 3/4 − 1/8 ; 7/6 + 3/4 ; encadrer 17/5 par deux entiers consécutifs.</p>', site: [['fractions2', 'denominateur'], ['fractions2', 'comparer'], ['fractions2', 'addsub']] },
+  N13: { fiche: 'Division, multiples et diviseurs', h: '<p><b>Coller la fiche « Division, multiples et diviseurs »</b> et l\'apprendre (vocabulaire, égalité euclidienne, déterminer les diviseurs).</p><p>Exercice, au dos de la fiche : poser la division euclidienne de 158 par 7 et écrire l\'égalité ; donner tous les diviseurs de 36.</p>', site: [['divisibilite', 'division'], ['divisibilite', 'multiples']] },
+  N15: { fiche: '', h: '<p><b>Pas de devoir à rendre : bonnes vacances !</b></p><p>Facultatif : refaire sur le site les chapitres où l\'évaluation était difficile (page « Mes erreurs »).</p>', site: [] },
+};
+
+/* =========================================================
+   Emploi du temps et planification
+   ========================================================= */
+const PERIODE_DEF = { debut: '2026-11-02', fin: '2026-12-18', feries: ['2026-11-11'] };
+let PERIODE = { ...PERIODE_DEF, feries: [...PERIODE_DEF.feries] };
+const EDT_DEF = () => ({ hebdo: [{ j: 3, d: 90 }, { j: 4, d: 90 }], extra: { on: true, j: 4, d: 90, first: '2026-11-09', every: 3 } });
+
+const JOURS = ['', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
+const pad = (n) => String(n).padStart(2, '0');
+const iso = (d) => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const pdate = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d, 12); };
+function lundi(s) { const d = typeof s === 'string' ? pdate(s) : new Date(s); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; }
+const fmtJ = (s, o) => pdate(s).toLocaleDateString('fr-FR', o || { weekday: 'short', day: 'numeric', month: 'short' });
+const fmtD = (m) => (m >= 60 ? Math.floor(m / 60) + 'h' + (m % 60 ? pad(m % 60) : '') : m + ' min');
+
+function creneaux(edt) {
+  const out = [];
+  if (!edt) return out;
+  const d0 = lundi(PERIODE.debut), fin = pdate(PERIODE.fin);
+  const x = edt.extra && edt.extra.on ? edt.extra : null;
+  const x0 = x ? lundi(x.first || PERIODE.debut) : null;
+  for (let d = new Date(d0); d <= fin; d.setDate(d.getDate() + 1)) {
+    const s = iso(d);
+    if (s < PERIODE.debut || PERIODE.feries.includes(s)) continue;
+    const j = (d.getDay() + 6) % 7 + 1; // 1 = lundi
+    const here = [];
+    (edt.hebdo || []).forEach((h) => { if (+h.j === j) here.push(+h.d); });
+    const nb = here.length;
+    if (x && +x.j === j) { const w = Math.round((lundi(s) - x0) / (7 * 864e5)); if (w >= 0 && w % (+x.every || 3) === 0) here.push(+x.d); }
+    here.forEach((m, i) => out.push({ id: s + (i ? '#' + i : ''), date: s, j, d: m, extra: i >= nb }));
   }
   return out;
 }
-function unites(){const u=[];for(const s of SEANCES.map(x=>x.id)){BLOCS[s].forEach((b,i)=>u.push({sid:s,i,...b}))}return u}
-// réduit les blocs souples de R minutes (pas de 5) ; ordre : depuis la fin (sens=-1) ou depuis le début (sens=1)
-function reduire(us,from,R,sens){
-  const el=us.map((u,k)=>k).filter(k=>k>=from&&us[k].y==="e"&&us[k].min>0);
-  if(sens===1)el.reverse();
-  const dur=us.map(u=>u.m);
-  let r=R,guard=0;
-  while(r>0&&guard++<500){let moved=false;
-    for(let a=el.length-1;a>=0&&r>0;a--){const k=el[a];if(dur[k]-5>=us[k].min){dur[k]-=5;r-=5;moved=true}}
-    if(!moved)break}
-  return {dur,ok:r<=0};
+
+function unites() {
+  const u = [];
+  for (const s of SEANCES) s.b.forEach((b, i) => u.push({ sid: s.id, i, m: b.m, y: b.y, t: b.t, ch: b.ch || s.ch, g: b.g || s.k, min: b.min == null ? (b.y === 'e' ? Math.min(10, b.m) : b.m) : b.min }));
+  return u;
 }
-const BILLET_DE={S2:1,S3:2,S7:3,S10:4,S14:5,S17:6};
-const PARC_DE={S3:1,S4:2,S8:3,S11:4,S15:5,S18:6};
-function simuler(cr,us,dur,etat){
-  // etat: {k,used} position de départ ; cr: créneaux à remplir {cap}
-  let k=etat.k,used=etat.used;const res=[];
-  for(const c of cr){
-    let rem=c.cap,t=0,pieces=[],billets=[];
-    while(rem>0&&k<us.length){
-      const u=us[k],left=dur[k]-used;
-      if(left<=0){k++;used=0;continue}
-      if(u.y==="p"&&billets.includes(PARC_DE[u.sid]))break;
-      if(u.y!=="e"&&left>rem)break;
-      if(u.i===0&&u.y==="r"&&u.m===10&&pieces.length&&k+1<us.length){const n=us[k+1];if(n.sid===u.sid&&n.y!=="e"&&dur[k+1]>rem-left)break}
-      const take=Math.min(left,rem);
-      pieces.push({sid:u.sid,i:u.i,t0:t,m:take,y:u.y,suite:used>0,coupe:take<left});
-      t+=take;rem-=take;used+=take;
-      if(u.y==="b")billets.push(BILLET_DE[u.sid]);
-      if(used>=dur[k]){k++;used=0}
-    }
-    if(rem>0&&k<us.length){
-      // rend le temps libre aux blocs souples raccourcis de ce créneau
-      for(let a=pieces.length-1;a>=0&&rem>0;a--){const pv=pieces[a];
-        if(pv.y==="e"&&!pv.coupe&&!pv.suite){const add=Math.min(rem,Math.max(0,us.find(z=>z.sid===pv.sid&&z.i===pv.i).m-pv.m));pv.m+=add;rem-=add}}
-      let tt=0;pieces.forEach(q=>{q.t0=tt;tt+=q.m});t=tt;
-      if(rem>0)pieces.push({marge:true,t0:t,m:rem})}
-    res.push({pieces,fin:{k,used}});
+const droppable = (u) => u.min === 0;
+
+/** réduit les blocs souples (type e) de R minutes, par pas de 5, depuis la fin (sens = -1) ou depuis le début (sens = 1) */
+function reduire(us, from, R, sens) {
+  const el = us.map((u, k) => k).filter((k) => k >= from && us[k].y === 'e' && us[k].min < us[k].m);
+  if (sens === 1) el.reverse();
+  const dur = us.map((u) => u.m);
+  let r = R, guard = 0;
+  while (r > 0 && guard++ < 500) {
+    let moved = false;
+    for (let a = el.length - 1; a >= 0 && r > 0; a--) { const k = el[a]; if (dur[k] - 5 >= us[k].min) { dur[k] -= 5; r -= 5; moved = true; } }
+    if (!moved) break;
   }
-  return {res,fin:{k,used},reste:k<us.length};
+  return { dur, ok: r <= 0 };
 }
-function planifier(cr,us,depart){
-  // plus petite réduction des blocs souples qui fait tout rentrer (la remédiation finale peut sauter)
-  const tient=sim=>!sim.reste||!us.slice(sim.fin.k).some(u=>!(u.y==="e"&&u.min===0));
-  let secours=null;
-  for(let R=0;R<=900;R+=5){
-    let fin=true;
-    for(const sens of [-1,1]){
-      const {dur,ok}=reduire(us,depart.k,R,sens);
-      const sim=simuler(cr,us,dur,depart);
-      if(tient(sim))return {...sim,R,dur};
-      if(ok)fin=false;
-      if(!secours||sim.fin.k>secours.fin.k)secours={...sim,R,dur};
+
+/** remplit les créneaux (cap = minutes disponibles) avec le flux de blocs ; un bloc non souple n'est jamais coupé */
+function simuler(cr, us, dur, etat) {
+  let k = etat.k, used = etat.used;
+  const res = [];
+  for (const c of cr) {
+    let rem = c.cap, t = 0;
+    const pieces = [];
+    while (rem > 0 && k < us.length) {
+      const u = us[k], left = dur[k] - used;
+      if (left <= 0) { k++; used = 0; continue; }
+      if (u.y !== 'e' && left > rem) break;
+      const take = Math.min(left, rem);
+      pieces.push({ sid: u.sid, i: u.i, t0: t, m: take, y: u.y, suite: used > 0, coupe: take < left });
+      t += take; rem -= take; used += take;
+      if (used >= dur[k]) { k++; used = 0; }
     }
-    if(fin)break;
+    if (rem > 0 && k < us.length) {
+      // rend le temps libre aux blocs souples raccourcis de ce créneau
+      for (let a = pieces.length - 1; a >= 0 && rem > 0; a--) {
+        const pv = pieces[a];
+        if (pv.y === 'e' && !pv.coupe && !pv.suite) {
+          const add = Math.min(rem, Math.max(0, us.find((z) => z.sid === pv.sid && z.i === pv.i).m - pv.m));
+          pv.m += add; rem -= add;
+        }
+      }
+      let tt = 0; pieces.forEach((q) => { q.t0 = tt; tt += q.m; }); t = tt;
+      if (rem > 0) pieces.push({ marge: true, t0: t, m: rem });
+    }
+    res.push({ pieces, fin: { k, used } });
+  }
+  return { res, fin: { k, used }, reste: k < us.length };
+}
+
+function planifier(cr, us, depart) {
+  // plus petite réduction des blocs souples qui fait tout rentrer (les blocs « facultatifs », min 0, peuvent sauter)
+  const tient = (sim) => !sim.reste || !us.slice(sim.fin.k).some((u) => !droppable(u));
+  let secours = null;
+  for (let R = 0; R <= 900; R += 5) {
+    let fin = true;
+    for (const sens of [-1, 1]) {
+      const { dur, ok } = reduire(us, depart.k, R, sens);
+      const sim = simuler(cr, us, dur, depart);
+      if (tient(sim)) return { ...sim, R, dur };
+      if (ok) fin = false;
+      if (!secours || sim.fin.k > secours.fin.k) secours = { ...sim, R, dur };
+    }
+    if (fin) break;
   }
   return secours;
 }
-const MAT={S1:"ciseaux",S2:"ciseaux, colle",S3:"ardoise et feutre, ciseaux, colle",S4:"ardoise et feutre",S5:"de quoi écrire",S6:"équerre, ciseaux",
- S7:"rapporteur, papier calque, ciseaux",S8:"ardoise et feutre, rapporteur",S9:"rapporteur, règle, crayons de couleur, calculatrice",S10:"rapporteur, règle",
- S11:"rapporteur, règle, ciseaux",S12:"rapporteur, règle, équerre",S13:"compas, règle",S14:"compas, rapporteur, règle",S15:"compas, règle, ciseaux",
- S16:"équerre, compas, règle",S17:"ciseaux, rapporteur",S18:"rapporteur, règle",S19:"compas, équerre, règle",S20:"règle, équerre, rapporteur, compas"};
-const CHN={"Opérations":[5,4],"Angles":[6,7],"Triangles":[7,7]};
-const REVISE={S4:1,S11:1,S19:1}; // devoirs « réviser pour l'évaluation » : à donner avant le créneau de l'évaluation
-const JOURS=["","lundi","mardi","mercredi","jeudi","vendredi"];
-const fmtJ=(s,o)=>pdate(s).toLocaleDateString("fr-FR",o||{weekday:"short",day:"numeric",month:"short"});
-const fmtD=m=>m>=60?(Math.floor(m/60)+"h"+(m%60?String(m%60).padStart(2,"0"):"")):m+" min";
-function numChap(s){const m=/séance (\d+)/.exec(s.k);return m?+m[1]:null}
-function chapPos(s){
-  if(s.id==="S5")return "Fin du chapitre 5 · Opérations (évaluation), puis chapitre 6 · Angles, séance 1 sur 7";
-  const [c,n]=CHN[s.chap];
-  if(s.eval)return `Chapitre ${c} · ${s.chap}, évaluation`;
-  return `Chapitre ${c} · ${s.chap}, séance ${numChap(s)} sur ${n}, puis l'évaluation`;
-}
-// étiquette courte d'un morceau de séance
-function labPiece(sid,i){
-  const s=SEANCES.find(x=>x.id===sid);
-  if(sid==="S5")return i===0?"Évaluation Opérations":"Angles · séance 1";
-  if(s.eval)return s.chap+" · "+(BLOCS[sid][i]&&BLOCS[sid][i].y==="v"?"évaluation":sid==="S12"?"révisions":"remédiation");
-  return s.chap+" · séance "+numChap(s);
-}
-function lastUnitIndex(us){const r={};us.forEach((u,k)=>r[u.sid]=k);return r}
-// plan complet d'une classe : créneaux passés figés (statut), créneaux à venir planifiés
-function planClasse(c){
-  const cr=creneaux(c.edt),us=unites(),st=c.cren||{};
-  let L=-1;cr.forEach((x,i)=>{if(st[x.id]&&st[x.id].st)L=i});
-  const out=[];let cur={k:0,used:0},last=null;
-  const capOf=x=>{const s=st[x.id]||{};if(s.st==="annule")return 0;if(s.st==="partiel")return Math.max(0,x.d-(+s.reste||0));return x.d};
-  for(let i=0;i<cr.length;i++){
-    if(i<=L){
-      // créneau figé : planifié avec les créneaux suivants supposés complets
-      const rest=cr.slice(i).map((x,j)=>({...x,cap:j===0?capOf(x):x.d}));
-      const p=planifier(rest,us,cur);
-      out.push({...cr[i],cap:rest[0].cap,...p.res[0],st:(st[cr[i].id]||{}).st||"fait",reste:(st[cr[i].id]||{}).reste||0,fige:true});
-      cur=p.res[0].fin;
-    }else{
-      const rest=cr.slice(i).map(x=>({...x,cap:capOf(x)}));
-      last=planifier(rest,us,cur);
-      last.res.forEach((r,j)=>out.push({...rest[j],...r,st:(st[rest[j].id]||{}).st||"",reste:0}));
-      cur=last.fin;break;
+
+function lastUnitIndex(us) { const r = {}; us.forEach((u, k) => { r[u.sid] = k; }); return r; }
+
+/** plan complet d'une classe : créneaux déjà passés figés (fait / pas tout fini / annulé), créneaux à venir planifiés */
+function planClasse(c) {
+  const cr = creneaux(c.edt), us = unites(), st = c.cren || {};
+  let L = -1;
+  cr.forEach((x, i) => { if (st[x.id] && st[x.id].st) L = i; });
+  const out = [];
+  let cur = { k: 0, used: 0 }, last = null;
+  const capOf = (x) => { const s = st[x.id] || {}; if (s.st === 'annule') return 0; if (s.st === 'partiel') return Math.max(0, x.d - (+s.reste || 0)); return x.d; };
+  for (let i = 0; i < cr.length; i++) {
+    if (i <= L) {
+      const rest = cr.slice(i).map((x, j) => ({ ...x, cap: j === 0 ? capOf(x) : x.d }));
+      const p = planifier(rest, us, cur);
+      out.push({ ...cr[i], cap: rest[0].cap, ...p.res[0], st: (st[cr[i].id] || {}).st || 'fait', reste: (st[cr[i].id] || {}).reste || 0, fige: true });
+      cur = p.res[0].fin;
+    } else {
+      const rest = cr.slice(i).map((x) => ({ ...x, cap: capOf(x) }));
+      last = planifier(rest, us, cur);
+      last.res.forEach((r, j) => out.push({ ...rest[j], ...r, st: (st[rest[j].id] || {}).st || '', reste: 0 }));
+      cur = last.fin;
+      break;
     }
   }
-  const lu=lastUnitIndex(us);
-  const fige=L>=0?out[L].fin:{k:0,used:0};
-  const manque=cur.k<us.length?us.slice(cur.k).filter(u=>!(u.y==="e"&&u.min===0)):[];
-  return {cr:out,us,lu,fige,manque,R:last?last.R:0,fin:cur};
-}
-function seanceFaite(c,sid){
-  if(!c.edt)return !!(c.prog[sid]||{}).done;
-  const P=c._plan||(c._plan=planClasse(c));return P.fige.k>P.lu[sid];
-}
-// devoirs d'un créneau : séances terminées ici (hors « Apporter ») + matériel du créneau suivant
-function creneauDonne(P){
-  if(P.give)return P.give;
-  const idx=sid=>SEANCES.findIndex(q=>q.id===sid);
-  const g={};
-  SEANCES.forEach(s=>{
-    let end=P.cr.findIndex(z=>z.fin.k>P.lu[s.id]);
-    if(REVISE[s.id]){
-      const ev=P.cr.findIndex(z=>z.pieces.some(p=>!p.marge&&BLOCS[p.sid][p.i].y==="v"&&idx(p.sid)>idx(s.id)));
-      if(ev>0&&(end<0||ev-1<end))end=ev-1;
-    }
-    g[s.id]=end;
-  });
-  return P.give=g;
-}
-function devoirsCreneau(c,P,i){
-  const x=P.cr[i],g=creneauDonne(P),parts=[];
-  const list=SEANCES.filter(s=>s.dev&&g[s.id]===i);
-  const photo=P.cr.find(z=>z.pieces.some(p=>p.sid==="S8"&&p.i===1));
-  list.forEach(s=>{
-    let h=devoirHtml(s);
-    if(photo)h=h.split("[date]").join(fmtJ(photo.date,{weekday:"long",day:"numeric",month:"long"}));
-    const tmp=document.createElement("div");tmp.innerHTML=h;
-    [...tmp.querySelectorAll("p")].forEach(p=>{if(!/^\s*Apporter/.test(p.textContent))parts.push(p.outerHTML)});
-  });
-  const nx=P.cr.slice(i+1).find(z=>z.cap>0&&z.pieces.some(p=>!p.marge));
-  if(!parts.length&&nx&&x.pieces.some(p=>!p.marge&&BLOCS[p.sid][p.i].y!=="v"))parts.push("<p><b>Relire dans le cours ce qui a été fait aujourd'hui.</b></p>");
-  if(nx){
-    const items=[];new Set(nx.pieces.filter(p=>!p.marge).map(p=>p.sid)).forEach(sid=>MAT[sid].split(", ").forEach(m=>{if(!items.includes(m))items.push(m)}));
-    if(items.length)parts.push(`<p><b>Pour le ${fmtJ(nx.date,{weekday:"long",day:"numeric",month:"long"})}, apporter : ${items.join(", ")}.</b></p>`);
-  }
-  return {html:parts.join(""),ended:list.map(s=>s.id)};
+  const lu = lastUnitIndex(us);
+  const fige = L >= 0 ? out[L].fin : { k: 0, used: 0 };
+  const manque = cur.k < us.length ? us.slice(cur.k).filter((u) => !droppable(u)) : [];
+  return { cr: out, us, lu, fige, manque, R: last ? last.R : 0, fin: cur };
 }
 
-function plan(c){return c._plan||(c._plan=planClasse(c))}
-function invalider(c){if(c)delete c._plan}
-function resumeCreneau(x){
-  const seen=[];x.pieces.filter(p=>!p.marge).forEach(p=>{const l=labPiece(p.sid,p.i);if(!seen.includes(l))seen.push(l)});
-  return seen.join(" → ")||(x.cap===0?"Annulé":"—");
+/* ---------- devoirs : donnés le jeudi (dernier créneau de la journée), à rendre la semaine suivante ---------- */
+function devoirsPlan(P) {
+  const res = {};
+  const lastOfDay = (i) => !P.cr[i + 1] || P.cr[i + 1].date !== P.cr[i].date;
+  SEANCES.forEach((s) => {
+    if (!DEV[s.id]) return;
+    const end = P.cr.findIndex((z) => z.fin.k > P.lu[s.id]);
+    if (end < 0) { res[s.id] = { give: -1, due: -1 }; return; }
+    let g = -1;
+    for (let i = end; i < P.cr.length; i++) { if (P.cr[i].j === 4 && P.cr[i].cap > 0 && lastOfDay(i)) { g = i; break; } }
+    let due = -1;
+    if (g >= 0) { const w = iso(lundi(P.cr[g].date)); due = P.cr.findIndex((z, i) => i > g && z.cap > 0 && iso(lundi(z.date)) > w); }
+    res[s.id] = { give: g, due };
+  });
+  return res;
 }
-function coupe(P){
-  let nom=0,fait=0;P.us.forEach((u,k)=>{if(k<P.fin.k&&!(u.y==="e"&&u.min===0))nom+=u.m});
-  P.cr.forEach(x=>x.pieces.forEach(p=>{if(!p.marge&&!(BLOCS[p.sid][p.i].y==="e"&&BLOCS[p.sid][p.i].min===0)&&P.us.findIndex(u=>u.sid===p.sid&&u.i===p.i)<P.fin.k)fait+=p.m}));
-  return Math.max(0,nom-fait);
+
+/* ---------- repères ---------- */
+const labPiece = (sid, i) => { const s = SEANCES.find((x) => x.id === sid); return s.b[i].g || s.k; };
+function resumeCreneau(x) {
+  const seen = [];
+  x.pieces.filter((p) => !p.marge).forEach((p) => { const l = labPiece(p.sid, p.i); if (!seen.includes(l)) seen.push(l); });
+  return seen.join(' → ') || (x.cap === 0 ? 'Annulé' : '—');
 }
-function prochainCreneau(P){
-  const today=iso(new Date());
-  return P.cr.find(x=>!x.st&&x.date>=today)||P.cr.find(x=>!x.st)||null;
+function coupe(P) {
+  let nom = 0, fait = 0;
+  P.us.forEach((u, k) => { if (k < P.fin.k && !droppable(u)) nom += u.m; });
+  P.cr.forEach((x) => x.pieces.forEach((p) => { if (!p.marge) { const k = P.us.findIndex((u) => u.sid === p.sid && u.i === p.i); if (k < P.fin.k && !droppable(P.us[k])) fait += p.m; } }));
+  return Math.max(0, nom - fait);
 }
-function renderCreneaux(c){
-  const P=plan(c);
-  const nfait=P.cr.filter(x=>x.st).length;
-  const nx=prochainCreneau(P);
-  let h=`<div class="panel"><div class="progress"><h2>${nfait} créneau${nfait>1?"x":""} passé${nfait>1?"s":""} sur ${P.cr.length}</h2>
-    <div class="meter" role="img" aria-label="${nfait} sur ${P.cr.length}"><i style="width:${Math.round(nfait/Math.max(1,P.cr.length)*100)}%"></i></div></div>
-    ${nx?`<p class="now">Prochain créneau : <b>${esc(fmtJ(nx.date,{weekday:"long",day:"numeric",month:"long"}))}</b> (${fmtD(nx.d)}) · ${esc(resumeCreneau(nx))}</p>`:`<p class="now">Tous les créneaux de la période sont passés.</p>`}
-    <p class="hint">La progression est calculée sur l'emploi du temps de la classe. Après chaque cours, indique « Fait », « Pas tout fini » ou « Annulé » : la suite se recalcule. Une évaluation n'est jamais coupée, et un parcours tombe toujours au moins un créneau après son billet.${coupe(P)?` Pour tout faire tenir, les temps de cahier d'activités sont raccourcis de ${fmtD(coupe(P))} au total.`:""}</p>
-    ${P.manque.length?`<p class="warn">Ne tient plus avant les vacances : ${esc([...new Set(P.manque.map(u=>labPiece(u.sid,u.i)))].join(", "))}. Raccourcis une activité ou ajoute un créneau.</p>`:""}
+/** avancement d'un chapitre : minutes de contenu (hors Plickers) dont le créneau est passé, début et fin prévus */
+function chapitres(P) {
+  const info = {};
+  Object.keys(CH).forEach((id) => { info[id] = { id, total: 0, fait: 0, d0: null, d1: null, ev: null }; });
+  P.us.forEach((u, k) => { if (u.y === 'q' || droppable(u)) return; const c = info[u.ch]; c.total += u.m; if (k < P.fige.k) c.fait += u.m; });
+  P.cr.forEach((x) => x.pieces.forEach((p) => {
+    if (p.marge) return;
+    const u = P.us.find((z) => z.sid === p.sid && z.i === p.i), c = info[u.ch];
+    if (u.y === 'q') return;
+    if (!c.d0 || x.date < c.d0) c.d0 = x.date;
+    if (!c.d1 || x.date > c.d1) c.d1 = x.date;
+    if (u.y === 'v') c.ev = x.date;
+  }));
+  return Object.values(info);
+}
+
+</script>
+<script>
+/* =========================================================
+   CLASSEUR 5e — interface
+   ========================================================= */
+const STORE_KEY = 'revisions5e-classeur';
+const UI_KEY = 'revisions5e-classeur-ui';
+let data = { classes: [], periode: null };
+let ui = { cls: null, tab: 'creneaux', openC: null, manage: false, confirmDel: false };
+try { Object.assign(ui, JSON.parse(localStorage.getItem(UI_KEY) || '{}')); ui.manage = false; ui.confirmDel = false; } catch (e) { /* rien */ }
+let timer = null;
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const siteBase = () => new URL('./', location.href).href;
+const fmtLong = (s) => fmtJ(s, { weekday: 'long', day: 'numeric', month: 'long' });
+function saveUi() { try { localStorage.setItem(UI_KEY, JSON.stringify({ cls: ui.cls, tab: ui.tab, openC: ui.openC })); } catch (e) { /* rien */ } }
+function setStatus(t) { $('#status').textContent = t; }
+function cur() { return data.classes.find((c) => c.id === ui.cls) || data.classes[0] || null; }
+
+function norm(d) {
+  if (!d || !Array.isArray(d.classes)) return { classes: [], periode: null };
+  d.classes.forEach((c) => { c.cren = c.cren || {}; if (!c.edt) c.edt = EDT_DEF(); });
+  if (d.periode && d.periode.debut && d.periode.fin) d.periode.feries = d.periode.feries || [];
+  else d.periode = null;
+  return d;
+}
+function applyPeriode() {
+  PERIODE = data.periode ? { debut: data.periode.debut, fin: data.periode.fin, feries: [...data.periode.feries] } : { ...PERIODE_DEF, feries: [...PERIODE_DEF.feries] };
+}
+
+/* ---------- enregistrement (sur cet appareil) ---------- */
+function persist() { clearTimeout(timer); setStatus('Enregistrement…'); timer = setTimeout(flush, 300); }
+function flush() {
+  timer = null;
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(data, (k, v) => (k === '_plan' ? undefined : v))); setStatus('Enregistré sur cet appareil.'); }
+  catch (e) { setStatus('⚠ Pas enregistré : le navigateur refuse (navigation privée ?). Fais une sauvegarde dans un fichier.'); }
+}
+function loadLocal() { try { const d = JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); if (d && Array.isArray(d.classes)) data = norm(d); } catch (e) { /* rien */ } applyPeriode(); }
+
+const plan = (c) => c._plan || (c._plan = planClasse(c));
+const invalider = (c) => { if (c) delete c._plan; };
+
+/* ---------- copie ---------- */
+async function copyText(text, btn, html) {
+  let ok = false;
+  try {
+    if (html && window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+      await navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([text], { type: 'text/plain' }) })]);
+      ok = true;
+    }
+  } catch (e) { /* on essaie autrement */ }
+  if (!ok) { try { await navigator.clipboard.writeText(text); ok = true; } catch (e) { /* idem */ } }
+  if (!ok) {
+    const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    ta.remove();
+  }
+  if (btn) {
+    const old = btn.dataset.lab || btn.textContent;
+    btn.dataset.lab = old;
+    btn.textContent = ok ? 'Copié ✓' : 'Copie refusée';
+    setTimeout(() => { btn.textContent = old; }, 1400);
+  }
+  if (!ok) setStatus('La copie automatique est refusée par le navigateur : sélectionne le texte et copie-le avec le menu.');
+}
+
+/* ---------- Plickers ---------- */
+function quizText(sid) {
+  const Q = QUIZ[sid], s = SEANCES.find((x) => x.id === sid);
+  return `Plickers · ${s.k} · ${Q.titre} (${Q.quand} de séance)\n\n` + Q.q.map((q, i) => `${i + 1}. ${q[0]}\n` + q[1].map((o, j) => `${LET[j]}. ${o}`).join('\n') + `\nBonne réponse : ${LET[q[2]]}`).join('\n\n');
+}
+function quizCsv(sids) {
+  const rows = [['Séance', 'Question', 'A', 'B', 'C', 'D', 'Bonne réponse']];
+  sids.forEach((sid) => QUIZ[sid].q.forEach((q) => rows.push([sid, q[0], q[1][0] || '', q[1][1] || '', q[1][2] || '', q[1][3] || '', LET[q[2]]])));
+  return '﻿' + rows.map((r) => r.map((v) => '"' + String(v).replace(/"/g, '""') + '"').join(';')).join('\r\n');
+}
+function download(name, text, type) {
+  const url = URL.createObjectURL(new Blob([text], { type: type || 'text/plain;charset=utf-8' }));
+  const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+function quizHtml(sid) {
+  const Q = QUIZ[sid];
+  return `<div class="quiz">
+    <div class="row"><button class="btn primary small" data-copyset="${sid}">Copier les 5 questions</button>
+    <button class="btn small" data-csv="${sid}">Télécharger en CSV</button>
+    <span class="hint">Dans Plickers : une question à la fois ; les boutons A à D copient chaque réponse. La bonne réponse (✔) est à cocher dans Plickers.</span></div>
+    ${Q.q.map((q, i) => `<div class="qz"><div class="qline"><span class="qn">${i + 1}</span><span class="qt">${esc(q[0])}</span><button class="mini" data-cq="${sid}:${i}:q" title="Copier la question">Copier</button></div>
+      <ul class="qopts">${q[1].map((o, j) => `<li class="${j === q[2] ? 'good' : ''}"><b>${LET[j]}</b> <span>${esc(o)}</span>${j === q[2] ? ' <span class="chk" title="Bonne réponse">✔</span>' : ''} <button class="mini" data-cq="${sid}:${i}:${j}" title="Copier la réponse ${LET[j]}">Copier</button></li>`).join('')}</ul></div>`).join('')}
   </div>`;
-  let semaine="";
-  P.cr.forEach((x,i)=>{
-    const lu=iso(lundi(x.date));
-    if(lu!==semaine){if(semaine)h+=`</div>`;semaine=lu;h+=`<div class="chap"><h2>Semaine du ${esc(fmtJ(lu,{day:"numeric",month:"long"}))}</h2>`}
-    const billets=x.pieces.filter(p=>!p.marge&&BLOCS[p.sid][p.i].y==="b").map(p=>p.sid);
-    const parcs=x.pieces.filter(p=>!p.marge&&BLOCS[p.sid][p.i].y==="p").map(p=>p.sid);
-    const evals=x.pieces.filter(p=>!p.marge&&BLOCS[p.sid][p.i].y==="v").map(p=>p.sid);
-    const pts=sid=>POINTS.find(q=>q.b===sid||q.p===sid);
-    const stLab={fait:"Fait",partiel:"Pas tout fini",annule:"Annulé"}[x.st];
-    const tags=[x.st?`<span class="tag ${x.st==="annule"?"eval":"fait"}">${stLab}</span>`:"",
-      x.extra?`<span class="tag extra">Créneau en plus</span>`:"",
-      ...evals.map(()=>`<span class="tag eval">Évaluation</span>`),
-      ...parcs.map(s=>`<span class="tag parc">Parcours point ${POINTS.find(q=>q.p===s).n}</span>`),
-      ...billets.map(s=>`<span class="tag billet">Billet n°${POINTS.find(q=>q.b===s).n}</span>`)].join("");
-    const open=ui.openC&&P.cr.some(z=>z.id===ui.openC)?ui.openC===x.id:(nx&&nx.id===x.id);
-    const dv=devoirsCreneau(c,P,i);
-    const docs=[];x.pieces.filter(p=>!p.marge).forEach(p=>SEANCES.find(s=>s.id===p.sid).docs.forEach(d=>{if(!docs.includes(d))docs.push(d)}));
-    h+=`<details class="seance${x.st?" done":""}" data-cid="${x.id}" ${open?"open":""}>
+}
+function copyQ(spec, btn) {
+  const [sid, i, f] = spec.split(':'); const q = QUIZ[sid].q[+i];
+  copyText(f === 'q' ? q[0] : q[1][+f], btn);
+}
+
+/* ---------- devoirs ---------- */
+function siteLinks(sid) {
+  const d = DEV[sid]; if (!d.site || !d.site.length) return '';
+  return `<p>Pour s'entraîner sur le site : ${d.site.map(([ch, p]) => `<a href="${esc(siteBase() + '#/' + ch + '/' + p)}">${esc(PAGES[ch][p])}</a>`).join(' · ')}</p>`;
+}
+function dueText(P, e) {
+  if (!e || e.give < 0) return '';
+  if (e.due >= 0) return `<p><b>À rendre pour le ${esc(fmtLong(P.cr[e.due].date))}.</b></p>`;
+  return '<p><b>À rendre à la rentrée.</b></p>';
+}
+function devoirHtml(sid, P, e) { return DEV[sid].h + siteLinks(sid) + dueText(P, e); }
+function devoirPlain(html) { const t = document.createElement('div'); t.innerHTML = html; return [...t.querySelectorAll('p')].map((p) => p.textContent).join('\n'); }
+
+/* ---------- affichage : créneaux ---------- */
+function prochainCreneau(P) { const today = iso(new Date()); return P.cr.find((x) => !x.st && x.date >= today) || P.cr.find((x) => !x.st) || null; }
+
+function apporter(P, i) {
+  const nx = P.cr.slice(i + 1).find((z) => z.cap > 0 && z.pieces.some((p) => !p.marge));
+  if (!nx) return '';
+  const items = [];
+  new Set(nx.pieces.filter((p) => !p.marge).map((p) => p.sid)).forEach((sid) => SEANCES.find((s) => s.id === sid).mat.split(', ').forEach((m) => { if (!items.includes(m)) items.push(m); }));
+  return items.length ? `<p><b>Pour le ${esc(fmtLong(nx.date))}, apporter : ${esc(items.join(', '))}.</b></p>` : '';
+}
+
+function renderCreneaux(c) {
+  const P = plan(c), D = devoirsPlan(P);
+  const nfait = P.cr.filter((x) => x.st).length, nx = prochainCreneau(P);
+  let h = `<div class="panel"><div class="progress"><h2>${nfait} créneau${nfait > 1 ? 'x' : ''} passé${nfait > 1 ? 's' : ''} sur ${P.cr.length}</h2>
+    <div class="meter" role="img" aria-label="${nfait} sur ${P.cr.length}"><i style="width:${Math.round(nfait / Math.max(1, P.cr.length) * 100)}%"></i></div></div>
+    ${nx ? `<p class="now">Prochain créneau : <b>${esc(fmtLong(nx.date))}</b> (${fmtD(nx.d)}) · ${esc(resumeCreneau(nx))}</p>` : '<p class="now">Tous les créneaux de la période sont passés.</p>'}
+    <p class="hint">Après chaque cours, indique « Fait », « Pas tout fini » ou « Annulé » : la suite se recalcule. Une évaluation n'est jamais coupée.${coupe(P) ? ` Pour tout faire tenir, les temps de cahier d'activités sont raccourcis de ${fmtD(coupe(P))} au total.` : ''}</p>
+    ${P.manque.length ? `<p class="warn">Ne tient plus avant les vacances : ${esc([...new Set(P.manque.map((u) => u.g))].join(', '))}. Raccourcis une activité, ajoute un créneau ou décale la fin de période.</p>` : ''}
+  </div>`;
+  let semaine = '';
+  P.cr.forEach((x, i) => {
+    const lu = iso(lundi(x.date));
+    if (lu !== semaine) { if (semaine) h += '</div>'; semaine = lu; h += `<div class="chap"><h2>Semaine du ${esc(fmtJ(lu, { day: 'numeric', month: 'long' }))}</h2>`; }
+    const evals = x.pieces.filter((p) => !p.marge && p.y === 'v');
+    const quiz = x.pieces.filter((p) => !p.marge && p.y === 'q');
+    const gives = SEANCES.filter((s) => DEV[s.id] && D[s.id] && D[s.id].give === i);
+    const stLab = { fait: 'Fait', partiel: 'Pas tout fini', annule: 'Annulé' }[x.st];
+    const tags = [x.st ? `<span class="tag ${x.st === 'annule' ? 'eval' : 'fait'}">${stLab}</span>` : '',
+      x.extra ? '<span class="tag extra">Créneau en plus</span>' : '',
+      ...evals.map(() => '<span class="tag eval">Évaluation</span>'),
+      ...quiz.map((p) => `<span class="tag plk">Plickers ${QUIZ[p.sid].quand}</span>`),
+      gives.length ? '<span class="tag dev">Devoir à donner</span>' : ''].join('');
+    const open = ui.openC && P.cr.some((z) => z.id === ui.openC) ? ui.openC === x.id : (nx && nx.id === x.id);
+    const sids = [...new Set(x.pieces.filter((p) => !p.marge).map((p) => p.sid))];
+    const acts = sids.map((sid) => SEANCES.find((s) => s.id === sid)).filter((s) => s.act && x.pieces.some((p) => p.sid === s.id && p.y === 'a'));
+    h += `<details class="seance${x.st ? ' done' : ''}" data-cid="${x.id}" ${open ? 'open' : ''}>
       <summary><span class="sid">${esc(fmtJ(x.date))}</span><span class="stitle">${esc(resumeCreneau(x))}<small>${esc(JOURS[x.j])} · ${fmtD(x.d)}</small></span>${tags}</summary>
       <div class="sbody">
         <div class="seg" role="group" aria-label="Ce créneau">
-          ${[["","À venir"],["fait","Fait"],["partiel","Pas tout fini"],["annule","Annulé"]].map(([k,l])=>`<button data-cst="${k}" data-c="${x.id}" aria-pressed="${(x.st||"")===k}">${l}</button>`).join("")}
+          ${[['', 'À venir'], ['fait', 'Fait'], ['partiel', 'Pas tout fini'], ['annule', 'Annulé']].map(([k, l]) => `<button data-cst="${k}" data-c="${x.id}" aria-pressed="${(x.st || '') === k}">${l}</button>`).join('')}
         </div>
-        ${x.st==="partiel"?`<div class="row"><label for="reste-${x.id}">Temps qui n'a pas pu être fait</label>
-          <select id="reste-${x.id}" data-reste="${x.id}">${[10,15,20,30,40,45,60,90].filter(m=>m<=x.d).map(m=>`<option value="${m}" ${+x.reste===m?"selected":""}>${fmtD(m)}</option>`).join("")}</select>
-          <span class="hint">Ce qui n'a pas été fait passe au créneau suivant.</span></div>`:""}
-        <div class="box"><h3>Déroulé</h3>
-          ${x.cap===0?`<p class="hint">Créneau annulé : le contenu passe au créneau suivant.</p>`:`<ol class="deroule">${x.pieces.map(p=>{
-            const t=`${p.t0}–${p.t0+p.m}`;
-            if(p.marge)return `<li><span class="tps">${t}</span><span><span class="lib">Temps libre</span> Cahier d'activités sur ce qu'on vient de faire, ou rattrapage</span></li>`;
-            const b=BLOCS[p.sid][p.i];
-            return `<li class="y-${b.y}"><span class="tps">${t}</span><span><span class="lib">${esc(labPiece(p.sid,p.i))}</span> ${esc(b.t)}${p.suite?" (suite)":""}${p.coupe?" (à finir au créneau suivant)":""}</span></li>`}).join("")}
-            ${x.st==="partiel"&&x.reste?`<li><span class="tps">${x.d-x.reste}–${x.d}</span><span class="hint">Non fait : reporté au créneau suivant</span></li>`:""}</ol>`}
+        ${x.st === 'partiel' ? `<div class="row"><label for="reste-${x.id}">Temps qui n'a pas pu être fait</label>
+          <select id="reste-${x.id}" data-reste="${x.id}">${[10, 15, 20, 30, 40, 45, 60, 90].filter((m) => m <= x.d).map((m) => `<option value="${m}" ${+x.reste === m ? 'selected' : ''}>${fmtD(m)}</option>`).join('')}</select>
+          <span class="hint">Ce qui n'a pas été fait passe au créneau suivant.</span></div>` : ''}
+        <div class="box"><h3>Déroulé minuté</h3>
+          ${x.cap === 0 ? '<p class="hint">Créneau annulé : le contenu passe au créneau suivant.</p>' : `<ol class="deroule">${x.pieces.map((p) => {
+    const t = `${p.t0}–${p.t0 + p.m}`;
+    if (p.marge) return `<li><span class="tps">${t}</span><span><span class="lib">Temps libre</span> Cahier d'activités sur ce qu'on vient de faire, ou rattrapage</span></li>`;
+    const s = SEANCES.find((q) => q.id === p.sid), b = s.b[p.i];
+    const lab = p.y === 'q' ? '<span class="lib">Plickers</span>' : `<span class="lib">${esc(labPiece(p.sid, p.i))}</span>`;
+    const txt = p.y === 'q' ? b.t.replace(/^Plickers \([^)]*\) : /, `5 questions (${QUIZ[p.sid].quand} de séance) : `) : b.t;
+    return `<li class="y-${p.y}"><span class="tps">${t}</span><span>${lab} ${esc(txt)}${p.suite ? ' (suite)' : ''}${p.coupe ? ' (à finir au créneau suivant)' : ''}</span></li>`;
+  }).join('')}
+            ${x.st === 'partiel' && x.reste ? `<li><span class="tps">${x.d - x.reste}–${x.d}</span><span class="hint">Non fait : reporté au créneau suivant</span></li>` : ''}</ol>`}
         </div>
         <div class="sgrid">
-          <div class="box"><h3>Repère</h3>${[...new Set(x.pieces.filter(p=>!p.marge).map(p=>p.sid))].map(sid=>{const s=SEANCES.find(q=>q.id===sid);
-            return `<div><b>${esc(chapPos(s))}</b><br><span class="hint">${esc(s.t)} · cours : ${esc(s.cours)}</span></div>`}).join("")||`<p class="hint">—</p>`}
-            ${parcs.map(s=>{const n=POINTS.find(q=>q.p===s).n;return `<div><button class="btn small" data-goparc="${n}">Préparer les parcours du point ${n}</button></div>`}).join("")}
-            ${billets.map(s=>{const n=POINTS.find(q=>q.b===s).n;return `<div class="hint">Billet n°${n} : note les groupes dans l'onglet Groupes (point ${n}). Les parcours sont au créneau suivant.</div>`}).join("")}
-          </div>
-          <div class="box"><h3>Documents</h3><div class="docs">${docs.map(docBtn).join("")||`<span class="hint">—</span>`}</div></div>
+          <div class="box"><h3>Repère</h3>${sids.map((sid) => { const s = SEANCES.find((q) => q.id === sid); return `<div><b>${esc(s.k)}</b><br><span class="hint">${esc(s.t)} · cours : ${esc(s.cours)}</span></div>`; }).join('') || '<p class="hint">—</p>'}</div>
+          <div class="box"><h3>À préparer</h3>${sids.map((sid) => `<div class="hint">${esc(SEANCES.find((q) => q.id === sid).prep)}</div>`).join('') || '<p class="hint">—</p>'}</div>
         </div>
-        ${dv.html?`<div class="box"><h3>Devoirs à donner en fin de créneau</h3>
-          <div class="devoir" id="devc-${x.id}">${dv.html}</div>
-          <div class="row"><button class="btn primary small" data-copyc="${i}">Copier les devoirs</button></div>
-          ${dv.ended.filter(sid=>SEANCES.find(s=>s.id===sid).dev.includes(LIEN)).map(sid=>`<p class="hint" style="margin:6px 0 0"><b>${esc(labPiece(sid,9))}</b></p>`+lienBox(SEANCES.find(s=>s.id===sid),"lienc-"+x.id)).join("")}
-        </div>`:""}
+        ${acts.map((s) => `<div class="box"><h3>Activité · ${esc(s.act)}</h3><div class="act">${s.actD}</div></div>`).join('')}
+        ${quiz.map((p) => `<div class="box"><h3>Plickers · ${esc(QUIZ[p.sid].titre)} <span class="tag plk">${QUIZ[p.sid].quand} de séance</span></h3>
+          <details class="inner"><summary>Voir les 5 questions</summary>${quizHtml(p.sid)}</details></div>`).join('')}
+        ${gives.length ? `<div class="box"><h3>Devoir à donner en fin de créneau</h3>
+          <div class="devoir" id="devc-${x.id}">${gives.map((s) => devoirHtml(s.id, P, D[s.id])).join('')}${apporter(P, i)}</div>
+          <div class="row"><button class="btn primary small" data-copydev="${x.id}">Copier le devoir</button>
+          ${gives.filter((s) => DEV[s.id].fiche).map((s) => `<span class="hint">Document à coller : <b>${esc(DEV[s.id].fiche)}</b></span>`).join('')}</div></div>` : (apporter(P, i) ? `<div class="box"><h3>Pas de devoir ce jour-là</h3><div class="devoir">${apporter(P, i)}</div><p class="hint">Les devoirs sont donnés le jeudi, à rendre la semaine suivante.</p></div>` : '')}
       </div></details>`;
   });
-  if(semaine)h+=`</div>`;
+  if (semaine) h += '</div>';
   return h;
 }
-function renderEdt(c){
-  const e=c.edt||{hebdo:[{j:1,d:90},{j:3,d:90},{j:5,d:90}],extra:{on:false,j:2,d:90,first:PERIODE.debut,every:3}};
-  const on=!!c.edt;
-  const jsel=(v,a)=>`<select ${a}>${[1,2,3,4,5].map(j=>`<option value="${j}" ${+v===j?"selected":""}>${JOURS[j]}</option>`).join("")}</select>`;
-  const dsel=(v,a)=>`<select ${a}>${[45,55,60,90,120].map(m=>`<option value="${m}" ${+v===m?"selected":""}>${fmtD(m)}</option>`).join("")}</select>`;
-  return `<div class="edt"><h3>Emploi du temps</h3>
-    <div class="seg" role="group" aria-label="Mode de suivi">
-      <button data-edtmode="0" aria-pressed="${!on}">Classique : 3 × 1h30, je coche les séances</button>
-      <button data-edtmode="1" aria-pressed="${on}">Mes créneaux (progression datée)</button>
-    </div>
-    ${on?`<div class="edtrows">${e.hebdo.map((h,i)=>`<div class="row">Chaque semaine, le ${jsel(h.j,`data-hj="${i}" aria-label="Jour"`)} ${dsel(h.d,`data-hd="${i}" aria-label="Durée"`)} <button class="btn small" data-hdel="${i}" aria-label="Supprimer ce créneau">Retirer</button></div>`).join("")}
+
+/* ---------- affichage : chapitres ---------- */
+function renderChapitres(c) {
+  const P = plan(c), info = chapitres(P);
+  return info.map((ch) => {
+    const C = CH[ch.id], pc = ch.total ? Math.round(ch.fait / ch.total * 100) : 0;
+    const lignes = P.cr.filter((x) => x.pieces.some((p) => !p.marge && p.y !== 'q' && P.us.find((u) => u.sid === p.sid && u.i === p.i).ch === ch.id));
+    return `<div class="panel chcard"><div class="progress"><h2>Chapitre ${C.n} · ${esc(C.nom)}</h2>
+      <div class="meter" role="img" aria-label="${pc} %"><i style="width:${pc}%"></i></div><span class="hint">${pc} % fait</span></div>
+      <p class="hint">Durée prévue par toi : ${esc(C.poids)} (3h30 par semaine). ${ch.d0 ? `Dans le planning : du <b>${esc(fmtJ(ch.d0, { weekday: 'long', day: 'numeric', month: 'long' }))}</b> au <b>${esc(fmtJ(ch.d1, { weekday: 'long', day: 'numeric', month: 'long' }))}</b>${ch.ev ? `, évaluation le <b>${esc(fmtJ(ch.ev, { weekday: 'long', day: 'numeric', month: 'long' }))}</b>` : ''}.` : 'Ne tient pas dans la période.'}</p>
+      <ul class="lignes">${lignes.map((x) => `<li><span class="sid">${esc(fmtJ(x.date))}</span><span>${esc(x.pieces.filter((p) => !p.marge && p.y !== 'q' && P.us.find((u) => u.sid === p.sid && u.i === p.i).ch === ch.id).map((p) => SEANCES.find((s) => s.id === p.sid).b[p.i].t).filter((t, i, a) => a.indexOf(t) === i).slice(0, 3).join(' · '))}</span>${x.st ? `<span class="tag fait">${{ fait: 'Fait', partiel: 'Pas tout fini', annule: 'Annulé' }[x.st]}</span>` : ''}</li>`).join('')}</ul>
+      <p><a class="btn small" href="index.html#/${C.site}/fiche" target="_blank" rel="noopener">Fiche du chapitre sur le site</a></p></div>`;
+  }).join('');
+}
+
+/* ---------- affichage : Plickers ---------- */
+function renderPlickers(c) {
+  const P = plan(c);
+  const date = (sid) => { const x = P.cr.find((z) => z.pieces.some((p) => !p.marge && p.sid === sid && p.y === 'q')); return x ? fmtJ(x.date) : 'hors période'; };
+  return `<div class="panel"><h2>Questions Plickers</h2>
+    <p class="hint">5 questions par séance, à 4 choix au plus et en texte seul pour se coller dans Plickers. Le mercredi, elles sont posées en début de séance (retour sur la séance précédente) ; le jeudi, en fin de séance (bilan du jour).</p>
+    <div class="row"><button class="btn small" data-csv="all">Tout télécharger en CSV (75 questions)</button></div></div>`
+    + SEANCES.map((s) => `<details class="seance" data-sid="${s.id}"><summary><span class="sid">${s.id}</span><span class="stitle">${esc(QUIZ[s.id].titre)}<small>${esc(s.k)} · ${QUIZ[s.id].quand} de séance</small></span><span class="tag plk">${esc(date(s.id))}</span></summary><div class="sbody">${quizHtml(s.id)}</div></details>`).join('');
+}
+
+/* ---------- affichage : devoirs ---------- */
+function renderDevoirs(c) {
+  const P = plan(c), D = devoirsPlan(P);
+  return `<div class="panel"><h2>Devoirs de la période</h2>
+    <p class="hint">Un devoir est donné <b>chaque jeudi</b> (au dernier créneau de la journée) et se rend <b>à la première séance de la semaine suivante</b>. Le mercredi, pas de devoir. Chaque devoir est un document à coller et un exercice. Les documents à coller sont dans le fichier <b>Devoirs_a_coller.pdf</b>.</p></div>`
+    + SEANCES.filter((s) => DEV[s.id]).map((s) => {
+      const e = D[s.id], g = e && e.give >= 0 ? P.cr[e.give] : null;
+      return `<details class="seance" data-sid="${s.id}"><summary><span class="sid">${g ? esc(fmtJ(g.date)) : '—'}</span><span class="stitle">${esc(DEV[s.id].fiche || 'Vacances de Noël')}<small>${g ? `à rendre ${e.due >= 0 ? 'le ' + esc(fmtJ(P.cr[e.due].date)) : 'à la rentrée'}` : 'hors période'}${DEV[s.id].revise ? ' · révision avant évaluation' : ''}</small></span></summary>
+        <div class="sbody"><div class="devoir" id="dev-${s.id}">${devoirHtml(s.id, P, e)}</div>
+        <div class="row"><button class="btn primary small" data-copydevs="${s.id}">Copier le devoir</button></div></div></details>`;
+    }).join('');
+}
+
+/* ---------- affichage : vue d'ensemble (imprimable) ---------- */
+function renderApercu(c) {
+  const P = plan(c), D = devoirsPlan(P);
+  const rows = P.cr.map((x, i) => {
+    const gives = SEANCES.filter((s) => DEV[s.id] && D[s.id] && D[s.id].give === i);
+    const quiz = x.pieces.filter((p) => !p.marge && p.y === 'q').map((p) => `${QUIZ[p.sid].quand === 'début' ? 'début' : 'fin'} · ${QUIZ[p.sid].titre}`);
+    const ev = x.pieces.some((p) => !p.marge && p.y === 'v');
+    return `<tr class="${x.st ? 'dn' : ''}"><td>${esc(fmtJ(x.date))}${x.extra ? ' <small>(en plus)</small>' : ''}</td><td>${fmtD(x.d)}</td><td>${ev ? '<b>Éval.</b> ' : ''}${esc(resumeCreneau(x))}</td><td>${quiz.map(esc).join('<br>') || '—'}</td><td>${gives.length ? gives.map((s) => esc(DEV[s.id].fiche || 'Vacances') + (D[s.id].due >= 0 ? ` <small>(pour le ${esc(fmtJ(P.cr[D[s.id].due].date))})</small>` : ' <small>(rentrée)</small>')).join('<br>') : '—'}</td><td>${x.st ? { fait: 'Fait', partiel: 'Pas tout fini', annule: 'Annulé' }[x.st] : ''}</td></tr>`;
+  }).join('');
+  return `<div class="panel printable"><div class="row" style="justify-content:space-between"><h2>${esc(c.nom)} · progression de la période</h2><button class="btn small noprint" id="btnPrint">Imprimer</button></div>
+    <div class="scroll"><table class="ov"><thead><tr><th>Date</th><th>Durée</th><th>Contenu</th><th>Plickers</th><th>Devoir donné</th><th>Suivi</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="hint">Du ${esc(fmtJ(PERIODE.debut, { day: 'numeric', month: 'long' }))} au ${esc(fmtJ(PERIODE.fin, { day: 'numeric', month: 'long' }))}${PERIODE.feries.length ? ', sans le ' + PERIODE.feries.map((d) => fmtJ(d, { day: 'numeric', month: 'long' })).join(', ') : ''}. Les chapitres : ${Object.values(CH).map((x) => x.nom + ' (' + x.poids + ')').join(', ')}.</p></div>`;
+}
+
+/* ---------- gestion de la classe ---------- */
+function renderEdt(c) {
+  const e = c.edt;
+  const jsel = (v, a) => `<select ${a}>${[1, 2, 3, 4, 5].map((j) => `<option value="${j}" ${+v === j ? 'selected' : ''}>${JOURS[j]}</option>`).join('')}</select>`;
+  const dsel = (v, a) => `<select ${a}>${[45, 55, 60, 90, 120].map((m) => `<option value="${m}" ${+v === m ? 'selected' : ''}>${fmtD(m)}</option>`).join('')}</select>`;
+  const n = creneaux(e);
+  return `<div class="edt"><h3>Emploi du temps de cette classe</h3>
+    <div class="edtrows">${e.hebdo.map((h, i) => `<div class="row">Chaque semaine, le ${jsel(h.j, `data-hj="${i}" aria-label="Jour"`)} ${dsel(h.d, `data-hd="${i}" aria-label="Durée"`)} <button class="btn small" data-hdel="${i}" aria-label="Retirer ce créneau">Retirer</button></div>`).join('')}
       <div><button class="btn small" id="btnHadd">Ajouter un créneau par semaine</button></div>
-      <div class="row"><label class="row" style="font-weight:400"><input type="checkbox" id="xOn" ${e.extra&&e.extra.on?"checked":""}> Un créneau en plus toutes les</label>
-        <select id="xEvery" aria-label="Nombre de semaines">${[2,3,4].map(n=>`<option ${+(e.extra||{}).every===n?"selected":""}>${n}</option>`).join("")}</select> semaines, le
-        ${jsel((e.extra||{}).j,`id="xJ" aria-label="Jour du créneau en plus"`)} ${dsel((e.extra||{}).d,`id="xD" aria-label="Durée du créneau en plus"`)}
-        , la première fois la semaine du <input type="date" id="xFirst" value="${esc((e.extra||{}).first||PERIODE.debut)}" min="${PERIODE.debut}" max="${PERIODE.fin}"></div>
-      <p class="hint">Période du ${fmtJ(PERIODE.debut,{day:"numeric",month:"long"})} au ${fmtJ(PERIODE.fin,{day:"numeric",month:"long"})}, sans le 11 novembre. ${creneaux(e).length} créneaux, ${fmtD(creneaux(e).reduce((a,x)=>a+x.d,0))} en tout.</p></div>`:""}
-  </div>`;
+      <div class="row"><label class="row" style="font-weight:400"><input type="checkbox" id="xOn" ${e.extra && e.extra.on ? 'checked' : ''}> Un créneau en plus toutes les</label>
+        <select id="xEvery" aria-label="Nombre de semaines">${[2, 3, 4].map((k) => `<option ${+(e.extra || {}).every === k ? 'selected' : ''}>${k}</option>`).join('')}</select> semaines, le
+        ${jsel((e.extra || {}).j, 'id="xJ" aria-label="Jour du créneau en plus"')} ${dsel((e.extra || {}).d, 'id="xD" aria-label="Durée du créneau en plus"')}
+        , la première fois la semaine du <input type="date" id="xFirst" value="${esc((e.extra || {}).first || PERIODE.debut)}"></div>
+      <p class="hint">${n.length} créneaux dans la période, ${fmtD(n.reduce((a, x) => a + x.d, 0))} en tout (le contenu prévu demande 15 créneaux de 1h30).</p></div></div>`;
 }
-
-/* ======================= ÉTAT ======================= */
-let data={classes:[],liens:{}};
-let ui={cls:null,tab:"seances",point:1,mode:"groupe",manage:false,confirmDel:false,open:null,openC:null,vue:"creneaux"};
-try{Object.assign(ui,JSON.parse(localStorage.getItem("revisions6e-classeur-ui")||"{}"));ui.manage=false;ui.confirmDel=false}catch(e){}
-let timer=null,busy=false;
-const STORE_KEY="revisions6e-classeur";
-const pdfCache={};
-
-const $=s=>document.querySelector(s);
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const uid=()=>Math.random().toString(36).slice(2,10);
-function saveUi(){try{localStorage.setItem("revisions6e-classeur-ui",JSON.stringify({cls:ui.cls,tab:ui.tab,point:ui.point,mode:ui.mode,open:ui.open,openC:ui.openC,vue:ui.vue}))}catch(e){}}
-function cur(){return data.classes.find(c=>c.id===ui.cls)||data.classes[0]||null}
-function setStatus(t){$("#status").textContent=t}
-function norm(d){
-  if(!d||!Array.isArray(d.classes))return {classes:[],liens:{}};
-  d.liens=d.liens||{};
-  d.classes.forEach(c=>{c.g=c.g||{};c.ok=c.ok||{};c.prog=c.prog||{};c.eleves=c.eleves||[];c.cren=c.cren||{};if(c.edt===undefined)c.edt=null});
-  return d;
+function renderPeriode() {
+  return `<div class="edt"><h3>Période (commune à toutes les classes)</h3>
+    <div class="row"><label for="pDeb">Du</label><input type="date" id="pDeb" value="${esc(PERIODE.debut)}"> <label for="pFin">au</label><input type="date" id="pFin" value="${esc(PERIODE.fin)}"></div>
+    <div class="row"><span>Jours sans cours :</span>${PERIODE.feries.map((d, i) => `<span class="tag">${esc(fmtJ(d, { weekday: 'short', day: 'numeric', month: 'short' }))} <button class="x" data-fdel="${i}" aria-label="Retirer ce jour">×</button></span>`).join('') || '<span class="hint">aucun</span>'}
+      <input type="date" id="fNew" aria-label="Ajouter un jour sans cours"> <button class="btn small" id="btnFadd">Ajouter</button></div>
+    <p class="hint">Change ces dates pour planifier une autre période : les chapitres et leurs durées restent ceux de cette période.</p></div>`;
 }
-
-/* ======================= ENREGISTREMENT (sur cet appareil) ======================= */
-function persist(){clearTimeout(timer);setStatus("Enregistrement…");timer=setTimeout(flush,400)}
-function flush(){
-  timer=null;
-  try{localStorage.setItem(STORE_KEY,JSON.stringify(data,(k,v)=>k==="_plan"?undefined:v));setStatus("Enregistré sur cet appareil.")}
-  catch(e){setStatus("⚠ Pas enregistré : le navigateur refuse (navigation privée ?). Fais une sauvegarde dans un fichier.")}
+function renderManage() {
+  const m = $('#manage'), c = cur();
+  m.hidden = !(ui.manage && c); if (m.hidden) return;
+  m.innerHTML = `<h2>Gérer ma progression</h2>
+    <div><label for="fNom">Nom de la classe</label><input type="text" id="fNom" value="${esc(c.nom)}"></div>
+    ${renderEdt(c)}${renderPeriode()}
+    <div class="row"><button class="btn primary" id="btnSaveClass">Enregistrer</button>
+    <button class="btn" id="btnAddClass">Ajouter une autre classe (mêmes horaires)</button>
+    <button class="btn" id="btnResetSuivi">Effacer le suivi (fait / annulé)</button>
+    <button class="btn danger" id="btnDel">Supprimer la classe</button></div>
+    ${ui.confirmDel ? `<div class="confirm"><span>Supprimer « ${esc(c.nom)} » et son suivi ?</span><button class="btn danger" id="btnDelYes">Oui, supprimer</button><button class="btn" id="btnDelNo">Annuler</button></div>` : ''}`;
 }
-function loadLocal(){try{const d=JSON.parse(localStorage.getItem(STORE_KEY)||"null");if(d&&Array.isArray(d.classes))data=norm(d)}catch(e){}}
-
-/* ======================= DOCUMENTS CHIFFRÉS ======================= */
-const KEYSTORE="revisions6e-classeur-cle";
-let cryptoKey=null,cleInfo=null;
-const b64u8=(t)=>Uint8Array.from(atob(t),(c)=>c.charCodeAt(0));
-const CLE_INFO={"v": 2, "salt": "0LS3ntCypB8aY2Z50UaGOQ==", "iter": 250000, "test": "rfzjxFs3nL7uDJ2FoJTh01Cg0wzYJqIMyFh3iGDdBE2FBtlR/0ba"}; /* sel et témoin du chiffrement (ne contient pas le code) */
-async function loadInfo(){return cleInfo||(cleInfo=CLE_INFO)}
-async function deriveKey(code){
-  const info=await loadInfo();
-  const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(code),"PBKDF2",false,["deriveKey"]);
-  return crypto.subtle.deriveKey({name:"PBKDF2",salt:b64u8(info.salt),iterations:info.iter,hash:"SHA-256"},base,{name:"AES-GCM",length:256},true,["decrypt"]);
+function renderBar() {
+  $('#classBar').innerHTML = data.classes.map((c) => `<button class="chip" data-cls="${c.id}" aria-pressed="${cur() && cur().id === c.id}">${esc(c.nom)}</button>`).join('')
+    + (data.classes.length ? `<button class="btn" id="btnManage" aria-expanded="${ui.manage}">${ui.manage ? 'Fermer' : 'Gérer ma progression'}</button>` : '');
 }
-async function decryptBytes(key,u){return new Uint8Array(await crypto.subtle.decrypt({name:"AES-GCM",iv:u.slice(0,12)},key,u.slice(12)))}
-async function testKey(key){const info=await loadInfo();try{return new TextDecoder().decode(await decryptBytes(key,b64u8(info.test)))==="classeur-ok"}catch(e){return false}}
-async function unlock(code){
-  const k=await deriveKey(code.trim());
-  if(!(await testKey(k)))return false;
-  cryptoKey=k;
-  try{const raw=new Uint8Array(await crypto.subtle.exportKey("raw",k));localStorage.setItem(KEYSTORE,btoa(String.fromCharCode(...raw)))}catch(e){}
-  return true;
+function renderTabs() {
+  const c = cur();
+  $('#tabs').hidden = !c;
+  $('#tabs').innerHTML = [['creneaux', 'Par créneau'], ['chap', 'Par chapitre'], ['plk', 'Plickers'], ['dev', 'Devoirs'], ['apercu', 'Vue d\'ensemble']]
+    .map(([k, l]) => `<button role="tab" data-tab="${k}" aria-selected="${ui.tab === k}">${l}</button>`).join('');
 }
-async function restoreKey(){
-  try{const t=localStorage.getItem(KEYSTORE);if(!t)return false;const k=await crypto.subtle.importKey("raw",b64u8(t),{name:"AES-GCM"},true,["decrypt"]);if(await testKey(k)){cryptoKey=k;return true}}catch(e){}
-  return false;
-}
-async function connect(){
-  if(!window.crypto||!crypto.subtle){$("#gate").hidden=false;$("#gateMsg").textContent=location.protocol==="file:"?"La page est ouverte depuis ton ordinateur : le navigateur refuse alors de déchiffrer. Ouvre-la depuis l'adresse du site en ligne (https://…github.io/…/classeur.html).":"Ce navigateur ne sait pas déchiffrer les documents : essaie avec Chrome, Edge, Firefox ou Safari à jour.";return}
-  fetch("documents.bin",{method:"HEAD"}).then(r=>{if(!r.ok)setTimeout(()=>setStatus("⚠ Le fichier documents.bin n'est pas sur GitHub : les documents ne pourront pas s'ouvrir."),300)}).catch(()=>{});
-  let ok=false;try{ok=await restoreKey()}catch(e){}
-  if(ok)start();else{$("#gate").hidden=false;$("#gateCode").focus()}
-}
-function start(){$("#gate").hidden=true;$("#app").hidden=false;loadLocal();render();setStatus("Enregistré sur cet appareil.")}
-
-/* ======================= OUTILS ======================= */
-function counts(c,p){const r={R:0,E:0,D:0,"0":0,ok:0};c.eleves.forEach(e=>{const v=(c.g[e.id]||{})[p];r[v||"0"]++;if((c.ok[e.id]||{})[p])r.ok++});return r}
-function devoirHtml(s){
-  const l=(data.liens||{})[s.id]||autoLink(cur(),s.id);
-  return s.dev.split(LIEN).join(l?`<a href="${esc(l)}">${esc(l)}</a>`:"[lien à ajouter]");
-}
-function lienBox(s,idp){
-  const auto=autoLink(cur(),s.id),own=(data.liens||{})[s.id]||"",l=own||auto;
-  return `<div class="linkrow">${l?`<span>Lien du devoir${own?" (le tien)":` (${(NB_Q[s.id]||10)} questions sur le site)`} :</span> <a class="btn small" href="${esc(l)}" target="_blank" rel="noopener">Essayer</a> <button class="btn small" data-copylink="${esc(l)}">Copier le lien seul</button>`:"<span>Pas d'exercices du site pour cette séance.</span>"}</div>
-  <details><summary class="hint">Utiliser un autre lien</summary><input type="url" id="${idp}-${s.id}" data-lien="${s.id}" placeholder="Colle ici un autre lien (laisse vide pour le lien automatique)" value="${esc(own)}" style="margin-top:6px"></details>`;
-}
-function nextSeance(c){return SEANCES.find(s=>!seanceFaite(c,s.id))||null}
-/* tous les documents sont dans un seul fichier chiffré : documents.bin (à côté de index.html) */
-let bundleP=null;
-function bundle(){
-  if(bundleP)return bundleP;
-  bundleP=(async()=>{
-    let r;try{r=await fetch("documents.bin")}catch(e){throw new Error(location.protocol==="file:"?"fichier":"reseau")}
-    if(!r.ok)throw new Error(r.status===404?"absent":"reseau");
-    const u=await decryptBytes(cryptoKey,new Uint8Array(await r.arrayBuffer()));
-    const n=new DataView(u.buffer,u.byteOffset).getUint32(0);
-    const idx=JSON.parse(new TextDecoder().decode(u.subarray(4,4+n)));
-    return {idx,data:u.subarray(4+n)};
-  })();
-  bundleP.catch(()=>{bundleP=null});
-  return bundleP;
-}
-async function getBytes(path){
-  if(pdfCache[path])return pdfCache[path];
-  if(!cryptoKey)throw new Error("verrouillé");
-  const B=await bundle(),k=path.replace(/^docs\//,""),e=B.idx[k];
-  if(!e)throw new Error("absent");
-  const b=B.data.slice(e[0],e[0]+e[1]);pdfCache[path]=b;return b;
-}
-/** ouvre le PDF dans un nouvel onglet (lecture, impression) ; la fenêtre est ouverte tout de suite pour éviter le bloqueur */
-function openWin(){try{const w=window.open("","_blank");if(w)w.document.write("<p style='font-family:sans-serif;padding:20px'>Préparation du document…</p>");return w}catch(e){return null}}
-function show(win,filename,bytes){
-  const url=URL.createObjectURL(new Blob([bytes],{type:"application/pdf"}));
-  if(win&&!win.closed){win.location.href=url;setStatus("Document ouvert dans un nouvel onglet : "+filename)}
-  else{const a=document.createElement("a");a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setStatus("Fichier téléchargé : "+filename)}
-  setTimeout(()=>URL.revokeObjectURL(url),120000);
-  return true;
-}
-function save(filename,bytes,win){return show(win||null,filename,bytes)}
-async function telecharger(key,win){
-  const d=DOCS[key];if(!d)return;
-  try{setStatus("Préparation de « "+d.label+" »…");const b=await getBytes(d.path);show(win,d.path.split("/").pop(),b)}
-  catch(e){if(win)win.close();setStatus(docErr(e,d.label))}
-}
-function docErr(e,label){
-  const m=e&&e.message;
-  if(m==="fichier")return "« "+label+" » : la page est ouverte depuis ton ordinateur. Les documents ne s'ouvrent que depuis l'adresse du site en ligne (https://…github.io/…).";
-  if(m==="absent")return "« "+label+" » est introuvable : dépose le fichier documents.bin sur GitHub, à côté de index.html.";
-  return "Impossible de charger « "+label+" » (connexion ?).";
-}
-/* ---------- liens de devoir du site (mêmes réglages que l'Espace professeur) ---------- */
-function parsePrefill(url){const m=String(url).match(/forms\/d\/e\/([\w-]+)\/(?:viewform|formResponse)/);if(!m)return null;const entries=[...String(url).matchAll(/entry\.(\d+)=/g)].map((x)=>x[1]);return {id:m[1],entries}}
-const formToSeg=(f)=>`/f=${f.id}~${f.entries.join("~")}`;
-function parseGristUrl(url){const m=String(url).trim().match(/^(https:\/\/[^\s?#]+?)\/forms\/([A-Za-z0-9]+)\/(\d+)/);return m?{a:m[1],k:m[2],v:m[3]}:null}
-const b64e=(t)=>btoa(unescape(encodeURIComponent(t))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
-const gristToSeg=(g)=>"/g="+b64e(JSON.stringify(g));
-function destSeg(){
-  let f="",g=null;try{f=localStorage.getItem("revisions6e-form")||"";g=JSON.parse(localStorage.getItem("revisions6e-grist")||"null")}catch(e){}
-  const pf=parsePrefill(f);if(pf&&pf.entries.length===6)return formToSeg(pf);
-  const pg=parseGristUrl(f);if(pg&&g&&g.k===pg.k&&g.v===pg.v)return gristToSeg(g);
-  return "";
-}
-const siteBase=()=>new URL("./",location.href).href;
-function autoLink(c,sid){
-  const ks=NOTIONS[sid];if(!ks)return "";
-  const cl=c?(c.nom||"").trim().replace(/\//g,"-").replace(/,/g," "):"";
-  return siteBase()+`#/devoir/${ks.join(",")}/${NB_Q[sid]||10}`+(cl?"/c="+encodeURIComponent(cl):"")+destSeg();
-}
-const projoLink=(sid)=>{const ks=NOTIONS[sid];return ks?siteBase()+"#/projo/"+ks.join(","):""};
-function nomPDF(font,s){
-  let t=String(s).trim();
-  try{font.widthOfTextAtSize(t,13);return t}catch(e){}
-  t=t.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^\x20-\x7E]/g,"?");
-  return t;
-}
-async function genererParcours(p,win){
-  const c=cur();if(!c||busy){if(win)win.close();return}
-  if(!window.PDFLib){setStatus("La fabrication du PDF n'est pas disponible (bibliothèque non chargée).");return}
-  const liste=c.eleves.map((e,i)=>({e,i,g:(c.g[e.id]||{})[p]})).filter(x=>x.g);
-  if(!liste.length){if(win)win.close();setStatus("Aucun groupe noté pour le point "+p+" : note d'abord les billets.");return}
-  busy=true;render();
-  try{
-    setStatus("Fabrication du PDF : "+liste.length+" parcours…");
-    const {PDFDocument,StandardFonts,rgb}=PDFLib;
-    const out=await PDFDocument.create();
-    const font=await out.embedFont(StandardFonts.HelveticaBold);
-    const src={};
-    for(const g of ["R","E","D"]){if(liste.some(x=>x.g===g))src[g]=await PDFDocument.load(await getBytes("docs/parcours/P"+p+g+".pdf"))}
-    for(const x of liste){
-      const [pg]=await out.copyPages(src[x.g],[0]);
-      out.addPage(pg);
-      pg.drawText(nomPDF(font,x.e.nom),{x:NOM[x.g].x,y:NOM[x.g].y,size:13,font,color:rgb(0,0,0)});
-      pg.drawText(String(x.i+1),{x:560,y:826,size:9,font,color:rgb(0.45,0.45,0.45)});
-    }
-    out.setTitle("Parcours point "+p+" – "+c.nom);
-    const bytes=await out.save();
-    const nom=("Parcours_point"+p+"_"+c.nom).replace(/[^A-Za-z0-9_\-]+/g,"_")+".pdf";
-    save(nom,bytes,win);
-  }catch(e){if(win)win.close();setStatus("Le PDF n'a pas pu être fabriqué. Réessaie, ou ouvre les parcours séparés dans l'onglet Documents.")}
-  busy=false;render();
-}
-async function copierDevoirs(id,btn){
-  const s=SEANCES.find(x=>x.id===id);if(!s)return;
-  return copierHtml(devoirHtml(s),btn,"dev-"+id);
-}
-async function copierHtml(html,btn,elId){
-  const tmp=document.createElement("div");tmp.innerHTML=html;
-  const plain=[...tmp.querySelectorAll("p")].map(p=>p.textContent).join("\n");
-  let ok=false;
-  try{
-    if(window.ClipboardItem&&navigator.clipboard&&navigator.clipboard.write){
-      await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([html],{type:"text/html"}),"text/plain":new Blob([plain],{type:"text/plain"})})]);ok=true;
-    }
-  }catch(e){}
-  if(!ok){try{await navigator.clipboard.writeText(plain);ok=true}catch(e){}}
-  if(ok){btn.textContent="Copié ✓";setTimeout(()=>{btn.textContent="Copier les devoirs"},1600)}
-  else{
-    const el=document.getElementById(elId);
-    const r=document.createRange();r.selectNodeContents(el);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);
-    setStatus("Copie automatique refusée : le texte est sélectionné, copie-le avec le menu.");
-  }
-}
-
-/* ======================= ACTIONS ======================= */
-function newClass(nom,eleves){
-  const c={id:uid(),nom:nom||"Ma classe",eleves:eleves.map(n=>({id:uid(),nom:n})),g:{},ok:{},prog:{}};
-  data.classes.push(c);ui.cls=c.id;saveUi();persist();render();return c;
-}
-function parseNames(t){return t.split(/\n/).map(s=>s.trim()).filter(Boolean)}
-function tap(eid,p){
-  const c=cur();if(!c)return;
-  if(ui.mode==="groupe"){
-    c.g[eid]=c.g[eid]||{};const v=c.g[eid][p]||"";
-    const nv=CYCLE[(CYCLE.indexOf(v)+1)%CYCLE.length];
-    if(nv)c.g[eid][p]=nv;else delete c.g[eid][p];
-  }else{
-    c.ok[eid]=c.ok[eid]||{};
-    if(c.ok[eid][p])delete c.ok[eid][p];else c.ok[eid][p]=true;
-  }
-  ui.point=p;saveUi();persist();render();
-}
-
-/* ======================= AFFICHAGE ======================= */
-function renderBar(){
-  $("#classBar").innerHTML=data.classes.map(c=>`<button class="chip" data-cls="${c.id}" aria-pressed="${cur()&&cur().id===c.id}">${esc(c.nom)}</button>`).join("")
-   +(data.classes.length?`<button class="btn" id="btnManage" aria-expanded="${ui.manage}">${ui.manage?"Fermer":"Gérer la classe"}</button>`:"");
-}
-function renderTabs(){
-  const c=cur();
-  $("#tabs").hidden=!c;
-  $("#tabs").innerHTML=[["seances","Séances"],["groupes","Groupes et parcours"],["documents","Documents"]]
-   .map(([k,l])=>`<button role="tab" data-tab="${k}" aria-selected="${ui.tab===k}">${l}</button>`).join("");
-}
-function renderManage(){
-  const m=$("#manage"),c=cur();
-  m.hidden=!(ui.manage&&c);if(m.hidden)return;
-  m.innerHTML=`
-   <h2>Gérer la classe</h2>
-   <div><label for="fNom">Nom de la classe</label><input type="text" id="fNom" value="${esc(c.nom)}"></div>
-   <div><label for="fEleves">Élèves dans l'ordre du plan de classe, un par ligne</label>
-   <textarea id="fEleves">${esc(c.eleves.map(e=>e.nom).join("\n"))}</textarea>
-   <p class="hint">Range les élèves dans l'ordre où tu distribues les feuilles (rangée par rangée). Le PDF des parcours suit cet ordre. Un élève dont le nom ne change pas garde ses groupes.</p></div>
-   ${renderEdt(c)}
-   <div class="row"><button class="btn primary" id="btnSaveClass">Enregistrer la classe</button>
-   <button class="btn" id="btnAddClass">Ajouter une autre classe</button>
-   <button class="btn" id="btnClearPoint">Vider les groupes du point ${ui.point}</button>
-   <button class="btn danger" id="btnDel">Supprimer la classe</button></div>
-   ${ui.confirmDel?`<div class="confirm"><span>Supprimer « ${esc(c.nom)} », ses groupes et sa progression ?</span><button class="btn danger" id="btnDelYes">Oui, supprimer</button><button class="btn" id="btnDelNo">Annuler</button></div>`:""}`;
-}
-function emptyState(){
-  return `<div class="panel empty">
-    <h2>Commence par ta classe</h2>
-    <p>Colle la liste des élèves dans l'ordre du plan de classe, un par ligne. Tu pourras ensuite cocher les séances faites, copier les devoirs, noter les billets de sortie et fabriquer le PDF des parcours avec les prénoms.</p>
-    <div style="width:100%;max-width:520px;display:flex;flex-direction:column;gap:10px;text-align:left">
-      <div><label for="nNom">Nom de la classe</label><input type="text" id="nNom" placeholder="6e B"></div>
-      <div><label for="nEleves">Élèves, un par ligne, dans l'ordre du plan de classe</label><textarea id="nEleves" placeholder="Adam B.&#10;Alice M.&#10;…"></textarea></div>
-      <div class="row"><button class="btn primary" id="btnCreate">Créer la classe</button>
-      <button class="btn" id="btnDemo">Essayer avec une classe exemple</button></div>
+function emptyState() {
+  return `<div class="panel empty"><h2>Commence par ta classe</h2>
+    <p>Donne un nom à ta classe : le classeur calcule tout seul les 15 créneaux de la période (mercredi et jeudi, avec un créneau de plus un jeudi sur trois, sans le 11 novembre) et y place les séances, les Plickers et les devoirs. Tu pourras changer l'emploi du temps ensuite.</p>
+    <div style="width:100%;max-width:420px;display:flex;flex-direction:column;gap:10px;text-align:left">
+      <div><label for="nNom">Nom de la classe</label><input type="text" id="nNom" placeholder="5e A"></div>
+      <div class="row"><button class="btn primary" id="btnCreate">Créer la classe</button></div>
     </div></div>`;
 }
-function docBtn(k){const d=DOCS[k];return `<button class="doc" data-doc="${k}"><b>${esc(d.label)}</b> · ${esc(d.sub)}</button>`}
-function renderSeances(c){
-  const vueSeg=c.edt?`<div class="seg" role="group" aria-label="Affichage"><button data-vue="creneaux" aria-pressed="${ui.vue!=="seances"}">Par créneau (dates)</button><button data-vue="seances" aria-pressed="${ui.vue==="seances"}">Par séance</button></div>`:"";
-  if(c.edt&&ui.vue!=="seances")return `<div class="row">${vueSeg}</div>`+renderCreneaux(c);
-  const P=c.edt?plan(c):null;
-  const quand=sid=>{if(!P)return "";const l=P.cr.filter(x=>x.pieces.some(p=>!p.marge&&p.sid===sid));return l.length?l.map(x=>fmtJ(x.date)).join(", "):""};
-  const done=SEANCES.filter(s=>seanceFaite(c,s.id)).length;
-  const nx=nextSeance(c);
-  const open=ui.open||(nx&&nx.id);
-  let html=(vueSeg?`<div class="row">${vueSeg}</div>`:"")+`<div class="panel"><div class="progress"><h2>${done} séance${done>1?"s":""} faite${done>1?"s":""} sur ${SEANCES.length}</h2>
-    <div class="meter" role="img" aria-label="${done} sur ${SEANCES.length}"><i style="width:${Math.round(done/SEANCES.length*100)}%"></i></div></div>
-    ${nx?`<p class="now">On en est à : <b>${esc(nx.k)}</b> · ${esc(nx.t)} <span class="hint">(${nx.id})</span></p><p class="hint">${esc(chapPos(nx))}.${c.edt?" Le suivi se fait dans la vue par créneau.":" Coche la séance quand elle est faite."}</p>`:`<p class="now">Toute la période est faite.</p>`}
-    <p class="hint">Les devoirs en gras sont ceux des élèves avec un tiers temps ; les autres font tout.</p></div>`;
-  for(const chap of ["Opérations","Angles","Triangles"]){
-    html+=`<div class="chap"><h2>${chap}</h2>`;
-    for(const s of SEANCES.filter(x=>x.chap===chap)){
-      const pr=c.edt?{done:seanceFaite(c,s.id)}:(c.prog[s.id]||{});
-      const tags=[pr.done?`<span class="tag fait">Faite${pr.date?" le "+new Date(pr.date+"T12:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"}):""}</span>`:"",
-        s.eval?`<span class="tag eval">Évaluation</span>`:"",
-        s.parcours?`<span class="tag parc">Parcours point ${s.parcours}</span>`:"",
-        s.billet?`<span class="tag billet">Billet n°${s.billet} en fin de séance</span>`:""].join("");
-      html+=`<details class="seance${pr.done?" done":""}" data-sid="${s.id}" ${open===s.id?"open":""}>
-        <summary><span class="sid">${s.id}</span><span class="stitle">${esc(s.t)}<small>${esc(s.k)}</small></span>${tags}</summary>
-        <div class="sbody">
-          ${c.edt?`<p class="hint">Prévue : ${esc(quand(s.id)||"ne tient plus dans la période")}</p>`:`<div class="check"><input type="checkbox" id="done-${s.id}" data-done="${s.id}" ${pr.done?"checked":""}><label for="done-${s.id}">Séance faite</label>
-            <label for="date-${s.id}" class="hint" style="font-weight:400">le</label><input type="date" id="date-${s.id}" data-date="${s.id}" value="${esc(pr.date||"")}"></div>`}
-          <div class="sgrid">
-            <div class="box"><h3>Contenu</h3>
-              <div class="repere">${esc(chapPos(s))}</div>
-              <div><b>Cours :</b> ${esc(s.cours)}</div>
-              ${s.act?`<div><b>Activité :</b> ${esc(s.act)}</div>`:""}
-              ${(()=>{const i=SEANCES.indexOf(s),pv=i>0?SEANCES[i-1].id:null,l=pv&&projoLink(pv);return l?`<div><a class="btn small" href="${esc(l)}" target="_blank" rel="noopener">📽 Questions flash au vidéoprojecteur</a> <span class="hint">sur la séance précédente</span></div>`:""})()}
-              ${s.parcours?`<div><b>Parcours :</b> 40 min sur le créneau exercices, d'après le billet de la séance précédente. <button class="btn small" data-goparc="${s.parcours}">Préparer les parcours du point ${s.parcours}</button></div>`:""}
-              ${s.billet?`<div><b>Billet de sortie n°${s.billet}</b> : 5 min avant la fin. Note les groupes dans l'onglet Groupes (point ${s.billet}).</div>`:""}
-            </div>
-            <div class="box"><h3>Documents</h3><div class="docs">${s.docs.map(docBtn).join("")}</div></div>
-          </div>
-          <div class="box"><h3>Déroulé (1h30)</h3><ol class="deroule">${(()=>{let t=0;return BLOCS[s.id].map(b=>{const r=`<li class="y-${b.y}"><span class="tps">${t}–${t+b.m}</span><span>${esc(b.t)}</span></li>`;t+=b.m;return r}).join("")})()}</ol></div>
-          ${s.dev?`<div class="box"><h3>Devoirs à donner en fin de séance</h3>
-            <div class="devoir" id="dev-${s.id}">${devoirHtml(s)}</div>
-            <div class="row"><button class="btn primary small" data-copy="${s.id}">Copier les devoirs</button></div>
-            ${s.dev.includes(LIEN)?lienBox(s,"lien"):""}</div>`:""}
-        </div></details>`;
-    }
-    html+=`</div>`;
+
+function render() {
+  const c = cur();
+  if (c && ui.cls !== c.id) ui.cls = c.id;
+  renderBar(); renderTabs(); renderManage();
+  const main = $('#main');
+  if (!c) { main.innerHTML = emptyState(); return; }
+  main.innerHTML = ui.tab === 'chap' ? renderChapitres(c) : ui.tab === 'plk' ? renderPlickers(c) : ui.tab === 'dev' ? renderDevoirs(c) : ui.tab === 'apercu' ? renderApercu(c) : renderCreneaux(c);
+}
+
+/* ---------- actions ---------- */
+function newClass(nom, edt) {
+  const c = { id: uid(), nom: nom || 'Ma classe', edt: edt || EDT_DEF(), cren: {} };
+  data.classes.push(c); ui.cls = c.id; saveUi(); persist(); render(); return c;
+}
+function readManage(c) {
+  const nom = $('#fNom').value.trim(); if (nom) c.nom = nom;
+  const e = c.edt;
+  e.extra = e.extra || {};
+  e.extra.on = $('#xOn').checked; e.extra.every = +$('#xEvery').value; e.extra.j = +$('#xJ').value; e.extra.d = +$('#xD').value; e.extra.first = $('#xFirst').value || PERIODE.debut;
+  const deb = $('#pDeb').value, fin = $('#pFin').value;
+  if (deb && fin && deb < fin) { data.periode = { debut: deb, fin, feries: [...PERIODE.feries] }; applyPeriode(); }
+}
+
+document.addEventListener('click', (ev) => {
+  const t = ev.target.closest('button, a'); if (!t) return;
+  const c = cur();
+  if (t.dataset.cls) { ui.cls = t.dataset.cls; saveUi(); render(); return; }
+  if (t.dataset.tab) { ui.tab = t.dataset.tab; saveUi(); render(); return; }
+  if (t.id === 'btnManage') { ui.manage = !ui.manage; ui.confirmDel = false; render(); return; }
+  if (t.id === 'btnCreate') { newClass($('#nNom').value.trim() || '5e'); return; }
+  if (t.id === 'btnPrint') { window.print(); return; }
+  if (!c) return;
+  if (t.dataset.cst !== undefined) {
+    const id = t.dataset.c, k = t.dataset.cst;
+    if (k) c.cren[id] = { st: k, reste: k === 'partiel' ? (c.cren[id] && c.cren[id].reste) || 30 : 0 }; else delete c.cren[id];
+    ui.openC = id; invalider(c); saveUi(); persist(); render(); return;
   }
-  return html;
-}
-function renderGroupes(c){
-  const p=POINTS.find(x=>x.n===ui.point)||POINTS[0];
-  const k=counts(c,p.n);
-  const ordre=c.eleves.map((e,i)=>({e,i,g:(c.g[e.id]||{})[p.n]}));
-  const sans=ordre.filter(x=>!x.g);
-  return `<div style="display:flex;flex-direction:column;gap:16px">
-  <div class="panel">
-    <div class="row" style="justify-content:space-between">
-      <h2>Point ${p.n} · ${esc(p.t)} · billet en fin de ${p.b}, parcours en ${p.p}</h2>
-      <div class="seg" role="group" aria-label="Ce que fait un toucher">
-        <button data-mode="groupe" aria-pressed="${ui.mode==="groupe"}">Billet : groupe</button>
-        <button data-mode="retest" aria-pressed="${ui.mode==="retest"}">Re-test réussi ✓</button>
-      </div>
-    </div>
-    <div class="summary">
-      <div class="count c-R"><b>${k.R}</b><span>Je reprends</span></div>
-      <div class="count c-E"><b>${k.E}</b><span>Je m'entraîne</span></div>
-      <div class="count c-D"><b>${k.D}</b><span>Je relève un défi</span></div>
-      <div class="count c-0"><b>${k["0"]}</b><span>sans groupe (absents ?)</span></div>
-    </div>
-    <p class="hint">${ui.mode==="groupe"
-      ?`Billet de la ${p.b} : touche une case pour passer de vide à R, E, D, puis vide. 0 ou 1 juste = R, 2 justes = E, 3 justes = D.`
-      :`Fin de la ${p.p} : touche la case d'un élève qui a réussi son mini re-test (3 justes). ${k.ok} élève${k.ok>1?"s":""} ✓ sur ce point.`}</p>
-    <div class="row"><button class="btn primary" id="btnGen" ${busy?"disabled":""}>${busy?"Fabrication…":`Fabriquer le PDF des parcours (${k.R+k.E+k.D} pages, avec les prénoms)`}</button>
-    <span class="hint">Le PDF s'ouvre dans un nouvel onglet : imprime-le depuis là.</span></div>
-    ${sans.length&&(k.R+k.E+k.D)?`<p class="warn">Sans groupe, donc sans parcours dans le PDF : ${sans.map(x=>esc(x.e.nom)).join(", ")}.</p>`:""}
-  </div>
-
-  <div class="scroll"><table>
-    <thead><tr><th class="name" scope="col">${c.eleves.length} élève${c.eleves.length>1?"s":""}, ordre du plan</th>
-    ${POINTS.map(x=>`<th scope="col"><button class="colhead" data-point="${x.n}" aria-pressed="${x.n===p.n}"><span class="n">${x.n}</span><span class="t">${esc(x.t)}</span><span class="s">billet ${x.b} · parcours ${x.p}</span></button></th>`).join("")}</tr></thead>
-    <tbody>${c.eleves.map((e,i)=>`<tr><td class="name"><small>${i+1}</small>${esc(e.nom)}</td>${POINTS.map(x=>{
-       const v=(c.g[e.id]||{})[x.n]||"";const ok=(c.ok[e.id]||{})[x.n];
-       return `<td class="${x.n===p.n?"sel":""}"><button class="cell ${v}" data-e="${e.id}" data-p="${x.n}" aria-label="${esc(e.nom)}, point ${x.n} : ${v?G[v]:"pas de groupe"}${ok?", re-test réussi":""}">${v||"·"}${ok?'<span class="tick">✓</span>':""}</button></td>`}).join("")}</tr>`).join("")}</tbody>
-    <tfoot><tr><td class="name">À imprimer</td>${POINTS.map(x=>{const q=counts(c,x.n);return `<td class="${x.n===p.n?"sel":""}"><b class="R">R ${q.R}</b><br><b class="E">E ${q.E}</b><br><b class="D">D ${q.D}</b></td>`}).join("")}</tr></tfoot>
-  </table></div>
-  <div class="legend"><span><i class="c-R">R</i>Je reprends</span><span><i class="c-E">E</i>Je m'entraîne</span><span><i class="c-D">D</i>Je relève un défi</span><span><i class="c-0">·</i>pas encore de groupe</span><span><i style="color:var(--ok)">✓</i>re-test réussi</span></div>
-
-  <div class="panel">
-    <h2>Ordre de distribution du point ${p.n}</h2>
-    <p class="hint">Le PDF suit l'ordre du plan de classe. Le numéro de chaque élève est aussi écrit en petit dans le coin de sa feuille.</p>
-    ${ordre.some(x=>x.g)?`<ol class="ordre">${ordre.filter(x=>x.g).map(x=>`<li value="${x.i+1}">${esc(x.e.nom)}<span class="g c-${x.g}">${x.g}</span>${(c.ok[x.e.id]||{})[p.n]?" ✓":""}</li>`).join("")}</ol>`:`<p class="hint">Aucun groupe noté pour ce point.</p>`}
-  </div>
-  </div>`;
-}
-function renderDocuments(){
-  return `<div class="panel"><p class="hint">Touche un document pour le télécharger. Les versions « élève » s'impriment ; les corrigés et les écrans se projettent.</p></div>`
-   +DOC_GROUPS.map(([t,keys])=>`<div class="panel docgroup"><h2>${t}</h2><div class="docs">${keys.map(docBtn).join("")}</div></div>`).join("")
-   +`<div class="panel docgroup"><h2>Parcours séparés (élève, sans prénom)</h2><div class="docs">${POINTS.map(p=>["R","E","D"].map(g=>`<button class="doc" data-pdoc="${p.n}${g}"><b>Point ${p.n}</b> · ${G[g]}</button>`).join("")).join("")}</div></div>`;
-}
-function render(){
-  data.classes.forEach(invalider);
-  const keep=ui.manage&&$("#fEleves")?{n:$("#fNom").value,e:$("#fEleves").value}:null;
-  if(!data.classes.find(c=>c.id===ui.cls)&&data.classes[0])ui.cls=data.classes[0].id;
-  renderBar();renderTabs();renderManage();
-  if(keep&&$("#fEleves")){$("#fNom").value=keep.n;$("#fEleves").value=keep.e}
-  const c=cur(),main=$("#main");
-  if(!c){main.innerHTML=emptyState();return}
-  main.innerHTML=ui.tab==="groupes"?renderGroupes(c):ui.tab==="documents"?renderDocuments():renderSeances(c);
-}
-
-/* ======================= ÉVÉNEMENTS ======================= */
-document.addEventListener("click",ev=>{
-  const t=ev.target.closest("button");if(!t)return;
-  if(t.dataset.cls){ui.cls=t.dataset.cls;ui.confirmDel=false;ui.open=null;saveUi();render();return}
-  if(t.dataset.tab){ui.tab=t.dataset.tab;saveUi();render();return}
-  if(t.dataset.e){tap(t.dataset.e,+t.dataset.p);return}
-  if(t.dataset.point){ui.point=+t.dataset.point;saveUi();render();return}
-  if(t.dataset.mode){ui.mode=t.dataset.mode;saveUi();render();return}
-  if(t.dataset.doc){telecharger(t.dataset.doc,openWin());return}
-  if(t.dataset.pdoc){const k=t.dataset.pdoc,w=openWin();getBytes("docs/parcours/P"+k+".pdf").then(b=>save("Parcours_point"+k[0]+"_"+({R:"Je_reprends",E:"Je_m_entraine",D:"Je_releve_un_defi"})[k[1]]+".pdf",b,w)).catch(e=>{if(w)w.close();setStatus(docErr(e,"ce parcours"))});return}
-  if(t.dataset.copylink){const v=t.dataset.copylink;(navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(()=>{t.textContent="Copié ✓";setTimeout(()=>{t.textContent="Copier le lien seul"},1500)}).catch(()=>{prompt("Copie ce lien :",v)});return}
-  if(t.dataset.copy){copierDevoirs(t.dataset.copy,t);return}
-  if(t.dataset.copyc){const c=cur(),i=+t.dataset.copyc,P=plan(c);copierHtml(devoirsCreneau(c,P,i).html,t,"devc-"+P.cr[i].id);return}
-  if(t.dataset.vue){ui.vue=t.dataset.vue;saveUi();render();return}
-  if(t.dataset.cst!==undefined){const c=cur(),id=t.dataset.c,v=t.dataset.cst;
-    if(!v)delete c.cren[id];else c.cren[id]={st:v,reste:v==="partiel"?((c.cren[id]||{}).reste||20):0};
-    if(v){const P=planClasse(c);const i=P.cr.findIndex(x=>x.id===id);const n=P.cr.slice(i+1).find(x=>!x.st);ui.openC=v==="partiel"?id:(n?n.id:id)}else ui.openC=id;
-    saveUi();persist();render();return}
-  if(t.dataset.edtmode!==undefined){const c=cur();c.edt=t.dataset.edtmode==="1"?(c.edt||{hebdo:[{j:1,d:90},{j:3,d:90},{j:5,d:90}],extra:{on:false,j:2,d:90,first:PERIODE.debut,every:3}}):null;persist();render();return}
-  if(t.dataset.hdel!==undefined){const c=cur();c.edt.hebdo.splice(+t.dataset.hdel,1);persist();render();return}
-  if(t.dataset.goparc){ui.tab="groupes";ui.point=+t.dataset.goparc;saveUi();render();window.scrollTo({top:0});return}
-  const c=cur();
-  switch(t.id){
-    case "btnGen":genererParcours(ui.point,openWin());break;
-    case "btnHadd":c.edt.hebdo.push({j:4,d:90});persist();render();break;
-    case "btnManage":ui.manage=!ui.manage;ui.confirmDel=false;render();break;
-    case "btnCreate":{const l=parseNames($("#nEleves").value);if(!l.length){$("#nEleves").focus();setStatus("Ajoute au moins un élève.");return}newClass($("#nNom").value.trim()||"Ma classe",l);break}
-    case "btnDemo":newClass("6e Exemple (fictive)",EXEMPLE);break;
-    case "btnSaveClass":{
-      const l=parseNames($("#fEleves").value);
-      const old=c.eleves;c.nom=$("#fNom").value.trim()||c.nom;
-      c.eleves=l.map(n=>old.find(e=>e.nom===n)||{id:uid(),nom:n});
-      const keep=new Set(c.eleves.map(e=>e.id));
-      Object.keys(c.g).forEach(k=>{if(!keep.has(k))delete c.g[k]});
-      Object.keys(c.ok).forEach(k=>{if(!keep.has(k))delete c.ok[k]});
-      ui.manage=false;persist();render();break}
-    case "btnAddClass":ui.manage=false;$("#manage").hidden=true;$("#tabs").hidden=true;
-      document.querySelectorAll("#classBar .chip").forEach(b=>b.setAttribute("aria-pressed","false"));
-      $("#main").innerHTML=emptyState();break;
-    case "btnClearPoint":Object.values(c.g).forEach(o=>delete o[ui.point]);Object.values(c.ok).forEach(o=>delete o[ui.point]);persist();render();break;
-    case "btnDel":ui.confirmDel=true;render();break;
-    case "btnDelNo":ui.confirmDel=false;render();break;
-    case "btnDelYes":data.classes=data.classes.filter(x=>x.id!==c.id);ui.cls=data.classes[0]?data.classes[0].id:null;ui.manage=false;ui.confirmDel=false;saveUi();persist();render();break;
+  if (t.dataset.copydev) {
+    const el = document.getElementById('devc-' + t.dataset.copydev); copyText(devoirPlain(el.innerHTML), t, el.innerHTML); return;
   }
+  if (t.dataset.copydevs) {
+    const el = document.getElementById('dev-' + t.dataset.copydevs); copyText(devoirPlain(el.innerHTML), t, el.innerHTML); return;
+  }
+  if (t.dataset.copyset) { copyText(quizText(t.dataset.copyset), t); return; }
+  if (t.dataset.cq) { copyQ(t.dataset.cq, t); return; }
+  if (t.dataset.csv) {
+    const sids = t.dataset.csv === 'all' ? SEANCES.map((s) => s.id) : [t.dataset.csv];
+    download(t.dataset.csv === 'all' ? 'plickers_5e_periode2.csv' : `plickers_${t.dataset.csv}.csv`, quizCsv(sids), 'text/csv;charset=utf-8'); return;
+  }
+  if (t.id === 'btnHadd') { readManage(c); c.edt.hebdo.push({ j: 3, d: 90 }); invalider(c); persist(); render(); return; }
+  if (t.dataset.hdel !== undefined) { readManage(c); c.edt.hebdo.splice(+t.dataset.hdel, 1); invalider(c); persist(); render(); return; }
+  if (t.dataset.fdel !== undefined) { readManage(c); const p = data.periode || { debut: PERIODE.debut, fin: PERIODE.fin, feries: [...PERIODE.feries] }; p.feries.splice(+t.dataset.fdel, 1); data.periode = p; applyPeriode(); data.classes.forEach(invalider); persist(); render(); return; }
+  if (t.id === 'btnFadd') {
+    const v = $('#fNew').value; if (!v) return; readManage(c);
+    const p = data.periode || { debut: PERIODE.debut, fin: PERIODE.fin, feries: [...PERIODE.feries] }; if (!p.feries.includes(v)) p.feries.push(v); p.feries.sort(); data.periode = p; applyPeriode(); data.classes.forEach(invalider); persist(); render(); return;
+  }
+  if (t.id === 'btnSaveClass') { readManage(c); data.classes.forEach(invalider); persist(); ui.manage = false; render(); return; }
+  if (t.id === 'btnAddClass') { readManage(c); const n = newClass('Nouvelle classe', JSON.parse(JSON.stringify(c.edt))); ui.manage = true; render(); $('#fNom').focus(); $('#fNom').select(); return; }
+  if (t.id === 'btnResetSuivi') { c.cren = {}; invalider(c); persist(); render(); return; }
+  if (t.id === 'btnDel') { ui.confirmDel = true; render(); return; }
+  if (t.id === 'btnDelNo') { ui.confirmDel = false; render(); return; }
+  if (t.id === 'btnDelYes') { data.classes = data.classes.filter((x) => x.id !== c.id); ui.cls = data.classes[0] ? data.classes[0].id : null; ui.manage = false; ui.confirmDel = false; saveUi(); persist(); render(); return; }
 });
-document.addEventListener("change",ev=>{
-  const t=ev.target,c=cur();if(!c)return;
-  if(t.dataset.done){const id=t.dataset.done;c.prog[id]=c.prog[id]||{};c.prog[id].done=t.checked;
-    if(t.checked&&!c.prog[id].date)c.prog[id].date=new Date().toISOString().slice(0,10);
-    const nx=nextSeance(c);ui.open=t.checked&&nx?nx.id:id;saveUi();persist();render();return}
-  if(t.dataset.reste){c.cren[t.dataset.reste]={st:"partiel",reste:+t.value};ui.openC=t.dataset.reste;saveUi();persist();render();return}
-  if(t.dataset.hj!==undefined){c.edt.hebdo[+t.dataset.hj].j=+t.value;persist();render();return}
-  if(t.dataset.hd!==undefined){c.edt.hebdo[+t.dataset.hd].d=+t.value;persist();render();return}
-  if(["xOn","xEvery","xJ","xD","xFirst"].includes(t.id)&&c.edt){const x=c.edt.extra=c.edt.extra||{};
-    x.on=$("#xOn").checked;x.every=+$("#xEvery").value;x.j=+$("#xJ").value;x.d=+$("#xD").value;x.first=$("#xFirst").value||PERIODE.debut;persist();render();return}
-  if(t.dataset.date){const id=t.dataset.date;c.prog[id]=c.prog[id]||{};c.prog[id].date=t.value;persist();render();return}
-  if(t.dataset.lien){const id=t.dataset.lien;data.liens=data.liens||{};const v=t.value.trim();if(v)data.liens[id]=v;else delete data.liens[id];
-    const el=document.getElementById("dev-"+id);const s=SEANCES.find(x=>x.id===id);if(el&&s)el.innerHTML=devoirHtml(s);
-    if(c.edt&&ui.vue!=="seances"){persist();render();return}persist();return}
+document.addEventListener('change', (ev) => {
+  const t = ev.target, c = cur(); if (!c) return;
+  if (t.dataset.reste) { const e = c.cren[t.dataset.reste]; if (e) { e.reste = +t.value; invalider(c); persist(); render(); } return; }
+  if (t.dataset.hj !== undefined) { c.edt.hebdo[+t.dataset.hj].j = +t.value; invalider(c); persist(); render(); return; }
+  if (t.dataset.hd !== undefined) { c.edt.hebdo[+t.dataset.hd].d = +t.value; invalider(c); persist(); render(); return; }
+  if (['xOn', 'xEvery', 'xJ', 'xD', 'xFirst', 'pDeb', 'pFin'].includes(t.id)) { readManage(c); data.classes.forEach(invalider); persist(); render(); }
 });
-document.addEventListener("toggle",ev=>{
-  const d=ev.target;if(!(d instanceof HTMLDetailsElement)||!(d.dataset.sid||d.dataset.cid))return;
-  if(d.open&&d.dataset.sid){ui.open=d.dataset.sid;saveUi()}
-  if(d.open&&d.dataset.cid){ui.openC=d.dataset.cid;saveUi()}
-},true);
+document.addEventListener('toggle', (ev) => {
+  const d = ev.target; if (d.tagName === 'DETAILS' && d.dataset.cid && d.open) { ui.openC = d.dataset.cid; saveUi(); }
+}, true);
 
-/* ---------- verrou, sauvegarde ---------- */
-$("#gateGo").addEventListener("click",async()=>{
-  const v=$("#gateCode").value;if(!v.trim())return;
-  $("#gateMsg").textContent="Vérification…";
-  let ok=false;try{ok=await unlock(v)}catch(e){$("#gateMsg").textContent="Ce navigateur n'arrive pas à vérifier le code ("+(location.protocol==="file:"?"page ouverte depuis l'ordinateur : ouvre-la depuis l'adresse du site en ligne":"essaie avec Chrome, Edge, Firefox ou Safari à jour")+").";return}
-  if(ok){$("#gateCode").value="";$("#gateMsg").textContent="";start()}else $("#gateMsg").textContent="Code incorrect.";
+/* ---------- sauvegarde dans un fichier ---------- */
+$('#btnExport').addEventListener('click', () => {
+  download('classeur5e_sauvegarde.json', JSON.stringify(data, (k, v) => (k === '_plan' ? undefined : v), 1), 'application/json');
+  setStatus('Sauvegarde téléchargée.');
 });
-$("#gateCode").addEventListener("keydown",e=>{if(e.key==="Enter")$("#gateGo").click()});
-$("#btnLock").addEventListener("click",()=>{try{localStorage.removeItem(KEYSTORE)}catch(e){}cryptoKey=null;for(const k in pdfCache)delete pdfCache[k];$("#app").hidden=true;$("#gate").hidden=false});
-$("#btnExport").addEventListener("click",()=>{
-  const txt=JSON.stringify({type:"classeur-6e",version:1,date:new Date().toISOString(),data:JSON.parse(JSON.stringify(data,(k,v)=>k==="_plan"?undefined:v))},null,1);
-  const url=URL.createObjectURL(new Blob([txt],{type:"application/json"}));
-  const a=document.createElement("a");a.href=url;a.download="classeur-6e-"+new Date().toISOString().slice(0,10)+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
-  setStatus("Sauvegarde téléchargée.");
+$('#fileImport').addEventListener('change', async (ev) => {
+  const f = ev.target.files[0]; if (!f) return;
+  try {
+    const d = JSON.parse(await f.text());
+    if (!d || !Array.isArray(d.classes)) throw new Error('format');
+    data = norm(d); applyPeriode(); ui.cls = data.classes[0] ? data.classes[0].id : null; persist(); render(); setStatus('Sauvegarde restaurée.');
+  } catch (e) { setStatus('Ce fichier n\'est pas une sauvegarde du classeur.'); }
+  ev.target.value = '';
 });
-$("#fileImport").addEventListener("change",async e=>{
-  const f=e.target.files&&e.target.files[0];if(!f)return;
-  try{const j=JSON.parse(await f.text());const d=j&&j.data?j.data:j;if(!d||!Array.isArray(d.classes))throw 0;
-    if(!confirm("Remplacer les classes de cet appareil par celles de la sauvegarde ("+d.classes.length+" classe"+(d.classes.length>1?"s":"")+") ?"))return;
-    data=norm(d);ui.cls=null;flush();render();setStatus("Sauvegarde restaurée.");}
-  catch(err){setStatus("Ce fichier n'est pas une sauvegarde du classeur.")}
-  e.target.value="";
-});
-connect();
+
+loadLocal();
+if (!data.classes.length) { /* l'écran « Commence par ta classe » s'affiche */ }
+render();
+
 </script>
 </body>
 </html>

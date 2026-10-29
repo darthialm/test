@@ -1,0 +1,70 @@
+/* =========================================================
+   Chapitres 4 à 7 + Espace professeur
+   ========================================================= */
+body[data-ch="proportionnalite"] { --accent: #b3541e; --accent-soft: #fbece0; }
+body[data-ch="angles"] { --accent: #7a3fb0; --accent-soft: #f0e6fa; }
+body[data-ch="fractions2"] { --accent: #1a6fa3; --accent-soft: #e0f0fa; }
+body[data-ch="divisibilite"] { --accent: #2d7d46; --accent-soft: #e3f4e8; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body[data-ch="proportionnalite"] { --accent: #ffb27d; --accent-soft: #3b2616; }
+  :root:not([data-theme="light"]) body[data-ch="angles"] { --accent: #c9a2f0; --accent-soft: #2d2140; }
+  :root:not([data-theme="light"]) body[data-ch="fractions2"] { --accent: #7cc4ef; --accent-soft: #15303f; }
+  :root:not([data-theme="light"]) body[data-ch="divisibilite"] { --accent: #7fd69a; --accent-soft: #17331f; }
+}
+.chapter-card[data-ch="proportionnalite"] { --c: #b3541e; --cs: #fbece0; }
+.chapter-card[data-ch="angles"] { --c: #7a3fb0; --cs: #f0e6fa; }
+.chapter-card[data-ch="fractions2"] { --c: #1a6fa3; --cs: #e0f0fa; }
+.chapter-card[data-ch="divisibilite"] { --c: #2d7d46; --cs: #e3f4e8; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .chapter-card[data-ch="proportionnalite"] { --c: #ffb27d; --cs: #3b2616; }
+  :root:not([data-theme="light"]) .chapter-card[data-ch="angles"] { --c: #c9a2f0; --cs: #2d2140; }
+  :root:not([data-theme="light"]) .chapter-card[data-ch="fractions2"] { --c: #7cc4ef; --cs: #15303f; }
+  :root:not([data-theme="light"]) .chapter-card[data-ch="divisibilite"] { --c: #7fd69a; --cs: #17331f; }
+}
+.chapter-card.locked { opacity: .6; cursor: default; filter: grayscale(.6); }
+.chapter-card.locked:hover { transform: none; }
+
+/* tableaux de proportionnalité */
+table.ptab { border-collapse: collapse; margin: 10px 0 14px; max-width: 100%; }
+table.ptab th, table.ptab td { border: 1.5px solid var(--ink); padding: 6px 14px; text-align: center; font-variant-numeric: tabular-nums; }
+table.ptab th { text-align: left; background: var(--accent-soft); font-weight: 700; }
+table.ptab td .ans { width: 5.5em; text-align: center; }
+.unit { font-size: 1rem; color: var(--muted); margin-left: 2px; }
+.fig5 { margin: 10px 0 14px; }
+.fig5 svg { width: min(100%, 420px); height: auto; display: block; }
+.fig5.small svg { width: min(100%, 300px); }
+.fig5 svg text { font-family: inherit; fill: var(--ink); }
+.fig5 svg .ln { stroke: var(--ink); stroke-width: 2; fill: none; }
+.fig5 svg .arc { stroke: var(--ink); stroke-width: 1.5; fill: none; }
+.fig5 svg .hiA { fill: #4a7bd6; opacity: .55; }
+.fig5 svg .hiB { fill: #e07b39; opacity: .55; }
+.fig5 .legend5 { display: flex; gap: 16px; flex-wrap: wrap; font-size: .95rem; margin-top: 4px; }
+.sw { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; }
+.sw.A { background: #4a7bd6; } .sw.B { background: #e07b39; }
+
+/* division posée */
+table.potence { border-collapse: collapse; font-family: "Courier New", monospace; font-size: 1.3rem; margin: 10px 0; }
+table.potence td { padding: 0 8px; text-align: right; white-space: pre; }
+table.potence td.dv { border-left: 2px solid var(--ink); border-bottom: 2px solid var(--ink); text-align: left; }
+table.potence td.qq { border-left: 2px solid var(--ink); text-align: left; }
+.crible5 { display: grid; grid-template-columns: repeat(10, 1fr); max-width: 420px; gap: 0; border: 2px solid var(--ink); margin: 10px 0; }
+.crible5 span { border: 1px solid var(--line); text-align: center; padding: 6px 0; }
+.crible5 span.p { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+
+/* espace professeur */
+.lock-card .ans { width: 14em; }
+.hidden-banner { background: var(--warn-soft); color: var(--warn); border-radius: 10px; padding: 8px 12px; font-size: .9rem; }
+.ouv-box summary { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.ouv-box summary h2 { margin: 0; }
+.ouv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin: 12px 0; }
+.ouv-ch { border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px 10px; }
+.ouv-ch legend { padding: 0 6px; }
+.ouv-p { display: block; padding: 3px 0 3px 8px; font-size: .95rem; }
+.steps-form li { margin: 4px 0; }
+
+/* divers */
+.blank { display: inline-block; min-width: 1.1em; border-bottom: 3px solid var(--accent); color: var(--accent); text-align: center; font-weight: 700; }
+.big.nombre { font-size: 2rem; letter-spacing: .12em; font-variant-numeric: tabular-nums; }
+.fig5 .angtxt { font-weight: 700; }
+.figcap { margin-top: 2px; }
+.ans.list { width: 16em; max-width: 100%; }
