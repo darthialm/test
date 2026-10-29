@@ -660,6 +660,16 @@ function chapitres(P) {
   return Object.values(info);
 }
 
+/* ---------- Cours à trous (PDF dans le dossier cours/) : séance -> [chapitre, page élève, page prof] ---------- */
+const COURS_NOM = { prop: 'Proportionnalite', ang: 'Angles', fr: 'Fractions', div: 'Divisibilite' };
+const COURS_PDF = {
+  N1: ['prop', 1, 1], N2: ['prop', 2, 2], N3: ['prop', 3, 3], N4: ['prop', 4, 3], N5: ['prop', 4, 4],
+  N6: ['ang', 1, 1], N7: ['ang', 3, 4],
+  N8: ['fr', 1, 1], N9: ['fr', 2, 2], N10: ['fr', 2, 2],
+  N11: ['div', 1, 1], N12: ['div', 1, 1], N13: ['div', 2, 1], N14: ['div', 2, 2],
+};
+const coursHref = (id, v) => { const c = COURS_PDF[id]; return c ? `cours-${v === 'e' ? 'eleve' : 'prof'}-${COURS_NOM[c[0]]}.pdf#page=${v === 'e' ? c[1] : c[2]}` : ''; };
+
 </script>
 <script>
 /* =========================================================
@@ -829,7 +839,7 @@ function renderCreneaux(c) {
             ${x.st === 'partiel' && x.reste ? `<li><span class="tps">${x.d - x.reste}–${x.d}</span><span class="hint">Non fait : reporté au créneau suivant</span></li>` : ''}</ol>`}
         </div>
         <div class="sgrid">
-          <div class="box"><h3>Repère</h3>${sids.map((sid) => { const s = SEANCES.find((q) => q.id === sid); return `<div><b>${esc(s.k)}</b><br><span class="hint">${esc(s.t)} · cours : ${esc(s.cours)}</span></div>`; }).join('') || '<p class="hint">—</p>'}</div>
+          <div class="box"><h3>Repère</h3>${sids.map((sid) => { const s = SEANCES.find((q) => q.id === sid); return `<div><b>${esc(s.k)}</b><br><span class="hint">${esc(s.t)} · cours : ${esc(s.cours)}</span>${COURS_PDF[sid] ? `<br><a class="btn mini" href="${coursHref(sid, 'p')}" target="_blank" rel="noopener">📘 Cours à trous (prof)</a> <a class="btn mini" href="${coursHref(sid, 'e')}" target="_blank" rel="noopener">📄 Cours à trous (élève)</a>` : ''}</div>`; }).join('') || '<p class="hint">—</p>'}</div>
           <div class="box"><h3>À préparer</h3>${sids.map((sid) => `<div class="hint">${esc(SEANCES.find((q) => q.id === sid).prep)}</div>`).join('') || '<p class="hint">—</p>'}</div>
         </div>
         ${acts.map((s) => `<div class="box"><h3>Activité · ${esc(s.act)}</h3><div class="act">${s.actD}</div></div>`).join('')}

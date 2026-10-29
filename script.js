@@ -2499,8 +2499,10 @@ function route() {
   if (OLD[h]) { location.replace('#/fractions/' + h); return; }
   if (h === 'accueil') h = '';
   let [ch, p] = h.split('/');
-  const special = ch === 'prof';
-  if (special) { ch = '_'; p = 'prof'; }
+  const retour = h.startsWith('r/');
+  const special = ch === 'prof' || retour;
+  if (retour) { ch = '_'; p = 'retour'; }
+  else if (special) { ch = '_'; p = 'prof'; }
   else if (!CHAPTERS.some((c) => c.id === ch && !c.locked)) { ch = ''; p = ''; }
   p = p || 'accueil';
   let page = document.querySelector(`.page[data-ch="${ch}"][data-p="${p}"]`);
@@ -2522,7 +2524,8 @@ function route() {
     pill.hidden = true; nav.innerHTML = '';
     document.title = 'Révisions 5e — Mathématiques';
   }
-  if (special) { document.title = 'Espace professeur — Révisions 5e'; if (typeof renderProfLock === 'function') renderProfLock(); }
+  if (retour) { document.title = 'Mon contrôle — Révisions 5e'; const rc = typeof routeRetour === 'function' ? routeRetour(h.slice(2)) : ''; if (rc) document.body.dataset.ch = rc; }
+  else if (special) { document.title = 'Espace professeur — Révisions 5e'; if (typeof renderProfLock === 'function') renderProfLock(); }
   else if (!ch) renderChapters();
   else if (p === 'accueil') renderChapterHome(ch);
   else if (p === 'erreurs') WEAK_CTL[ch]?.renew();
