@@ -88,6 +88,13 @@ details.seance>summary::-webkit-details-marker{display:none}
 .sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
 .box{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .box h3{font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.docs{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.docs .btn.mini,.row .btn.mini{text-decoration:none}
+.btn.mini.prof{border-style:dashed}
+.box.ed{background:#f6f9fd}
+.edgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:760px){.edgrid{grid-template-columns:1fr}}
+.edtxt{white-space:pre-wrap;font:inherit;font-size:.9rem;line-height:1.45;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:6px 0 8px;user-select:all}
 .devoir{background:var(--bg);border-radius:8px;padding:10px 12px;line-height:1.55}
 .devoir p{margin:0 0 6px}
 .act p{margin:0 0 6px} .act ul{margin:0 0 6px;padding-left:20px}
@@ -182,193 +189,196 @@ const PAGES = {
 const SEANCES = [
   /* ============ PROPORTIONNALITÉ (2 semaines) ============ */
   { id: 'N1', ch: 'prop', k: 'Proportionnalité · séance 1', t: 'Reconnaître un tableau de proportionnalité, coefficient',
-    cours: 'Partie 1 (1.1 et début du 1.2)', mat: 'calculatrice',
-    prep: 'Imprimer le cours à trous « Proportionnalité » (un par élève). Rien d\'autre.',
-    act: 'Thalès et la pyramide',
-    actD: '<p>Lire le texte d\'ouverture : « À l\'instant où mon ombre sera égale à ma taille, l\'ombre de la pyramide sera égale à sa hauteur. » Question : une perche de 1 m a une ombre de 80 cm ; un arbre a une ombre de 6 m. Quelle est sa hauteur ? Les élèves réalisent que <b>la hauteur et l\'ombre sont proportionnelles</b>.</p>',
+    cours: 'Partie 1, paragraphes 1 et 2', mat: 'calculatrice',
+    prep: 'Imprimer pour chaque élève le cours « Proportionnalité » (élève) et la fiche d\'exercices, en recto-verso. Projeter la fiche à projeter, séance 1.',
+    act: 'Thalès et l\'arbre',
+    actD: '<p>Projeter « Thalès et la pyramide », puis l\'activité du cours : une perche de 1 m a une ombre de 0,8 m, l\'ombre d\'un arbre mesure 6 m ; quelle est sa hauteur ? Les élèves cherchent 3 minutes seuls, puis on construit le tableau ensemble : <b>la hauteur et l\'ombre sont proportionnelles</b>, l\'arbre mesure 6 : 0,8 = 7,5 m.</p>',
     b: [
-      B(8, 'q', 'Plickers (début) : prérequis, multiplier et diviser, vitesse de 6e'),
-      B(12, 'a', 'Accroche « Thalès et la pyramide » : ombre et hauteur'),
-      B(20, 'r', 'Cours à trous partie 1.1 : tableau de proportionnalité, coefficient, méthode « Reconnaître »'),
-      B(30, 'e', 'Cahier d\'activités : proportionnel ou non ?', { min: 10 }),
-      B(20, 'r', 'Cours à trous partie 1.2 : compléter un tableau (coefficient, ÷ coefficient)'),
+      B(8, 'q', 'Plickers (début) : prérequis, multiplier et diviser, vitesse de 6e', { ed: 'Questions de rappel : multiplier, diviser, situations de proportionnalité vues en 6e.' }),
+      B(12, 'a', 'Accroche « Thalès et la pyramide », activité « Mesurer un arbre avec son ombre »', { ed: 'Activité : mesurer la hauteur d\'un arbre grâce à son ombre (la méthode de Thalès).' }),
+      B(20, 'r', 'Cours partie 1.1 : tableau de proportionnalité, coefficient, méthode « Reconnaître »', { ed: 'Cours : reconnaître un tableau de proportionnalité ; le coefficient de proportionnalité.' }),
+      B(20, 'e', 'Exercices 1 à 3 (proportionnel ou pas, taxi)', { min: 10, ex: ['prop', 1, 3] }),
+      B(15, 'r', 'Cours partie 1.2 : compléter un tableau (× coefficient, : coefficient)', { ed: 'Cours : compléter un tableau de proportionnalité.' }),
+      B(15, 'e', 'Exercices 4 et 5 (compléter, recette de crêpes)', { min: 5, ex: ['prop', 4, 5] }),
     ] },
   { id: 'N2', ch: 'prop', k: 'Proportionnalité · séance 2', t: 'Les quatre méthodes, problèmes de proportionnalité',
-    cours: 'Partie 1.2', mat: 'calculatrice',
-    prep: 'Rien à imprimer. Quatre affiches ou quatre zones du tableau pour les groupes. Le devoir de cette séance est à donner en fin de journée.',
+    cours: 'Partie 1, paragraphe 3', mat: 'calculatrice',
+    prep: 'Rien à imprimer. Quatre zones du tableau pour les groupes de l\'activité. Projeter la fiche à projeter, séance 2. Le devoir de cette séance est à donner en fin de journée.',
     act: 'Violette va au cinéma',
-    actD: '<p>Situation du cours : « 4 places de cinéma coûtent 28 €. Combien coûtent 6 places ? » Quatre groupes, <b>une méthode chacun</b> : coefficient de proportionnalité, multiplication (× 1,5), addition (4 + 2), passage à l\'unité. Chaque groupe présente au tableau ; la classe compare et choisit la méthode la plus rapide selon les nombres.</p>',
+    actD: '<p>Situation projetée : « 4 places de cinéma coûtent 28 €. Combien coûtent 6 places ? » Quatre groupes, <b>une méthode imposée chacun</b> (consignes sur la fiche à projeter) : coefficient, multiplication (× 1,5), addition (4 + 2), passage à l\'unité. Chaque groupe présente au tableau ; la classe compare et dégage « Quelle méthode choisir ? ».</p>',
     b: [
-      B(8, 'r', 'Questions flash : × 1,5 ; × 0,25 ; ÷ 0,5'),
-      B(15, 'a', 'Activité « Violette va au cinéma » : une méthode par groupe'),
-      B(17, 'r', 'Cours à trous partie 1.2 : les quatre méthodes, synthèse'),
-      B(42, 'e', 'Cahier d\'activités : carrelage, location de voiture électrique, recettes', { min: 14 }),
-      B(8, 'q', 'Plickers (fin) : compléter un tableau de proportionnalité'),
+      B(8, 'r', 'Questions flash : × 1,5 ; × 0,25 ; : 0,5', { ed: 'Calcul mental : multiplier par 1,5 et par 0,25, diviser par 0,5.' }),
+      B(15, 'a', 'Activité « Violette va au cinéma » : une méthode par groupe', { ed: 'Activité en groupes : quatre méthodes pour résoudre le même problème (« Violette va au cinéma »).' }),
+      B(22, 'r', 'Cours partie 1.3 : les quatre méthodes, quelle méthode choisir, problèmes (carrelage, location)', { ed: 'Cours : résoudre un problème de proportionnalité (coefficient, multiplication, addition, passage à l\'unité).' }),
+      B(17, 'e', 'Exercices 6 à 8 (marché, voiture, imprimante)', { min: 8, ex: ['prop', 6, 8] }),
+      B(20, 'e', 'Exercice 9 en groupes : problème « Le goûter de la classe »', { min: 0, ex: ['prop', 9, 9], ed: 'Problème en groupes : préparer le goûter de la classe (exercice 9 de la fiche).' }),
+      B(8, 'q', 'Plickers (fin) : compléter un tableau de proportionnalité', { ed: 'Questions-bilan sur les tableaux de proportionnalité.' }),
     ] },
   { id: 'N3', ch: 'prop', k: 'Proportionnalité · séance 3', t: 'Les pourcentages',
     cours: 'Partie 2', mat: 'calculatrice',
-    prep: 'Projeter la liste des 6 articles soldés (voir l\'activité). Ramasser les mesures de la chambre (devoir du jeudi précédent).',
+    prep: 'Projeter la fiche à projeter, séance 3 (tableau des soldes). Vérifier que chacun a ses mesures de chambre (devoir).',
     act: 'Les soldes',
-    actD: '<p>Au tableau, six articles : <b>casque 80 € (−25 %) · jeu 45 € (−20 %) · sac 60 € (−30 %) · baskets 90 € (−40 %) · sweat 35 € (−10 %) · montre 120 € (−50 %)</b>. Les élèves calculent chaque prix soldé (sans calculatrice pour 10 %, 25 %, 50 %), puis classent les articles de la plus forte à la plus faible économie en euros.</p>',
+    actD: '<p>Tableau projeté de six articles soldés (casque 80 € −25 %, jeu 45 € −20 %, sac 60 € −30 %, baskets 90 € −40 %, sweat 35 € −10 %, montre 120 € −50 %). Les élèves calculent le montant de chaque remise et le prix soldé, <b>sans calculatrice pour 10 %, 25 % et 50 %</b>, puis classent les articles selon l\'économie réalisée. Point clé à faire dire : le casque (−25 %) fait économiser plus que le sac (−30 %) — tout dépend du prix de départ.</p>',
     b: [
-      B(6, 'r', 'Ramasser les mesures de la chambre ; correction rapide'),
-      B(14, 'a', 'Activité « Les soldes » : calculer les prix soldés'),
-      B(22, 'r', 'Cours à trous partie 2.1 : appliquer un pourcentage (72 % de 9 000 = 0,72 × 9 000)'),
-      B(18, 'r', 'Cours à trous partie 2.2 : calculer un pourcentage (351 sur 650 = 54 %)'),
-      B(22, 'e', 'Cahier d\'activités : pourcentages', { min: 10 }),
-      B(8, 'q', 'Plickers (fin) : pourcentages'),
+      B(6, 'r', 'Vérifier les mesures de la chambre (devoir) ; rappel de la séance précédente', { ed: 'Vérification du travail à la maison (mesures de la chambre).' }),
+      B(14, 'a', 'Activité « Les soldes » : remises et prix soldés', { ed: 'Activité : calculer des prix soldés.' }),
+      B(20, 'r', 'Cours partie 2.1 : appliquer un pourcentage (72 % de 9 000), pourcentages à connaître', { ed: 'Cours : appliquer un pourcentage ; les pourcentages à connaître (50 %, 25 %, 10 %…).' }),
+      B(15, 'r', 'Cours partie 2.2 : calculer un pourcentage (351 sur 650 = 54 %), calcul d\'une remise', { ed: 'Cours : calculer un pourcentage ; calculer un prix après une remise.' }),
+      B(27, 'e', 'Exercices 10 à 14 (le 15 pour aller plus loin)', { min: 10, ex: ['prop', 10, 15], ed: 'Exercices 10 à 14 de la fiche d\'exercices (15 pour aller plus loin).' }),
+      B(8, 'q', 'Plickers (fin) : pourcentages', { ed: 'Questions-bilan sur les pourcentages.' }),
     ] },
   { id: 'N4', ch: 'prop', k: 'Proportionnalité · séance 4', t: 'Les échelles : le plan de ma chambre',
-    cours: 'Partie 3.1', mat: 'règle graduée, papier quadrillé ou millimétré, crayons de couleur, calculatrice',
-    prep: 'Papier quadrillé ou millimétré (une feuille par élève). Les élèves ont leurs mesures de chambre (devoir du 5 novembre). Le devoir de cette séance (révision) est à donner en fin de journée.',
+    cours: 'Partie 3, paragraphe 1', mat: 'règle graduée, crayon, gomme, crayons de couleur, calculatrice, mesures de la chambre',
+    prep: 'Papier quadrillé ou millimétré (une feuille par élève). Projeter la fiche à projeter, séance 4. Le devoir de cette séance (révision) est à donner en fin de journée.',
     act: 'Le plan de ma chambre',
-    actD: '<p>Avec les mesures relevées à la maison (longueur et largeur de la chambre, trois meubles), chaque élève <b>choisit une échelle</b> (1/50 conseillée), calcule dans un tableau de proportionnalité les dimensions sur le plan, puis trace le plan à la règle sur papier quadrillé ou millimétré. Il indique l\'échelle et nomme les meubles.</p><p>Bilan : que se passe-t-il avec l\'échelle 1/10 ? avec 1/200 ? (feuille trop grande ou trop petite).</p>',
+    actD: '<p>Avec les mesures relevées à la maison, chaque élève utilise l\'échelle 1/50, calcule dans un tableau les dimensions du plan (on divise par 50), puis trace le plan à la règle sur papier quadrillé. Il indique l\'échelle et nomme les meubles. Ceux qui ont oublié leurs mesures prennent la chambre « type » de l\'exemple du cours.</p><p>Bilan : que se passe-t-il avec l\'échelle 1/10 ? avec 1/200 ?</p>',
     b: [
-      B(8, 'r', 'Questions flash : 10 %, 25 %, 50 % de 80, 120, 200'),
-      B(20, 'r', 'Cours à trous partie 3.1 : échelle 1/1000, appliquer une échelle, calculer une échelle'),
-      B(36, 'a', 'Activité « Le plan de ma chambre » : calculs et tracé à l\'échelle', { min: 20 }),
-      B(18, 'e', 'Cahier d\'activités : cartes et modèles réduits', { min: 6 }),
-      B(8, 'q', 'Plickers (fin) : échelles'),
+      B(8, 'r', 'Questions flash : 10 %, 25 %, 50 %, 75 % d\'un nombre', { ed: 'Calcul mental : pourcentages simples.' }),
+      B(20, 'r', 'Cours partie 3.1 : échelles (appliquer, calculer, échelle graphique)', { ed: 'Cours : les échelles (calculer une longueur réelle, calculer une échelle).' }),
+      B(32, 'a', 'Activité « Le plan de ma chambre » : calculs et tracé à l\'échelle 1/50', { min: 20, ed: 'Activité : tracer le plan de sa chambre à l\'échelle 1/50.' }),
+      B(22, 'e', 'Exercices 16 à 19 (randonnée, appartement, échelles, carte au trésor)', { min: 6, ex: ['prop', 16, 19] }),
+      B(8, 'q', 'Plickers (fin) : échelles', { ed: 'Questions-bilan sur les échelles.' }),
     ] },
-  { id: 'N5', ch: 'prop', k: 'Proportionnalité · révisions et évaluation', t: 'Durées et vitesse, puis évaluation Proportionnalité',
-    cours: 'Partie 3.2', mat: 'calculatrice',
-    prep: 'Imprimer l\'évaluation de Proportionnalité.',
+  { id: 'N5', ch: 'prop', k: 'Proportionnalité · révisions et évaluation', t: 'Durées et distances, puis évaluation Proportionnalité',
+    cours: 'Partie 3, paragraphe 2', mat: 'calculatrice',
+    prep: 'Préparer l\'évaluation de Proportionnalité (Espace professeur → Contrôle sur papier, compétences du chapitre 4) et l\'imprimer.',
     act: '',
     b: [
-      B(8, 'q', 'Plickers (début) : échelles, pourcentages, vitesse'),
-      B(12, 'r', 'Cours à trous partie 3.2 : durées et distances (12 km en trois quarts d\'heure)'),
-      B(29, 'e', 'Révisions : fiche bilan, exercices au choix, dernières questions', { min: 10 }),
-      B(41, 'v', 'Évaluation Proportionnalité (40 min) et ramassage', { g: 'Proportionnalité · évaluation' }),
+      B(8, 'q', 'Plickers (début) : échelles, pourcentages, durées', { ed: 'Questions de révision avant l\'évaluation.' }),
+      B(12, 'r', 'Cours partie 3.2 : durées et distances (12 km en trois quarts d\'heure, vitesse moyenne)', { ed: 'Cours : durées et distances, vitesse moyenne.' }),
+      B(29, 'e', 'Correction du devoir de révision, exercices 20 à 23', { min: 10, ex: ['prop', 20, 23], ed: 'Correction de la fiche de révision ; exercices 20 à 23 de la fiche d\'exercices.' }),
+      B(41, 'v', 'Évaluation Proportionnalité (40 min) et ramassage', { g: 'Proportionnalité · évaluation', ed: 'Évaluation : proportionnalité.' }),
     ] },
 
   /* ============ ANGLES (1 semaine) ============ */
   { id: 'N6', ch: 'ang', k: 'Angles · séance 1', t: 'Somme des angles, triangles rectangle, équilatéral, isocèle',
-    cours: 'Parties 1 et 2', mat: 'ciseaux, rapporteur',
-    prep: 'Imprimer le cours à trous « Angles ». Chaque élève trace un triangle sur une feuille blanche. Le devoir de cette séance est à donner en fin de journée.',
+    cours: 'Parties 1 et 2', mat: 'ciseaux, crayons de couleur, rapporteur',
+    prep: 'Imprimer pour chaque élève le cours « Angles » (élève) et la fiche d\'exercices. Une feuille blanche par élève pour l\'activité. Projeter la fiche à projeter, séance 1. Le devoir de cette séance est à donner en fin de journée.',
     act: 'Le triangle déchiré',
-    actD: '<p>Chaque élève trace un grand triangle (un aigu, un obtus), colore ses trois angles, <b>déchire</b> les trois coins et les place côte à côte sur une droite : ils forment un angle plat. Conclusion : A + B + C = 180°.</p>',
+    actD: '<p>Chaque élève trace un grand triangle, colorie ses trois angles, <b>déchire</b> les trois coins et les place côte à côte, sommets réunis : ils forment un angle plat. Comparer avec les voisins (triangles aigus, obtus) : c\'est toujours 180°.</p>',
     b: [
-      B(12, 'a', 'Activité « Le triangle déchiré » : trois angles qui forment un angle plat'),
-      B(14, 'r', 'Cours à trous partie 1 : la somme des angles est 180°, méthode « Appliquer la règle des 180° »'),
-      B(18, 'r', 'Cours à trous partie 2 : triangle rectangle (angles aigus = 90°), triangle équilatéral (60°)'),
-      B(16, 'r', 'Cours à trous partie 2 : triangle isocèle (angles à la base), méthode « nature du triangle ABC »'),
-      B(22, 'e', 'Cahier d\'activités : calculer des angles', { min: 10 }),
-      B(8, 'q', 'Plickers (fin) : angles d\'un triangle'),
+      B(12, 'a', 'Activité « Le triangle déchiré »', { ed: 'Activité : le triangle déchiré (les trois angles d\'un triangle forment un angle plat).' }),
+      B(14, 'r', 'Cours partie 1 : la somme des angles vaut 180°, méthode « troisième angle »', { ed: 'Cours : la somme des angles d\'un triangle est égale à 180°.' }),
+      B(10, 'e', 'Exercices 1 et 4', { min: 5, ex: ['ang', 1, 4], ed: 'Exercices 1 et 4 de la fiche d\'exercices.' }),
+      B(22, 'r', 'Cours partie 2 : triangles rectangle, équilatéral, isocèle ; méthodes isocèle et nature', { ed: 'Cours : les angles des triangles rectangles, équilatéraux et isocèles.' }),
+      B(24, 'e', 'Exercices 2, 3, 5, 6 (et 7 pour aller plus loin)', { min: 10, ex: ['ang', 2, 7], ed: 'Exercices 2, 3, 5 et 6 de la fiche d\'exercices (le 7 pour aller plus loin).' }),
+      B(8, 'q', 'Plickers (fin) : angles d\'un triangle', { ed: 'Questions-bilan sur les angles d\'un triangle.' }),
     ] },
   { id: 'N7', ch: 'ang', k: 'Angles · séance 2', t: 'Angles alternes-internes, correspondants et parallélisme',
     cours: 'Parties 3 et 4', mat: 'règle, équerre, rapporteur',
-    prep: 'Si possible, vidéoprojecteur pour une figure de deux parallèles et d\'une sécante.',
+    prep: 'Projeter la fiche à projeter, séance 2 (figures des angles, modèle de rédaction).',
     act: 'Les bandes parallèles',
-    actD: '<p>Chaque élève trace deux droites parallèles (règle et équerre) coupées par une sécante, numérote les 8 angles et les <b>mesure</b>. Il complète un tableau : quels angles sont égaux ? Conjecture écrite par la classe : les angles alternes-internes sont égaux, les angles correspondants sont égaux. Vérification avec une autre sécante.</p>',
+    actD: '<p>Chaque élève trace deux droites parallèles (règle et équerre) coupées par une sécante, numérote les 8 angles comme sur la figure projetée et les <b>mesure</b>. Conjecture de la classe : 1 = 3 = 5 = 7 et 2 = 4 = 6 = 8. On recommence avec deux droites non parallèles : ce n\'est plus vrai.</p>',
     b: [
-      B(8, 'q', 'Plickers (début) : 180° et triangles particuliers'),
-      B(6, 'r', 'Correction du devoir « Angles et triangles »'),
-      B(15, 'a', 'Activité « Les bandes parallèles » : mesurer 8 angles, conjecture'),
-      B(15, 'r', 'Cours à trous partie 3 : angles alternes-internes et correspondants (reconnaître)'),
-      B(16, 'r', 'Cours à trous partie 4 : propriétés de parallélisme (directes et réciproques), méthodes rédigées'),
-      B(30, 'e', 'Cahier d\'activités : calculer, prouver que deux droites sont parallèles', { min: 12 }),
+      B(8, 'q', 'Plickers (début) : 180° et triangles particuliers', { ed: 'Questions de rappel sur les angles d\'un triangle.' }),
+      B(6, 'r', 'Correction du devoir « Angles et triangles »', { ed: 'Correction du travail à la maison.' }),
+      B(12, 'a', 'Activité « Les bandes parallèles » : mesurer 8 angles, conjecture', { ed: 'Activité : mesurer les angles formés par deux parallèles et une sécante.' }),
+      B(16, 'r', 'Cours partie 3 : vocabulaire, angles alternes-internes et correspondants', { ed: 'Cours : angles opposés par le sommet, angles alternes-internes et correspondants.' }),
+      B(18, 'r', 'Cours partie 4 : propriétés de parallélisme, rédiger une démonstration', { ed: 'Cours : angles et droites parallèles ; rédiger une démonstration (Je sais que… Or… Donc…).' }),
+      B(30, 'e', 'Exercices 8 à 13 (le 14 en défi)', { min: 12, ex: ['ang', 8, 14], ed: 'Exercices 8 à 13 de la fiche d\'exercices (14 : défi).' }),
     ] },
 
   /* ============ FRACTIONS 2 (1,5 semaine) ============ */
   { id: 'N8', ch: 'fr', k: 'Fractions 2 · séance 1', t: 'Mettre au même dénominateur, comparer des fractions',
-    cours: 'Partie 1 et début de la partie 2', mat: 'bandes de papier, ciseaux, crayons de couleur',
-    prep: 'Imprimer le cours à trous « Fractions 2 ». Préparer des bandes de papier (environ 24 cm × 3 cm), 4 par élève. Le devoir de cette séance (révision Angles) est à donner en fin de journée.',
+    cours: 'Parties 1 et 2', mat: 'ciseaux, crayons de couleur',
+    prep: 'Imprimer pour chaque élève le cours « Fractions » (élève) et la fiche d\'exercices. Préparer des bandes de papier de 24 cm × 3 cm, 4 par élève. Projeter la fiche à projeter, séance 1. Le devoir de cette séance (révision Angles) est à donner en fin de journée.',
     act: 'Qui a la plus grande part ?',
-    actD: '<p>Chaque élève reçoit 4 bandes identiques. Il plie en 2, 4, 8, puis en 3, 6, 12 et colorie <b>3/4, 5/8, 2/3 et 7/12</b>. En superposant les bandes il range les fractions.</p><p>Conclusion à écrire : pour comparer, on les met <b>au même dénominateur</b>, puis on compare les numérateurs.</p>',
+    actD: '<p>Chaque élève reçoit 4 bandes identiques. Il les plie en 4, 8, 3 et 12 et colorie <b>3/4, 5/8, 2/3 et 7/12</b>. En superposant les bandes, il range les fractions. On justifie ensuite sans bande, avec le dénominateur 24 (figure de correction sur la fiche à projeter).</p>',
     b: [
-      B(7, 'r', 'Questions flash : fractions égales, simplifier (fractions 1)'),
-      B(15, 'r', 'Cours à trous partie 1 : mettre au même dénominateur (multiplier, ou diviser)'),
-      B(20, 'e', 'Cahier d\'activités : mettre au même dénominateur (dont un cas où l\'on divise)', { min: 8 }),
-      B(20, 'a', 'Activité « Qui a la plus grande part ? » (bandes de papier)'),
-      B(20, 'r', 'Cours à trous partie 2 : comparer deux fractions, méthode'),
-      B(8, 'q', 'Plickers (fin) : mettre au même dénominateur, comparer'),
+      B(7, 'r', 'Questions flash : fractions égales, simplifier', { ed: 'Calcul mental : fractions égales, simplifier une fraction.' }),
+      B(15, 'r', 'Cours partie 1 : mettre au même dénominateur (multiplier, ou diviser)', { ed: 'Cours : mettre deux fractions au même dénominateur.' }),
+      B(15, 'e', 'Exercices 1 à 3', { min: 6, ex: ['fr', 1, 3] }),
+      B(18, 'a', 'Activité « Qui a la plus grande part ? » (bandes de papier)', { ed: 'Activité : comparer des fractions avec des bandes de papier.' }),
+      B(15, 'r', 'Cours partie 2 : comparer deux fractions, comparer à 1', { ed: 'Cours : comparer deux fractions.' }),
+      B(12, 'e', 'Exercices 4 à 6', { min: 5, ex: ['fr', 4, 6] }),
+      B(8, 'q', 'Plickers (fin) : même dénominateur, comparer', { ed: 'Questions-bilan : même dénominateur, comparer.' }),
     ] },
   { id: 'N9', ch: 'fr', k: 'Évaluation Angles · Fractions 2, séance 2', t: 'Évaluation Angles, puis encadrer une fraction',
-    cours: 'Partie 2 (encadrer)', mat: 'de quoi écrire',
-    prep: 'Imprimer l\'évaluation d\'Angles.',
+    cours: 'Fractions : encadrer une fraction', mat: 'règle, équerre, rapporteur',
+    prep: 'Préparer l\'évaluation d\'Angles (Espace professeur → Contrôle sur papier, compétences du chapitre 5) et l\'imprimer.',
     act: '',
     b: [
-      B(8, 'q', 'Plickers (début) : révision Angles avant l\'évaluation', { ch: 'ang', g: 'Angles · évaluation' }),
-      B(6, 'r', 'Correction du devoir de révision « Angles : l\'essentiel »', { ch: 'ang', g: 'Angles · évaluation' }),
-      B(41, 'v', 'Évaluation Angles (40 min) et ramassage', { ch: 'ang', g: 'Angles · évaluation' }),
-      B(12, 'r', 'Cours à trous partie 2 : encadrer une fraction par deux entiers consécutifs (18/5)', { g: 'Fractions 2 · séance 2' }),
-      B(23, 'e', 'Cahier d\'activités : comparer, ranger, encadrer', { g: 'Fractions 2 · séance 2', min: 8 }),
+      B(8, 'q', 'Plickers (début) : révision Angles avant l\'évaluation', { ch: 'ang', g: 'Angles · évaluation', ed: 'Questions de révision avant l\'évaluation d\'angles.' }),
+      B(6, 'r', 'Correction du devoir de révision « Angles : l\'essentiel »', { ch: 'ang', g: 'Angles · évaluation', ed: 'Correction de la fiche de révision.' }),
+      B(41, 'v', 'Évaluation Angles (40 min) et ramassage', { ch: 'ang', g: 'Angles · évaluation', ed: 'Évaluation : angles.' }),
+      B(12, 'r', 'Cours : encadrer une fraction par deux entiers consécutifs (18/5)', { g: 'Fractions 2 · séance 2', ed: 'Cours (fractions) : encadrer une fraction par deux nombres entiers consécutifs.' }),
+      B(23, 'e', 'Exercices 7 à 9 (encadrer, droite graduée, vrai ou faux)', { g: 'Fractions 2 · séance 2', min: 8, ex: ['fr', 7, 9] }),
     ] },
   { id: 'N10', ch: 'fr', k: 'Fractions 2 · séance 3', t: 'Additionner et soustraire des fractions',
-    cours: 'Partie 3 (3.1 et 3.2)', mat: 'ardoise et feutre',
-    prep: 'Écrire au tableau les 12 résultats du bingo (voir l\'activité).',
+    cours: 'Partie 3', mat: 'cahier de brouillon',
+    prep: 'Projeter la fiche à projeter, séance 3 (bingo : 12 résultats, puis les calculs un par un).',
     act: 'Bingo des fractions',
-    actD: '<p>Au tableau, 12 résultats : <b>1/2 ; 3/4 ; 3/2 ; 5/6 ; 7/8 ; 1 ; 13/12 ; 5/4 ; 7/6 ; 2 ; 5/3 ; 1/4</b>. Chaque élève en choisit 9 et les place dans une grille 3 × 3.</p><p>Calculs à projeter, un par un : 1/4 + 1/4 · 1/2 + 1/4 · 3/4 + 3/4 · 1/3 + 1/2 · 3/8 + 1/2 · 5/6 + 1/6 · 7/12 + 1/2 · 3/4 + 1/2 · 1/2 + 2/3 · 5/4 + 3/4 · 1 + 2/3 · 3/4 − 1/2. Les élèves barrent le résultat s\'il est dans leur grille ; une ligne complète gagne (vérification au tableau).</p>',
+    actD: '<p>Les 12 résultats sont projetés : <b>1/2 ; 3/4 ; 3/2 ; 5/6 ; 7/8 ; 1 ; 13/12 ; 5/4 ; 7/6 ; 2 ; 5/3 ; 1/4</b>. Chaque élève en choisit 9 et les place dans une grille 3 × 3. Les 12 calculs sont projetés un par un (une page chacun) ; on barre le résultat s\'il est dans sa grille. Une ligne complète gagne (vérification avec la dernière page, qui donne toutes les réponses).</p>',
     b: [
-      B(8, 'r', 'Questions flash : comparer, encadrer'),
-      B(12, 'r', 'Cours à trous partie 3.1 : même dénominateur (4/5 + 7/5, 9/3 − 5/3)'),
-      B(18, 'r', 'Cours à trous partie 3.2, méthode 1 : une seule fraction à modifier (3/8 + 3/4, 4/5 + 1)'),
-      B(14, 'r', 'Cours à trous partie 3.2, méthode 2 : les deux fractions changent (7/6 + 3/4, 3/5 − 1/7)'),
-      B(18, 'e', 'Cahier d\'activités : additions et soustractions', { min: 8 }),
-      B(12, 'a', 'Jeu « Bingo des fractions »', { min: 0 }),
-      B(8, 'q', 'Plickers (fin) : additionner et soustraire'),
+      B(8, 'r', 'Questions flash : comparer, encadrer', { ed: 'Calcul mental : comparer et encadrer des fractions.' }),
+      B(12, 'r', 'Cours partie 3.1 : même dénominateur (4/5 + 7/5, 9/4 − 3/4)', { ed: 'Cours : additionner et soustraire des fractions de même dénominateur.' }),
+      B(16, 'r', 'Cours partie 3.2 : une seule fraction à modifier, puis les deux (7/6 + 3/4)', { ed: 'Cours : additionner et soustraire des fractions de dénominateurs différents.' }),
+      B(10, 'r', 'Cours : résoudre un problème (la pizza)', { ed: 'Cours : problème avec des fractions (la pizza).' }),
+      B(24, 'e', 'Exercices 10 à 14 (15 et 16 pour aller plus loin)', { min: 8, ex: ['fr', 10, 16], ed: 'Exercices 10 à 14 de la fiche d\'exercices (15 et 16 pour aller plus loin).' }),
+      B(12, 'a', 'Jeu « Bingo des fractions »', { min: 0, ed: 'Jeu : le bingo des fractions.' }),
+      B(8, 'q', 'Plickers (fin) : additionner et soustraire', { ed: 'Questions-bilan : additionner et soustraire des fractions.' }),
     ] },
   { id: 'N11', ch: 'div', k: 'Révisions Fractions · Divisibilité, séance 1', t: 'Révisions Fractions, puis division euclidienne',
-    cours: 'Divisibilité, partie 1.1', mat: 'jeu de cartes (un par groupe de 2), de quoi écrire',
-    prep: 'Un jeu de 32 ou 52 cartes par groupe de 2. Imprimer le cours à trous « Divisibilité ». Le devoir de cette séance (révision Fractions) est à donner en fin de journée.',
+    cours: 'Divisibilité, partie 1, paragraphe 1', mat: 'ardoise et feutre',
+    prep: 'Un jeu de cartes (as à 10) par binôme. Imprimer pour chaque élève le cours « Divisibilité » (élève) et la fiche d\'exercices. Projeter la fiche à projeter de Divisibilité, séance 1. Le devoir de cette séance (révision Fractions) est à donner en fin de journée.',
     act: 'Bataille de fractions, puis « Combien de minibus ? »',
-    actD: '<p><b>1. Bataille de fractions.</b> Avec un jeu de cartes (as = 1, de 1 à 10 seulement) : chaque joueur retourne <b>deux cartes</b> et forme une fraction (une carte au numérateur, l\'autre au dénominateur). La <b>plus grande fraction</b> gagne les quatre cartes ; en cas d\'égalité, bataille. Les élèves doivent justifier en mettant au même dénominateur. Puis relais par équipes : une addition à chaque rang au tableau.</p><p><b>2. Entrée en Divisibilité : « Combien de minibus ? »</b> Au tableau : « 73 élèves partent en sortie. Chaque minibus a 8 places. Combien faut-il de minibus ? Combien de places restent vides ? » Les élèves cherchent seuls (ardoise), puis en binôme. À faire ressortir : 73 = 8 × 9 + 1, <b>il reste 1 élève</b> donc il faut <b>10</b> minibus (le reste se « lit » dans le contexte). Introduit dividende, diviseur, quotient, reste.</p>',
+    actD: '<p><b>1. Bataille de fractions</b> (règles projetées) : chaque joueur retourne deux cartes et forme une fraction ; la plus grande gagne, à condition de le justifier en mettant au même dénominateur.</p><p><b>2. « Combien de minibus ? »</b> 73 élèves, minibus de 8 places. Recherche seul sur l\'ardoise, puis en binôme. À faire ressortir : 73 = 8 × 9 + 1, il reste 1 élève, donc il faut <b>10</b> minibus. On introduit dividende, diviseur, quotient, reste.</p>',
     b: [
-      B(18, 'a', 'Jeu « Bataille de fractions », puis relais par équipes', { ch: 'fr', g: 'Fractions 2 · révisions', min: 8 }),
-      B(15, 'e', 'Fiche bilan Fractions et dernières questions', { ch: 'fr', g: 'Fractions 2 · révisions', min: 0 }),
-      B(12, 'a', 'Problème d\'entrée « Combien de minibus ? » (ardoise, puis binômes)', { g: 'Divisibilité · séance 1' }),
-      B(17, 'r', 'Cours à trous partie 1.1 : poser une division euclidienne, vocabulaire, égalité euclidienne', { g: 'Divisibilité · séance 1' }),
-      B(20, 'e', 'Cahier d\'activités : poser 4 divisions et écrire l\'égalité euclidienne', { g: 'Divisibilité · séance 1', min: 8 }),
-      B(8, 'q', 'Plickers (fin) : division euclidienne', { g: 'Divisibilité · séance 1' }),
+      B(18, 'a', 'Jeu « Bataille de fractions »', { ch: 'fr', g: 'Fractions 2 · révisions', min: 8, ed: 'Révisions de fractions : jeu de la bataille de fractions.' }),
+      B(15, 'e', 'Révisions : exercices 15 et 16 de la fiche Fractions, questions', { ch: 'fr', g: 'Fractions 2 · révisions', min: 0, ed: 'Révisions de fractions : problèmes (exercices 15 et 16 de la fiche Fractions).' }),
+      B(12, 'a', 'Problème d\'entrée « Combien de minibus ? » (ardoise, puis binômes)', { g: 'Divisibilité · séance 1', ed: 'Problème de recherche : combien de minibus ?' }),
+      B(17, 'r', 'Cours partie 1.1 : poser une division euclidienne, vocabulaire, égalité, interpréter le reste', { g: 'Divisibilité · séance 1', ed: 'Cours : la division euclidienne (poser, vocabulaire, égalité dividende = diviseur × quotient + reste).' }),
+      B(20, 'e', 'Exercices 1 à 4', { g: 'Divisibilité · séance 1', min: 8, ex: ['div', 1, 4] }),
+      B(8, 'q', 'Plickers (fin) : division euclidienne', { g: 'Divisibilité · séance 1', ed: 'Questions-bilan sur la division euclidienne.' }),
     ] },
   { id: 'N12', ch: 'div', k: 'Évaluation Fractions · Divisibilité, séance 2', t: 'Évaluation Fractions, puis diviser par un décimal',
-    cours: 'Divisibilité, partie 1.2', mat: 'calculatrice (pour vérifier)',
-    prep: 'Imprimer l\'évaluation de Fractions.',
+    cours: 'Divisibilité, partie 1, paragraphe 2', mat: 'calculatrice (pour vérifier)',
+    prep: 'Préparer l\'évaluation de Fractions (Espace professeur → Contrôle sur papier, compétences du chapitre 6) et l\'imprimer.',
     act: '',
     b: [
-      B(8, 'q', 'Plickers (début) : révision Fractions avant l\'évaluation', { ch: 'fr', g: 'Fractions 2 · évaluation' }),
-      B(5, 'r', 'Correction du devoir de révision « Fractions : l\'essentiel »', { ch: 'fr', g: 'Fractions 2 · évaluation' }),
-      B(41, 'v', 'Évaluation Fractions 2 (40 min) et ramassage', { ch: 'fr', g: 'Fractions 2 · évaluation' }),
-      B(15, 'r', 'Cours à trous partie 1.2 : diviser par un nombre décimal (1,5 : 0,3)', { g: 'Divisibilité · séance 2' }),
-      B(21, 'e', 'Cahier d\'activités : 1,5 : 0,3 ; 4,8 : 0,6 ; 2,4 : 0,08', { g: 'Divisibilité · séance 2', min: 6 }),
+      B(8, 'q', 'Plickers (début) : révision Fractions avant l\'évaluation', { ch: 'fr', g: 'Fractions 2 · évaluation', ed: 'Questions de révision avant l\'évaluation de fractions.' }),
+      B(5, 'r', 'Correction du devoir de révision « Fractions : l\'essentiel »', { ch: 'fr', g: 'Fractions 2 · évaluation', ed: 'Correction de la fiche de révision.' }),
+      B(41, 'v', 'Évaluation Fractions 2 (40 min) et ramassage', { ch: 'fr', g: 'Fractions 2 · évaluation', ed: 'Évaluation : fractions.' }),
+      B(15, 'r', 'Cours partie 1.2 : diviser par un nombre décimal (1,5 : 0,3)', { g: 'Divisibilité · séance 2', ed: 'Cours (divisibilité) : diviser par un nombre décimal.' }),
+      B(21, 'e', 'Exercices 5 et 6', { g: 'Divisibilité · séance 2', min: 6, ex: ['div', 5, 6] }),
     ] },
   { id: 'N13', ch: 'div', k: 'Divisibilité · séance 3', t: 'Multiples et diviseurs',
-    cours: 'Partie 2', mat: 'papier quadrillé, ciseaux',
-    prep: 'Photocopier du papier quadrillé 1 cm (une feuille par élève). Le devoir de cette séance est à donner en fin de journée.',
+    cours: 'Partie 2', mat: 'crayon, règle',
+    prep: 'Photocopier du papier quadrillé (une feuille par élève). Projeter la fiche à projeter, séance 3. Le devoir de cette séance est à donner en fin de journée.',
     act: 'Les rectangles de 24 carreaux',
-    actD: '<p>Chaque élève dessine, sur du papier quadrillé, <b>tous les rectangles</b> formés de 24 carreaux, puis de 36, puis de 13. Il note les dimensions dans un tableau : 1 × 24, 2 × 12, 3 × 8, 4 × 6.</p><p>Bilan : les dimensions sont les <b>diviseurs</b> de 24 (par couples). Pour 13 il n\'y a qu\'un rectangle, 1 × 13 : annonce des nombres premiers de la séance suivante.</p>',
+    actD: '<p>Chaque élève dessine, sur papier quadrillé, <b>tous les rectangles</b> formés de 24 carreaux, puis de 36, puis de 13, et note leurs dimensions. Bilan (sur la fiche à projeter) : les dimensions sont les <b>diviseurs</b>, par couples. Pour 13, un seul rectangle : annonce des nombres premiers.</p>',
     b: [
-      B(8, 'r', 'Questions flash : multiples de 6, 7, 8, 9'),
-      B(14, 'a', 'Activité « Les rectangles de 24 carreaux » (papier quadrillé)'),
-      B(18, 'r', 'Cours à trous partie 2 : diviseur, multiple, divisible ; 0 n\'est pas un diviseur ; méthode « Reconnaître un multiple »'),
-      B(14, 'r', 'Cours à trous : méthode « Déterminer les diviseurs d\'un nombre » (par couples)'),
-      B(28, 'e', 'Cahier d\'activités : multiples de 14, diviseurs de 28, 36, 48', { min: 10 }),
-      B(8, 'q', 'Plickers (fin) : division euclidienne, multiples et diviseurs'),
+      B(8, 'r', 'Questions flash : tables, multiples, restes', { ed: 'Calcul mental : tables de multiplication, multiples.' }),
+      B(14, 'a', 'Activité « Les rectangles de 24 carreaux »', { ed: 'Activité : les rectangles de 24 carreaux.' }),
+      B(18, 'r', 'Cours partie 2 : diviseur, multiple, divisible ; reconnaître un multiple', { ed: 'Cours : multiples et diviseurs ; reconnaître un multiple.' }),
+      B(14, 'r', 'Cours : trouver tous les diviseurs d\'un nombre (par couples)', { ed: 'Cours : trouver tous les diviseurs d\'un nombre.' }),
+      B(28, 'e', 'Exercices 7 à 10 (11 et 12 : problèmes)', { min: 10, ex: ['div', 7, 12], ed: 'Exercices 7 à 10 de la fiche d\'exercices (11 et 12 : problèmes).' }),
+      B(8, 'q', 'Plickers (fin) : multiples et diviseurs', { ed: 'Questions-bilan sur les multiples et les diviseurs.' }),
     ] },
   { id: 'N14', ch: 'div', k: 'Divisibilité · séance 4', t: 'Critères de divisibilité, nombres premiers, Juniper Green',
-    cours: 'Partie 3 et nombres premiers', mat: 'de quoi écrire',
-    prep: 'Écrire au tableau la grille 1 à 20 (puis 1 à 40) pour Juniper Green.',
+    cours: 'Partie 3', mat: 'crayon',
+    prep: 'Projeter la fiche à projeter, séance 4 (régularité des multiples de 3, règles et grille de Juniper Green).',
     act: 'Juniper Green',
-    actD: '<p><b>Juniper Green</b> (jeu de ton idée), en binôme, nombres de 1 à 20 puis de 1 à 40 :</p><ul><li>le premier joueur choisit <b>un nombre pair</b> et le barre ;</li><li>chacun à son tour choisit un nombre non barré qui est <b>un multiple ou un diviseur</b> du nombre que l\'adversaire vient de jouer, et le barre ;</li><li>celui qui ne peut plus jouer a perdu.</li></ul><p>Jouer deux parties (on échange les rôles), puis bilan collectif : jouer 1 est-il une bonne idée ? les nombres premiers sont-ils des coups dangereux ? (règles à ajuster à celles de ton exemplaire.)</p>',
+    actD: '<p><b>Juniper Green</b> en binôme, nombres de 1 à 20 puis de 1 à 40 (grille et règles projetées) : le premier joueur barre un nombre pair ; chacun à son tour barre un multiple ou un diviseur du nombre que l\'adversaire vient de jouer ; celui qui ne peut plus jouer a perdu. Deux parties, puis bilan : jouer 1 est-il une bonne idée ? pourquoi les grands nombres premiers sont-ils dangereux ?</p>',
     b: [
-      B(8, 'q', 'Plickers (début) : multiples, diviseurs et critères déjà vus'),
-      B(10, 'r', 'Ramasser et corriger le devoir (diviseurs de 36) ; questions flash'),
-      B(12, 'a', 'Découverte : multiples de 3 et de 9, somme de leurs chiffres, conjecture'),
-      B(20, 'r', 'Cours à trous partie 3 : critères par 2, 5, 10, 3, 9 ; méthode « Reconnaître un multiple ou un diviseur » (456)'),
-      B(8, 'r', 'Cours à trous : les nombres premiers (jusqu\'à 30)'),
-      B(22, 'a', 'Jeu « Juniper Green » : deux parties en binôme, bilan', { min: 12 }),
-      B(10, 'e', 'Exercices flash avant l\'évaluation', { min: 5 }),
+      B(8, 'q', 'Plickers (début) : multiples et diviseurs', { ed: 'Questions de rappel sur les multiples et les diviseurs.' }),
+      B(10, 'r', 'Correction du devoir « Division, multiples et diviseurs »', { ed: 'Correction du travail à la maison.' }),
+      B(12, 'a', 'Découverte : la somme des chiffres des multiples de 3 et de 9', { ed: 'Activité : une régularité dans les multiples de 3 et de 9.' }),
+      B(20, 'r', 'Cours partie 3 : critères par 2, 5, 10, 3, 9 ; méthode (456)', { ed: 'Cours : les critères de divisibilité par 2, 3, 5, 9 et 10.' }),
+      B(8, 'r', 'Cours : les nombres premiers, crible d\'Ératosthène', { ed: 'Cours : les nombres premiers (crible d\'Ératosthène).' }),
+      B(22, 'a', 'Jeu « Juniper Green » : deux parties en binôme, bilan', { min: 12, ed: 'Jeu : Juniper Green (multiples et diviseurs).' }),
+      B(10, 'e', 'Exercices 13 à 15 (16 à 18 pour aller plus loin)', { min: 5, ex: ['div', 13, 18], ed: 'Exercices 13 à 15 de la fiche d\'exercices (16 à 18 pour aller plus loin).' }),
     ] },
   { id: 'N15', ch: 'div', k: 'Bilan de la période', t: 'Évaluation Divisibilité, puis quiz par équipes',
-    cours: '—', mat: 'ardoise et feutre',
-    prep: 'Imprimer l\'évaluation de Divisibilité. Prévoir les Plickers des séances précédentes à rejouer.',
+    cours: '—', mat: 'de quoi écrire',
+    prep: 'Préparer l\'évaluation de Divisibilité (Espace professeur → Contrôle sur papier, compétences du chapitre 7) et l\'imprimer. Projeter le quiz (fiche à projeter de Divisibilité, séance 5).',
     act: 'Quiz par équipes',
-    actD: '<p>Rejouer en équipes les meilleures questions Plickers des quatre chapitres (proportionnalité, angles, fractions, divisibilité) : 4 équipes, un point par bonne réponse, bonus pour la justification.</p>',
+    actD: '<p>Quiz projeté de 10 questions sur les quatre chapitres (proportionnalité, angles, fractions, divisibilité) : 4 équipes, un point par bonne réponse, un point de plus pour une justification correcte.</p>',
     b: [
-      B(41, 'v', 'Évaluation Divisibilité (40 min) et ramassage', { g: 'Divisibilité · évaluation' }),
-      B(33, 'a', 'Quiz par équipes sur les quatre chapitres', { min: 0 }),
-      B(8, 'r', 'Ce qu\'il faut retenir de la période (cahier)', { min: 0 }),
-      B(8, 'q', 'Plickers (fin) : bilan de la période', { min: 0 }),
+      B(41, 'v', 'Évaluation Divisibilité (40 min) et ramassage', { g: 'Divisibilité · évaluation', ed: 'Évaluation : divisibilité.' }),
+      B(33, 'a', 'Quiz par équipes sur les quatre chapitres', { min: 0, ed: 'Quiz par équipes sur les quatre chapitres de la période.' }),
+      B(8, 'r', 'Ce qu\'il faut retenir de la période', { min: 0, ed: 'Bilan de la période.' }),
+      B(8, 'q', 'Plickers (fin) : bilan de la période', { min: 0, ed: 'Questions-bilan de la période.' }),
     ] },
 ];
 
@@ -469,13 +479,13 @@ const LET = ['A', 'B', 'C', 'D'];
 
 /* ---------- Devoirs : donnés le jeudi, à rendre à la première séance de la semaine suivante ---------- */
 const DEV = {
-  N2: { fiche: 'Le plan de ma chambre', h: '<p><b>Coller la fiche « Le plan de ma chambre »</b> et la compléter : mesurer, <b>en centimètres</b>, la longueur et la largeur de ta chambre et de trois meubles (lit, bureau, armoire ou autres).</p><p>Ces mesures serviront à faire un plan à l\'échelle en classe (séance sur les échelles).</p>', site: [['proportionnalite', 'tableaux']] },
-  N4: { fiche: 'Proportionnalité : l\'essentiel', revise: true, h: '<p><b>Réviser pour l\'évaluation de Proportionnalité (mercredi) : coller la fiche « Proportionnalité, l\'essentiel »</b> (tableaux, pourcentages, échelles, vitesse) et l\'apprendre.</p><p>Exercice, au dos de la fiche : 4 exercices de révision (tableau à compléter, pourcentage, échelle, vitesse).</p>', site: [['proportionnalite', 'problemes'], ['proportionnalite', 'pourcentages'], ['proportionnalite', 'echelles']] },
-  N6: { fiche: 'Angles et triangles', h: '<p><b>Coller la fiche « Angles et triangles »</b> (180°, rectangle, équilatéral, isocèle) et l\'apprendre.</p><p>Exercice, au dos de la fiche : trois triangles dont il faut calculer un angle (180°, rectangle, isocèle).</p>', site: [['angles', 'triangles']] },
-  N8: { fiche: 'Angles : l\'essentiel', revise: true, h: '<p><b>Réviser pour l\'évaluation d\'Angles (mercredi) : coller la fiche « Angles, l\'essentiel »</b> (triangles, angles alternes-internes et correspondants, parallélisme) et l\'apprendre.</p><p>Exercice, au dos de la fiche : calculer des angles dans une figure avec deux parallèles, et justifier que deux droites sont parallèles.</p>', site: [['angles', 'triangles'], ['angles', 'parallelisme']] },
-  N11: { fiche: 'Fractions : l\'essentiel', revise: true, h: '<p><b>Réviser pour l\'évaluation de Fractions (mercredi) : coller la fiche « Fractions, l\'essentiel »</b> (comparer, encadrer, additionner, soustraire) et l\'apprendre.</p><p>Exercice, au dos de la fiche : 5/6 + 7/6 ; 3/4 − 1/8 ; 7/6 + 3/4 ; encadrer 17/5 par deux entiers consécutifs.</p>', site: [['fractions2', 'denominateur'], ['fractions2', 'comparer'], ['fractions2', 'addsub']] },
-  N13: { fiche: 'Division, multiples et diviseurs', h: '<p><b>Coller la fiche « Division, multiples et diviseurs »</b> et l\'apprendre (vocabulaire, égalité euclidienne, déterminer les diviseurs).</p><p>Exercice, au dos de la fiche : poser la division euclidienne de 158 par 7 et écrire l\'égalité ; donner tous les diviseurs de 36.</p>', site: [['divisibilite', 'division'], ['divisibilite', 'multiples']] },
-  N15: { fiche: '', h: '<p><b>Pas de devoir à rendre : bonnes vacances !</b></p><p>Facultatif : refaire sur le site les chapitres où l\'évaluation était difficile (page « Mes erreurs »).</p>', site: [] },
+  N2: { fiche: 'Le plan de ma chambre', n: 1, h: '<p>Coller dans le cahier la fiche « Le plan de ma chambre ».</p><p>Mesurer en centimètres la longueur et la largeur de sa chambre et de trois meubles (lit, bureau, armoire…), ainsi que la largeur de la porte et de la fenêtre. Compléter le tableau de la fiche et faire le croquis de la chambre vue du dessus.</p><p>Ces mesures servent en classe pour tracer le plan de la chambre à l\'échelle.</p>', site: [['proportionnalite', 'tableaux']] },
+  N4: { fiche: 'Proportionnalité : l\'essentiel', n: 2, revise: true, h: '<p>Coller dans le cahier la fiche « Proportionnalité : l\'essentiel » et l\'apprendre : l\'évaluation de proportionnalité a lieu à la prochaine séance.</p><p>Faire dans le cahier les exercices 1 à 4 de la fiche.</p>', site: [['proportionnalite', 'problemes'], ['proportionnalite', 'pourcentages'], ['proportionnalite', 'echelles']] },
+  N6: { fiche: 'Angles et triangles', n: 3, h: '<p>Coller dans le cahier la fiche « Angles et triangles » et apprendre les propriétés.</p><p>Faire dans le cahier les exercices 1 à 4 de la fiche, en écrivant chaque calcul.</p>', site: [['angles', 'triangles']] },
+  N8: { fiche: 'Angles : l\'essentiel', n: 4, revise: true, h: '<p>Coller dans le cahier la fiche « Angles : l\'essentiel » et l\'apprendre : l\'évaluation d\'angles a lieu à la prochaine séance.</p><p>Faire dans le cahier les exercices 1 à 3 de la fiche (rédiger avec « Je sais que… Or… Donc… »).</p>', site: [['angles', 'triangles'], ['angles', 'parallelisme']] },
+  N11: { fiche: 'Fractions : l\'essentiel', n: 5, revise: true, h: '<p>Coller dans le cahier la fiche « Fractions : l\'essentiel » et l\'apprendre : l\'évaluation de fractions a lieu à la prochaine séance.</p><p>Faire dans le cahier les exercices 1 à 4 de la fiche.</p>', site: [['fractions2', 'denominateur'], ['fractions2', 'comparer'], ['fractions2', 'addsub']] },
+  N13: { fiche: 'Division, multiples et diviseurs', n: 6, h: '<p>Coller dans le cahier la fiche « Division, multiples et diviseurs » et l\'apprendre.</p><p>Faire dans le cahier les exercices 1 à 4 de la fiche.</p>', site: [['divisibilite', 'division'], ['divisibilite', 'multiples']] },
+  N15: { fiche: '', h: '<p>Pas de travail à rendre : bonnes vacances !</p><p>Facultatif : refaire sur le site Révisions 5e les exercices des chapitres où l\'évaluation a été difficile (page « Mes erreurs »).</p>', site: [] },
 };
 
 /* =========================================================
@@ -660,15 +670,31 @@ function chapitres(P) {
   return Object.values(info);
 }
 
-/* ---------- Cours à trous (PDF dans le dossier cours/) : séance -> [chapitre, page élève, page prof] ---------- */
-const COURS_NOM = { prop: 'Proportionnalite', ang: 'Angles', fr: 'Fractions', div: 'Divisibilite' };
-const COURS_PDF = {
-  N1: ['prop', 1, 1], N2: ['prop', 2, 2], N3: ['prop', 3, 3], N4: ['prop', 4, 3], N5: ['prop', 4, 4],
-  N6: ['ang', 1, 1], N7: ['ang', 3, 4],
-  N8: ['fr', 1, 1], N9: ['fr', 2, 2], N10: ['fr', 2, 2],
-  N11: ['div', 1, 1], N12: ['div', 1, 1], N13: ['div', 2, 1], N14: ['div', 2, 2],
-};
-const coursHref = (id, v) => { const c = COURS_PDF[id]; return c ? `cours-${v === 'e' ? 'eleve' : 'prof'}-${COURS_NOM[c[0]]}.pdf#page=${v === 'e' ? c[1] : c[2]}` : ''; };
+/* ---------- Documents PDF (à la racine du site) ---------- */
+const DOCN = { prop: 'Proportionnalite', ang: 'Angles', fr: 'Fractions', div: 'Divisibilite' };
+const CHED = { prop: 'Proportionnalité', ang: 'Angles', fr: 'Fractions (partie 2)', div: 'Divisibilité' };
+const PDFP = {"cours": {"Proportionnalite": {"eleve": {"seance:N1": 1, "seance:N2": 3, "seance:N3": 4, "seance:N4": 5, "seance:N5": 7}, "prof": {"seance:N1": 1, "seance:N2": 2, "seance:N3": 4, "seance:N4": 5, "seance:N5": 7}}, "Angles": {"eleve": {"seance:N6": 1, "seance:N7": 3}, "prof": {"seance:N6": 1, "seance:N7": 3}}, "Fractions": {"eleve": {"seance:N8": 1, "seance:N9": 3, "seance:N10": 4}, "prof": {"seance:N8": 1, "seance:N9": 3, "seance:N10": 3}}, "Divisibilite": {"eleve": {"seance:N11": 1, "seance:N12": 2, "seance:N13": 3, "seance:N14": 4}, "prof": {"seance:N11": 1, "seance:N12": 2, "seance:N13": 2, "seance:N14": 4}}}, "exo": {"Proportionnalite": {"eleve": {"exo:1": 1, "exo:2": 1, "exo:3": 1, "exo:4": 1, "exo:5": 2, "exo:6": 2, "exo:7": 2, "exo:8": 2, "exo:9": 2, "exo:10": 3, "exo:11": 3, "exo:12": 3, "exo:13": 3, "exo:14": 3, "exo:15": 3, "exo:16": 3, "exo:17": 3, "exo:18": 4, "exo:19": 4, "exo:20": 4, "exo:21": 4, "exo:22": 4, "exo:23": 4}, "prof": {"exo:1": 1, "exo:2": 1, "exo:3": 1, "exo:4": 2, "exo:5": 2, "exo:6": 3, "exo:7": 3, "exo:8": 3, "exo:9": 3, "exo:10": 4, "exo:11": 4, "exo:12": 4, "exo:13": 4, "exo:14": 5, "exo:15": 5, "exo:16": 5, "exo:17": 5, "exo:18": 6, "exo:19": 6, "exo:20": 6, "exo:21": 7, "exo:22": 7, "exo:23": 7}}, "Angles": {"eleve": {"exo:1": 1, "exo:2": 1, "exo:3": 1, "exo:4": 1, "exo:5": 1, "exo:6": 1, "exo:7": 1, "exo:8": 2, "exo:9": 2, "exo:10": 2, "exo:11": 2, "exo:12": 2, "exo:13": 2, "exo:14": 3}, "prof": {"exo:1": 1, "exo:2": 1, "exo:3": 1, "exo:4": 1, "exo:5": 2, "exo:6": 2, "exo:7": 2, "exo:8": 2, "exo:9": 3, "exo:10": 3, "exo:11": 3, "exo:12": 3, "exo:13": 4, "exo:14": 4}}, "Fractions": {"eleve": {"exo:1": 1, "exo:2": 1, "exo:3": 1, "exo:4": 1, "exo:5": 1, "exo:6": 1, "exo:7": 1, "exo:8": 2, "exo:9": 2, "exo:10": 2, "exo:11": 2, "exo:12": 2, "exo:13": 2, "exo:14": 2, "exo:15": 2, "exo:16": 3}, "prof": {"exo:1": 1, "exo:2": 1, "exo:3": 1, "exo:4": 1, "exo:5": 2, "exo:6": 2, "exo:7": 2, "exo:8": 2, "exo:9": 3, "exo:10": 3, "exo:11": 3, "exo:12": 3, "exo:13": 3, "exo:14": 4, "exo:15": 4, "exo:16": 4}}, "Divisibilite": {"eleve": {"exo:1": 1, "exo:2": 1, "exo:3": 1, "exo:4": 1, "exo:5": 1, "exo:6": 1, "exo:7": 1, "exo:8": 2, "exo:9": 2, "exo:10": 2, "exo:11": 2, "exo:12": 2, "exo:13": 2, "exo:14": 2, "exo:15": 2, "exo:16": 3, "exo:17": 3, "exo:18": 3}, "prof": {"exo:1": 1, "exo:2": 1, "exo:3": 1, "exo:4": 1, "exo:5": 2, "exo:6": 2, "exo:7": 2, "exo:8": 2, "exo:9": 2, "exo:10": 3, "exo:11": 3, "exo:12": 3, "exo:13": 3, "exo:14": 4, "exo:15": 4, "exo:16": 4, "exo:17": 4, "exo:18": 4}}}, "proj": {"Proportionnalite": {"seance:N1": 2, "seance:N2": 8, "seance:N3": 13, "seance:N4": 17, "seance:N5": 22}, "Angles": {"seance:N6": 2, "seance:N7": 7, "seance:N9": 12}, "Fractions": {"seance:N8": 2, "seance:N9": 7, "seance:N10": 10}, "Divisibilite": {"seance:N11": 2, "seance:N12": 6, "seance:N13": 9, "seance:N14": 14, "seance:N15": 20}}};
+const pdfHref = (file, page) => file + (page ? '#page=' + page : '');
+/** liens utiles pour une séance : [libellé, adresse, prof ?] */
+function docLinks(sid) {
+  const s = SEANCES.find((q) => q.id === sid), n = DOCN[s.ch], L = [];
+  const cp = PDFP.cours[n] || {};
+  if (cp.eleve && cp.eleve['seance:' + sid]) {
+    L.push(['📄 Cours (élève)', pdfHref(`cours-eleve-${n}.pdf`, cp.eleve['seance:' + sid]), 0]);
+    L.push(['📘 Cours complété (prof)', pdfHref(`cours-prof-${n}.pdf`, cp.prof['seance:' + sid]), 1]);
+  }
+  const ex = s.b.map((b) => b.ex).filter(Boolean);
+  ex.forEach((e) => {
+    const en = DOCN[e[0]], ep = PDFP.exo[en] || {};
+    if (!ep.eleve) return;
+    const lab = e[1] === e[2] ? `exercice ${e[1]}` : `exercices ${e[1]} ${e[2] === e[1] + 1 ? 'et' : 'à'} ${e[2]}`;
+    L.push([`✏️ Fiche d'exercices (${lab})`, pdfHref(`exercices-${en}.pdf`, ep.eleve['exo:' + e[1]]), 0]);
+    L.push([`✅ Corrigés (${lab})`, pdfHref(`exercices-corriges-${en}.pdf`, ep.prof['exo:' + e[1]]), 1]);
+  });
+  Object.keys(PDFP.proj).forEach((pn) => { const pg = PDFP.proj[pn]['seance:' + sid]; if (pg) L.push([`🖥️ Projeter (${pn === n ? 'séance' : pn.replace('Proportionnalite', 'Proportionnalité').replace('Divisibilite', 'Divisibilité')})`, pdfHref(`projection-${pn}.pdf`, pg), 1]); });
+  const seen = new Set();
+  return L.filter((l) => !seen.has(l[1]) && seen.add(l[1]));
+}
 
 </script>
 <script>
@@ -782,11 +808,56 @@ function dueText(P, e) {
 function devoirHtml(sid, P, e) { return DEV[sid].h + siteLinks(sid) + dueText(P, e); }
 function devoirPlain(html) { const t = document.createElement('div'); t.innerHTML = html; return [...t.querySelectorAll('p')].map((p) => p.textContent).join('\n'); }
 
+/* ---------- École Directe : textes à copier ---------- */
+const exTxt = (e) => (e[1] === e[2] ? `Exercice ${e[1]} de la fiche d'exercices.` : `Exercices ${e[1]} ${e[2] === e[1] + 1 ? 'et' : 'à'} ${e[2]} de la fiche d'exercices.`);
+function edContenu(x) {
+  const parts = x.pieces.filter((p) => !p.marge && p.y !== 'q');
+  const lines = []; let cch = null;
+  parts.forEach((p) => {
+    const s = SEANCES.find((q) => q.id === p.sid), b = s.b[p.i], ch = b.ch || s.ch;
+    if (ch !== cch) { if (lines.length) lines.push(''); lines.push(CHED[ch]); cch = ch; }
+    let t = b.ed || (b.ex ? exTxt(b.ex) : b.t);
+    if (p.coupe) t = t.replace(/\.$/, '') + ' (commencé, suite à la prochaine séance).';
+    else if (p.suite) t = t.replace(/\.$/, '') + ' (suite et fin).';
+    if (!lines.includes('- ' + t)) lines.push('- ' + t);
+  });
+  return lines.join('\n');
+}
+function devPlainLines(sid) { const t = document.createElement('div'); t.innerHTML = DEV[sid].h; return [...t.querySelectorAll('p')].map((p) => p.textContent.trim()); }
+function siteLine(sid) {
+  const d = DEV[sid]; if (!d.site || !d.site.length) return '';
+  return `Pour s'entraîner (facultatif) : site Révisions 5e (${siteBase()}), ${d.site.length > 1 ? 'pages' : 'page'} ${d.site.map(([ch, p]) => `« ${PAGES[ch][p]} »`).join(', ')}.`;
+}
+function edTravail(P, i, gives, D) {
+  const out = [];
+  gives.forEach((s) => {
+    const e = D[s.id];
+    out.push(e.due >= 0 ? `Pour le ${fmtLong(P.cr[e.due].date)} :` : 'Pour la rentrée :');
+    devPlainLines(s.id).forEach((l) => out.push('- ' + l));
+    const sl = siteLine(s.id); if (sl) out.push(sl);
+  });
+  const ap = apporter(P, i);
+  if (ap) { const t = document.createElement('div'); t.innerHTML = ap; if (out.length) out.push(''); out.push(t.textContent.trim()); }
+  return out.join('\n');
+}
+function edBox(x, P, i, gives, D) {
+  const c = edContenu(x), w = edTravail(P, i, gives, D);
+  return `<div class="box ed"><h3>École Directe <span class="hint">(texte prêt à coller)</span></h3><div class="edgrid">
+    <div><b>Contenu de séance</b><pre class="edtxt" id="edc-${x.id}">${esc(c || '—')}</pre><button class="btn small" data-copyed="edc-${x.id}">Copier le contenu</button></div>
+    <div><b>Travail à faire</b>${w ? `<pre class="edtxt" id="edw-${x.id}">${esc(w)}</pre><button class="btn small" data-copyed="edw-${x.id}">Copier le travail à faire</button>` : '<p class="hint">Rien à noter dans « Travail à faire » pour ce créneau (les devoirs sont donnés le jeudi, en fin de journée).</p>'}</div>
+  </div></div>`;
+}
+function devDocs(sid) {
+  const n = DEV[sid].n; if (!n) return '';
+  return `<a class="btn mini" href="devoirs-impression.pdf#page=${n}" target="_blank" rel="noopener">🖨️ Fiche « ${esc(DEV[sid].fiche)} » (2 par page)</a><a class="btn mini prof" href="devoirs-corriges.pdf#page=${2 * n}" target="_blank" rel="noopener">✅ Corrigé</a>`;
+}
+
 /* ---------- affichage : créneaux ---------- */
 function prochainCreneau(P) { const today = iso(new Date()); return P.cr.find((x) => !x.st && x.date >= today) || P.cr.find((x) => !x.st) || null; }
 
 function apporter(P, i) {
-  const nx = P.cr.slice(i + 1).find((z) => z.cap > 0 && z.pieces.some((p) => !p.marge));
+  if (P.cr[i + 1] && P.cr[i + 1].date === P.cr[i].date && P.cr[i + 1].cap > 0) return '';
+  const nx = P.cr.slice(i + 1).find((z) => z.date !== P.cr[i].date && z.cap > 0 && z.pieces.some((p) => !p.marge));
   if (!nx) return '';
   const items = [];
   new Set(nx.pieces.filter((p) => !p.marge).map((p) => p.sid)).forEach((sid) => SEANCES.find((s) => s.id === sid).mat.split(', ').forEach((m) => { if (!items.includes(m)) items.push(m); }));
@@ -799,7 +870,7 @@ function renderCreneaux(c) {
   let h = `<div class="panel"><div class="progress"><h2>${nfait} créneau${nfait > 1 ? 'x' : ''} passé${nfait > 1 ? 's' : ''} sur ${P.cr.length}</h2>
     <div class="meter" role="img" aria-label="${nfait} sur ${P.cr.length}"><i style="width:${Math.round(nfait / Math.max(1, P.cr.length) * 100)}%"></i></div></div>
     ${nx ? `<p class="now">Prochain créneau : <b>${esc(fmtLong(nx.date))}</b> (${fmtD(nx.d)}) · ${esc(resumeCreneau(nx))}</p>` : '<p class="now">Tous les créneaux de la période sont passés.</p>'}
-    <p class="hint">Après chaque cours, indique « Fait », « Pas tout fini » ou « Annulé » : la suite se recalcule. Une évaluation n'est jamais coupée.${coupe(P) ? ` Pour tout faire tenir, les temps de cahier d'activités sont raccourcis de ${fmtD(coupe(P))} au total.` : ''}</p>
+    <p class="hint">Après chaque cours, indique « Fait », « Pas tout fini » ou « Annulé » : la suite se recalcule. Une évaluation n'est jamais coupée.${coupe(P) ? ` Pour tout faire tenir, les temps d'exercices sont raccourcis de ${fmtD(coupe(P))} au total.` : ''}</p>
     ${P.manque.length ? `<p class="warn">Ne tient plus avant les vacances : ${esc([...new Set(P.manque.map((u) => u.g))].join(', '))}. Raccourcis une activité, ajoute un créneau ou décale la fin de période.</p>` : ''}
   </div>`;
   let semaine = '';
@@ -830,7 +901,7 @@ function renderCreneaux(c) {
         <div class="box"><h3>Déroulé minuté</h3>
           ${x.cap === 0 ? '<p class="hint">Créneau annulé : le contenu passe au créneau suivant.</p>' : `<ol class="deroule">${x.pieces.map((p) => {
     const t = `${p.t0}–${p.t0 + p.m}`;
-    if (p.marge) return `<li><span class="tps">${t}</span><span><span class="lib">Temps libre</span> Cahier d'activités sur ce qu'on vient de faire, ou rattrapage</span></li>`;
+    if (p.marge) return `<li><span class="tps">${t}</span><span><span class="lib">Temps libre</span> Exercices « pour aller plus loin » de la fiche, ou rattrapage</span></li>`;
     const s = SEANCES.find((q) => q.id === p.sid), b = s.b[p.i];
     const lab = p.y === 'q' ? '<span class="lib">Plickers</span>' : `<span class="lib">${esc(labPiece(p.sid, p.i))}</span>`;
     const txt = p.y === 'q' ? b.t.replace(/^Plickers \([^)]*\) : /, `5 questions (${QUIZ[p.sid].quand} de séance) : `) : b.t;
@@ -839,16 +910,16 @@ function renderCreneaux(c) {
             ${x.st === 'partiel' && x.reste ? `<li><span class="tps">${x.d - x.reste}–${x.d}</span><span class="hint">Non fait : reporté au créneau suivant</span></li>` : ''}</ol>`}
         </div>
         <div class="sgrid">
-          <div class="box"><h3>Repère</h3>${sids.map((sid) => { const s = SEANCES.find((q) => q.id === sid); return `<div><b>${esc(s.k)}</b><br><span class="hint">${esc(s.t)} · cours : ${esc(s.cours)}</span>${COURS_PDF[sid] ? `<br><a class="btn mini" href="${coursHref(sid, 'p')}" target="_blank" rel="noopener">📘 Cours à trous (prof)</a> <a class="btn mini" href="${coursHref(sid, 'e')}" target="_blank" rel="noopener">📄 Cours à trous (élève)</a>` : ''}</div>`; }).join('') || '<p class="hint">—</p>'}</div>
+          <div class="box"><h3>Repère et documents</h3>${sids.map((sid) => { const s = SEANCES.find((q) => q.id === sid); return `<div><b>${esc(s.k)}</b><br><span class="hint">${esc(s.t)} · cours : ${esc(s.cours)}</span><div class="docs">${docLinks(sid).map(([l, h, p]) => `<a class="btn mini${p ? ' prof' : ''}" href="${esc(h)}" target="_blank" rel="noopener">${esc(l)}</a>`).join('')}</div></div>`; }).join('') || '<p class="hint">—</p>'}</div>
           <div class="box"><h3>À préparer</h3>${sids.map((sid) => `<div class="hint">${esc(SEANCES.find((q) => q.id === sid).prep)}</div>`).join('') || '<p class="hint">—</p>'}</div>
         </div>
+        ${x.cap > 0 ? edBox(x, P, i, gives, D) : ''}
         ${acts.map((s) => `<div class="box"><h3>Activité · ${esc(s.act)}</h3><div class="act">${s.actD}</div></div>`).join('')}
         ${quiz.map((p) => `<div class="box"><h3>Plickers · ${esc(QUIZ[p.sid].titre)} <span class="tag plk">${QUIZ[p.sid].quand} de séance</span></h3>
           <details class="inner"><summary>Voir les 5 questions</summary>${quizHtml(p.sid)}</details></div>`).join('')}
         ${gives.length ? `<div class="box"><h3>Devoir à donner en fin de créneau</h3>
           <div class="devoir" id="devc-${x.id}">${gives.map((s) => devoirHtml(s.id, P, D[s.id])).join('')}${apporter(P, i)}</div>
-          <div class="row"><button class="btn primary small" data-copydev="${x.id}">Copier le devoir</button>
-          ${gives.filter((s) => DEV[s.id].fiche).map((s) => `<span class="hint">Document à coller : <b>${esc(DEV[s.id].fiche)}</b></span>`).join('')}</div></div>` : (apporter(P, i) ? `<div class="box"><h3>Pas de devoir ce jour-là</h3><div class="devoir">${apporter(P, i)}</div><p class="hint">Les devoirs sont donnés le jeudi, à rendre la semaine suivante.</p></div>` : '')}
+          <div class="row">${gives.filter((s) => DEV[s.id].fiche).map((s) => devDocs(s.id)).join('')}</div></div>` : (apporter(P, i) ? `<div class="box"><h3>Pas de devoir ce jour-là</h3><div class="devoir">${apporter(P, i)}</div><p class="hint">Les devoirs sont donnés le jeudi, à rendre la semaine suivante.</p></div>` : '')}
       </div></details>`;
   });
   if (semaine) h += '</div>';
@@ -883,12 +954,12 @@ function renderPlickers(c) {
 function renderDevoirs(c) {
   const P = plan(c), D = devoirsPlan(P);
   return `<div class="panel"><h2>Devoirs de la période</h2>
-    <p class="hint">Un devoir est donné <b>chaque jeudi</b> (au dernier créneau de la journée) et se rend <b>à la première séance de la semaine suivante</b>. Le mercredi, pas de devoir. Chaque devoir est un document à coller et un exercice. Les documents à coller sont dans le fichier <b>Devoirs_a_coller.pdf</b>.</p></div>`
+    <p class="hint">Un devoir est donné <b>chaque jeudi</b> (au dernier créneau de la journée) et se rend <b>à la première séance de la semaine suivante</b>. Le mercredi, pas de devoir. Chaque devoir est une fiche à coller (un résumé à apprendre et des exercices à faire dans le cahier). Les fiches sont dans <a href="devoirs-impression.pdf" target="_blank" rel="noopener">devoirs-impression.pdf</a> (deux fiches identiques par feuille A4, à couper) ; les corrigés dans <a href="devoirs-corriges.pdf" target="_blank" rel="noopener">devoirs-corriges.pdf</a>.</p></div>`
     + SEANCES.filter((s) => DEV[s.id]).map((s) => {
       const e = D[s.id], g = e && e.give >= 0 ? P.cr[e.give] : null;
       return `<details class="seance" data-sid="${s.id}"><summary><span class="sid">${g ? esc(fmtJ(g.date)) : '—'}</span><span class="stitle">${esc(DEV[s.id].fiche || 'Vacances de Noël')}<small>${g ? `à rendre ${e.due >= 0 ? 'le ' + esc(fmtJ(P.cr[e.due].date)) : 'à la rentrée'}` : 'hors période'}${DEV[s.id].revise ? ' · révision avant évaluation' : ''}</small></span></summary>
         <div class="sbody"><div class="devoir" id="dev-${s.id}">${devoirHtml(s.id, P, e)}</div>
-        <div class="row"><button class="btn primary small" data-copydevs="${s.id}">Copier le devoir</button></div></div></details>`;
+        <div class="row"><button class="btn primary small" data-copydevs="${s.id}">Copier pour École Directe</button>${DEV[s.id].fiche ? devDocs(s.id) : ''}</div></div></details>`;
     }).join('');
 }
 
@@ -999,8 +1070,12 @@ document.addEventListener('click', (ev) => {
   if (t.dataset.copydev) {
     const el = document.getElementById('devc-' + t.dataset.copydev); copyText(devoirPlain(el.innerHTML), t, el.innerHTML); return;
   }
+  if (t.dataset.copyed) { copyText(document.getElementById(t.dataset.copyed).textContent, t); return; }
   if (t.dataset.copydevs) {
-    const el = document.getElementById('dev-' + t.dataset.copydevs); copyText(devoirPlain(el.innerHTML), t, el.innerHTML); return;
+    const sid = t.dataset.copydevs, P = plan(c), e = devoirsPlan(P)[sid] || { due: -1 };
+    const lines = [e.due >= 0 ? `Pour le ${fmtLong(P.cr[e.due].date)} :` : 'Pour la rentrée :', ...devPlainLines(sid).map((l) => '- ' + l)];
+    const sl = siteLine(sid); if (sl) lines.push(sl);
+    copyText(lines.join('\n'), t); return;
   }
   if (t.dataset.copyset) { copyText(quizText(t.dataset.copyset), t); return; }
   if (t.dataset.cq) { copyQ(t.dataset.cq, t); return; }

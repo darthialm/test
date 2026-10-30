@@ -97,9 +97,10 @@ function genCompleter() {
     q: `<p>Complète ce tableau de proportionnalité.</p>${ptab(rows)}`,
     check(r) {
       const x = valU(r); if (!x) return null;
-      if (!near(x.value, hidden)) { markInput(r, 0, false); return { ok: false, msg: `Coefficient : ${kTxt}. ${row === 1 ? `${fmt(given)} × ${fmt(k)} = <b>${fmt(hidden)}</b>.` : `${fmt(given)} : ${fmt(k)} = <b>${fmt(hidden)}</b>.`}` }; }
+      const expl = `On calcule le coefficient dans la colonne complète : ${kTxt}. ${row === 1 ? `Le nombre manquant est sur la 2<sup>e</sup> ligne : on <b>multiplie</b> par le coefficient : ${fmt(given)} × ${fmt(k)} = <b>${fmt(hidden)}</b>.` : `Le nombre manquant est sur la 1<sup>re</sup> ligne : on remonte en <b>divisant</b> par le coefficient : ${fmt(given)} : ${fmt(k)} = <b>${fmt(hidden)}</b>.`} Vérification : ${row === 1 ? `${fmt(given)} × ${fmt(k)}` : `${fmt(hidden)} × ${fmt(k)}`} = ${fmt(row === 1 ? hidden : given)}.`;
+      if (!near(x.value, hidden)) { markInput(r, 0, false); return { ok: false, msg: expl }; }
       markInput(r, 0, true);
-      return { ok: true, msg: `Coefficient : ${kTxt}. ${row === 1 ? `${fmt(given)} × ${fmt(k)} = ${fmt(hidden)}.` : `${fmt(given)} : ${fmt(k)} = ${fmt(hidden)}.`}` };
+      return { ok: true, msg: expl };
     },
     __solve: (r) => setAns(r, 0, fmt(hidden)),
     __wrong: (r) => setAns(r, 0, fmt(hidden + 7)),
@@ -158,7 +159,9 @@ function genProbleme() {
   const stem = T.ctx(n1, P1);
   const ask = T.ask(n2);
   let steps;
-  steps = `Passage à l'unité : ${fmt(P1)} : ${n1} = ${fmt(u)} ${T.un} pour ${T.fix ? '10 km' : '1'}. Puis ${n2} × ${fmt(u)} = <b>${fmt(ans)} ${T.un}</b>.<br>Par le coefficient (tableau) : coefficient = ${fmt(P1)} : ${n1} = ${fmt(u)} ; ${n2} × ${fmt(u)} = ${fmt(ans)}.`;
+  const one = T.fix ? '10 km' : T.sing;
+  steps = `Passage à l'unité : on cherche d'abord la valeur pour ${one} : ${fmt(P1)} : ${n1} = ${fmt(u)} ${T.un}. Puis on multiplie par ${n2} : ${n2} × ${fmt(u)} = <b>${fmt(ans)} ${T.un}</b>.`
+    + (n2 % n1 === 0 ? `<br>Autre méthode : ${n2} = ${n1} × ${n2 / n1}, donc ${fmt(P1)} × ${n2 / n1} = ${fmt(ans)} ${T.un}.` : '');
   return {
     hints: [
       `Fais un tableau de proportionnalité avec les deux données de l'énoncé et la valeur cherchée. Quelle méthode choisis-tu : coefficient, multiplication, addition, passage à l'unité ?`,
@@ -171,7 +174,7 @@ function genProbleme() {
       if (near(x.value, u)) return 'Tu as trouvé la valeur pour <b>une</b> unité. Il reste à calculer la valeur demandée dans la question.';
       return null;
     },
-    q: `<p>${stem} Le résultat est proportionnel à la quantité.</p><p><b>${ask}</b></p><p class="big">${inp('num')} ${unit(T.un)}</p>`,
+    q: `<p>${stem} C'est une situation de proportionnalité.</p><p><b>${ask}</b></p><p class="big">${inp('num')} ${unit(T.un)}</p>`,
     check(r) {
       const x = valU(r); if (!x) return null;
       const ok = near(x.value, ans);
@@ -192,8 +195,9 @@ const SUJ = [
 function genPctAppliquer() {
   const p = pick([5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 75, 80, 90, 12, 45]);
   const N = pick([40, 60, 80, 120, 150, 200, 240, 300, 360, 400, 500, 600, 800, 1000, 1200, 2000, 9000]);
-  const ans = rnd((p * N) / 100);
   const sujet = pick(SUJ);
+  if (sujet !== SUJ[2] && !Number.isInteger((p * N) / 100)) return genPctAppliquer();
+  const ans = rnd((p * N) / 100);
   const ex = pick([[35, 60, 21], [8, 250, 20], [65, 40, 26]]);
   return {
     hints: [
@@ -389,7 +393,8 @@ function genVitesse() {
     d = (v * t) / 60; ans = (v * T) / 60;
   } while (T === t || !exact(d) || !exact(ans));
   const Ttxt = T === 60 ? '1 heure' : T === 90 ? '1 h 30 min' : T === 120 ? '2 heures' : T === 75 ? '1 h 15 min' : `${T} minutes`;
-  const who = pick(['Un cycliste', 'Un coureur', 'Un train', 'Une voiture']);
+  const who = pick(['Un cycliste roule', 'Un coureur court', 'Un train roule', 'Une voiture roule']);
+  const g = gcd(t, T), dg = (d * g) / t;
   const coef = rnd(t / d);
   return {
     hints: [
@@ -404,12 +409,15 @@ function genVitesse() {
       if (T === 75 && near(x.value, rnd(d * 1.15))) return '1 h 15 min ne s\'écrit pas 1,15 h : 1 h 15 min = 75 min.';
       return null;
     },
-    q: `<p>${who} roule à vitesse constante : il parcourt ${fmt(d)} km en ${t} minutes. Quelle distance parcourt-il en ${Ttxt} ?</p><p class="big">${inp('num')} ${unit('km')}</p>`,
+    q: `<p>${who} à vitesse constante : ${who.startsWith('Une') ? 'elle' : 'il'} parcourt ${fmt(d)} km en ${t} minutes. Quelle distance parcourt-il en ${Ttxt} ?</p><p class="big">${inp('num')} ${unit('km')}</p>`,
     check(r) {
       const x = valU(r); if (!x) return null;
       const ok = near(x.value, ans);
       markInput(r, 0, ok);
-      return { ok, msg: `${Ttxt} = ${T} min. Tableau : ${fmt(d)} km pour ${t} min. Coefficient : ${t} : ${fmt(d)} = ${fmt(coef)} min par km ; distance = ${T} : ${fmt(coef)} = <b>${fmt(ans)} km</b>. (Autre méthode : ${fmt(v)} km en 60 min, donc ${T} min → ${fmt(ans)} km.)` };
+      const m = exact(dg)
+        ? `${Ttxt} = ${T} min. On passe par une durée « commune » de ${g} min : ${t} min = ${t / g} × ${g} min, donc en ${g} min on parcourt ${fmt(d)} : ${t / g} = ${fmt(dg)} km. Or ${T} min = ${T / g} × ${g} min, donc la distance est ${T / g} × ${fmt(dg)} = <b>${fmt(ans)} km</b>.`
+        : `${Ttxt} = ${T} min. Tableau : ${fmt(d)} km pour ${t} min ; coefficient ${t} : ${fmt(d)} = ${fmt(coef)} min par km, donc distance = ${T} : ${fmt(coef)} = <b>${fmt(ans)} km</b>.`;
+      return { ok, msg: m + ` (Vitesse moyenne : ${fmt(v)} km en 1 h, soit ${fmt(v)} km/h.)` };
     },
     __solve: (r) => setAns(r, 0, fmt(ans)),
     __wrong: (r) => setAns(r, 0, fmt(ans + 2)),
@@ -744,7 +752,7 @@ function genCouple() {
     ],
     remediate(r) { const x = valU(r, 0), y = valU(r, 1); if (x && y && near(x.value, a) && near(y.value, c)) return 'Tu as recopié les numérateurs : en changeant le dénominateur, il faut aussi changer le numérateur.'; return null; },
     q: `<p>Écris ces deux fractions avec le dénominateur <b>${D}</b>.</p><p class="big">${F(a, b)} = <span class="frac"><span>${inp('num', 'Numérateur 1')}</span><span>${D}</span></span> &nbsp; et &nbsp; ${F(c, d)} = <span class="frac"><span>${inp('num', 'Numérateur 2')}</span><span>${D}</span></span></p>`,
-    check(r) { const x = valU(r, 0), y = valU(r, 1); if (!x || !y) return null; const o1 = near(x.value, na), o2 = near(y.value, nc); markInput(r, 0, o1); markInput(r, 1, o2); return { ok: o1 && o2, msg: `${F(a, b)} = ${F(a + '×' + D / b, b + '×' + D / b)} = ${F(na, D)} et ${F(c, d)} = ${F(c + '×' + D / d, d + '×' + D / d)} = ${F(nc, D)}.` }; },
+    check(r) { const x = valU(r, 0), y = valU(r, 1); if (!x || !y) return null; const o1 = near(x.value, na), o2 = near(y.value, nc); markInput(r, 0, o1); markInput(r, 1, o2); return { ok: o1 && o2, msg: `${b} × ${D / b} = ${D}, donc on multiplie aussi le numérateur par ${D / b} : ${F(a, b)} = ${F(a + ' × ' + D / b, b + ' × ' + D / b)} = ${F(na, D)}. ` + (D === d ? `${F(c, d)} a déjà le dénominateur ${D} : on la garde.` : `${d} × ${D / d} = ${D} : ${F(c, d)} = ${F(c + ' × ' + D / d, d + ' × ' + D / d)} = ${F(nc, D)}.`) }; },
     __solve: (r) => { setAns(r, 0, String(na)); setAns(r, 1, String(nc)); }, __wrong: (r) => { setAns(r, 0, String(na + 1)); setAns(r, 1, String(nc)); },
   };
 }
@@ -801,11 +809,13 @@ function mkAddSub(kind) {
   else if (kind === 'mult') { b = pick([2, 3, 4, 5, 6]); e = b * rand(2, 4); op = Math.random() < 0.5 ? '+' : '−'; a = rand(1, b + 2); c = rand(1, e); if (op === '−') { while (a / b <= c / e) { a++; } } }
   else { [b, e] = pick([[2, 3], [3, 4], [2, 5], [3, 5], [4, 5], [3, 7], [5, 6], [4, 3], [5, 2]]); op = Math.random() < 0.5 ? '+' : '−'; a = rand(1, b + 1); c = rand(1, e + 1); if (op === '−') { while (a / b <= c / e) a++; } }
   if (kind === 'same') { b = e = D; }
+  else { if (a % b === 0) a++; if (c % e === 0) c = Math.max(1, c - 1); if (op === '−') { while (a / b <= c / e || a % b === 0) a++; } }
   const L = (() => { const x = b, y = e; return x * y / gcd(x, y); })();
   const na = a * (L / b), nc = c * (L / e);
   const resN = op === '+' ? na + nc : na - nc;
   const target = resN / L;
-  const stepTxt = kind === 'same' ? `${F(a, b)} ${op} ${F(c, e)} = ${F(a + ' ' + op + ' ' + c, b)} = ${F(resN, L)}` : `${F(a, b)} ${op} ${F(c, e)} = ${F(na, L)} ${op} ${F(nc, L)} = ${F(resN, L)}`;
+  const why = kind === 'same' ? `Même dénominateur : on ${op === '+' ? 'additionne' : 'soustrait'} les numérateurs et on garde le dénominateur ${b}. ` : kind === 'mult' ? `${L} est un multiple de ${Math.min(b, e)} : on écrit ${b < e ? F(a, b) : F(c, e)} avec le dénominateur ${L}, puis on calcule les numérateurs. ` : `Dénominateur commun : ${L}, un multiple de ${b} et de ${e}. On transforme les deux fractions, puis on calcule les numérateurs. `;
+  const stepTxt = why + (kind === 'same' ? `${F(a, b)} ${op} ${F(c, e)} = ${F(a + ' ' + op + ' ' + c, b)} = ${F(resN, L)}` : `${F(a, b)} ${op} ${F(c, e)} = ${F(na, L)} ${op} ${F(nc, L)} = ${F(resN, L)}`);
   return {
     hints: [
       kind === 'same' ? 'Les deux fractions ont le même dénominateur. On additionne (ou soustrait) les numérateurs et on garde le dénominateur.' : 'On ne peut additionner (ou soustraire) que des fractions qui ont le même dénominateur. Commence par les mettre au même dénominateur.',
@@ -830,9 +840,9 @@ const genAddAutre = () => mkAddSub('other');
 // Problèmes avec fractions
 function genFracProbleme() {
   const T = pick([
-    () => { const [b, e] = pick([[4, 8], [3, 6], [5, 10], [2, 4], [3, 12], [4, 12]]); const a = 1, c = rand(1, e / 2); const p = a / b + c / e; return { t: `Lina mange ${F(a, b)} d'une tarte et Hugo en mange ${F(c, e)}. Quelle fraction de la tarte ont-ils mangée à eux deux ?`, v: p, tot: [a, b, c, e], op: '+' }; },
-    () => { const [b, e] = pick([[4, 8], [3, 6], [2, 4], [5, 10], [3, 9]]); const a = 1, c = rand(1, e / 2); const p = 1 - (a / b + c / e); return { t: `Dans un sac de billes, ${F(a, b)} des billes sont rouges et ${F(c, e)} sont bleues. Les autres sont vertes. Quelle fraction du sac représentent les billes vertes ?`, v: p, tot: null, op: '1-' }; },
-    () => { const b = pick([3, 4, 5, 6]), e = b * pick([2, 3]); const c = rand(1, e - 1); let a = rand(1, b - 1); if (a / b <= c / e) a = b - 1 || 1; const p = a / b - c / e; if (p <= 0) return null; return { t: `Un jardin est occupé aux ${F(a, b)} par des légumes. Les tomates occupent ${F(c, e)} du jardin et font partie des légumes. Quelle fraction du jardin occupent les autres légumes ?`, v: p, tot: null, op: '-' }; },
+    () => { const [b, e] = pick([[4, 8], [3, 6], [5, 10], [2, 4], [3, 12], [4, 12]]); const a = 1, c = rand(1, e / 2), A = a * e / b; return { t: `Lina mange ${F(a, b)} d'une tarte et Hugo en mange ${F(c, e)}. Quelle fraction de la tarte ont-ils mangée à eux deux ?`, v: a / b + c / e, expl: `À eux deux : on <b>additionne</b> les deux parts, après avoir mis ${F(a, b)} au dénominateur ${e} : ${F(a, b)} + ${F(c, e)} = ${F(A, e)} + ${F(c, e)} = ${F(A + c, e)}.` }; },
+    () => { const [b, e] = pick([[4, 8], [3, 6], [2, 4], [5, 10], [3, 9]]); const a = 1, c = rand(1, e / 2), A = a * e / b; return { t: `Dans un sac de billes, ${F(a, b)} des billes sont rouges et ${F(c, e)} sont bleues. Les autres sont vertes. Quelle fraction du sac représentent les billes vertes ?`, v: 1 - (a / b + c / e), expl: `Rouges et bleues ensemble : ${F(a, b)} + ${F(c, e)} = ${F(A, e)} + ${F(c, e)} = ${F(A + c, e)}. Le sac entier, c'est ${F(e, e)} = 1, donc les vertes représentent ${F(e, e)} − ${F(A + c, e)} = ${F(e - A - c, e)}.` }; },
+    () => { const b = pick([3, 4, 5, 6]), e = b * pick([2, 3]); const c = rand(1, e - 1); let a = rand(1, b - 1); if (a / b <= c / e) a = b - 1 || 1; const A = a * e / b; if (A - c <= 0) return null; return { t: `Un jardin est occupé aux ${F(a, b)} par des légumes. Les tomates occupent ${F(c, e)} du jardin et font partie des légumes. Quelle fraction du jardin occupent les autres légumes ?`, v: a / b - c / e, expl: `Les autres légumes, ce sont tous les légumes <b>moins</b> les tomates : ${F(a, b)} − ${F(c, e)} = ${F(A, e)} − ${F(c, e)} = ${F(A - c, e)}.` }; },
   ]);
   let g; do { g = T(); } while (!g || g.v <= 0 || g.v >= 1);
   let n = Math.round(g.v * 120), d = 120; const gg = gcd(n, d); n /= gg; d /= gg;
@@ -845,7 +855,7 @@ function genFracProbleme() {
     ],
     remediate: () => null,
     q: `<p>${g.t}</p><p class="big">${inp('frac', 'Fraction')}</p><p class="small muted">Écris ta réponse sous la forme 3/8.</p>`,
-    check(r) { const x = val(r); if (!x) return null; const ok = eq(x.value, g.v); markInput(r, 0, ok); return { ok, msg: `Calcul : ${g.op === '+' ? 'on additionne' : g.op === '1-' ? 'on calcule 1 − (somme des deux parts)' : 'on soustrait'} avec des fractions de même dénominateur. Résultat : <b>${Fs(n, d)}</b>.` }; },
+    check(r) { const x = val(r); if (!x) return null; const ok = eq(x.value, g.v); markInput(r, 0, ok); return { ok, msg: g.expl + ` Résultat : <b>${Fs(n, d)}</b>.` }; },
     __solve: (r) => setAns(r, 0, `${n}/${d}`), __wrong: (r) => setAns(r, 0, `${n + 1}/${d}`),
   };
 }
@@ -879,7 +889,7 @@ function genEgalite() {
   const q = Math.floor(a / b), rest = a % b;
   const opts = [`${a} = ${b} × ${q} + ${rest}`, `${a} = ${b} × ${q - 1} + ${rest + b}`, `${a} = ${b} × ${q} + ${rest + 1}`, `${a} = ${b} × ${q + 1} − ${b - rest}`];
   const o = mcq(`<p>Quelle égalité traduit la division euclidienne de <b>${a}</b> par <b>${b}</b> ?</p>`, opts, 0,
-    `La division euclidienne s'écrit a = b × q + r avec r &lt; b. Ici ${b} × ${q} + ${rest} = ${a} et ${rest} &lt; ${b} : <b>${opts[0]}</b>. La 2<sup>e</sup> est vraie mais son reste ${rest + b} est trop grand ; la 3<sup>e</sup> est fausse ; la 4<sup>e</sup> n'a pas de reste positif.`, { col: true });
+    `La division euclidienne s'écrit a = b × q + r avec r &lt; b. Ici ${b} × ${q} + ${rest} = ${a} et ${rest} &lt; ${b} : <b>${opts[0]}</b>. « ${opts[1]} » : le calcul est juste, mais le reste ${rest + b} est plus grand que le diviseur ${b} (on pouvait mettre ${b} une fois de plus). « ${opts[2]} » : le calcul est faux (${b} × ${q} + ${rest + 1} = ${a + 1}). « ${opts[3]} » : on y soustrait, ce n'est pas la forme « diviseur × quotient + reste ».`, { col: true });
   o.hints = [
     'L\'égalité de la division euclidienne est a = b × q + r avec un reste r plus petit que b. Vérifie chaque proposition : le calcul est-il exact ? Le reste est-il plus petit que le diviseur ?',
     'Exemple : 47 = 5 × 8 + 7 est un calcul exact mais ce n\'est pas la division euclidienne car 7 > 5.',
@@ -988,13 +998,13 @@ function explainCrit(n, k) {
 }
 const fmtN = (n) => big(n);
 function genCriteres() {
-  const k = pick([2, 3, 4, 5, 9, 10]); const want = Math.random() < 0.5;
+  const k = pick([2, 3, 5, 9, 10]); const want = Math.random() < 0.5;
   let n, tries = 0;
   do { n = rand(120, 9999); tries++; } while (divBy[k](n) !== want && tries < 2000);
   const o = mcq(`<p>Le nombre <b>${fmtN(n)}</b> est-il divisible par <b>${k}</b> ?</p>`, ['Oui', 'Non'], divBy[k](n) ? 0 : 1, explainCrit(n, k), {});
   o.hints = [
     `Il existe un critère de divisibilité par ${k}. Tu peux le retrouver dans la fiche. Tu peux aussi poser la division, mais le critère est bien plus rapide.`,
-    'Exemple : 5 418 par 3 ? 5 + 4 + 1 + 8 = 18 et 18 est dans la table de 3 : oui. Par 4 ? Les deux derniers chiffres (18) ne sont pas divisibles par 4 : non.',
+    'Exemple : 5 418 par 3 ? 5 + 4 + 1 + 8 = 18 et 18 est dans la table de 3 : oui. Par 5 ? 5 418 se termine par 8 (ni 0 ni 5) : non.',
     `Outil : ${CRIT[k]}`,
   ];
   o.remediate = () => null;

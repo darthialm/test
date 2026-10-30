@@ -1,35 +1,47 @@
-# Révisions 5e — site + Espace professeur + classeur
+# Révisions 5e — site, Espace professeur, classeur et documents
 
 Le site garde la même adresse. Les 3 premiers chapitres (calculs, triangles, fractions 1) ne changent pas.
-Quatre chapitres s'ajoutent : **4 Proportionnalité · 5 Angles et parallèles · 6 Fractions (partie 2) · 7 Divisibilité**.
-Ils sont **fermés aux élèves par défaut** : c'est toi qui décides quand ouvrir.
+Quatre chapitres s'ajoutent : **4 Proportionnalité · 5 Angles · 6 Fractions (partie 2) · 7 Divisibilité**.
+Ils sont **fermés aux élèves par défaut** : c'est toi qui décides quand les ouvrir.
 
-## Fichiers à déposer à la racine du dépôt GitHub 5e
-`index.html`, `script.js`, `style.css` (inchangé), `chapitres-5e.js`, `chapitres-5e.css`, `espace-prof.js`, `controles-5e.js`, `qrcode.js`, `reglages.js`, `ouverture.js`, `classeur.html`, et les 8 PDF `cours-eleve-*.pdf` et `cours-prof-*.pdf` (à la racine, pas de dossier).
-(Remplace les fichiers existants du même nom. Dépose dans le dépôt **5e**, pas dans celui de 6e.)
+## Ce qu'il faut déposer dans le dépôt GitHub de 5e (tout à la racine, sans dossier)
+- Le site : `index.html`, `script.js`, `style.css`, `chapitres-5e.js`, `chapitres-5e.css`, `espace-prof.js`, `controles-5e.js`, `qrcode.js`, `reglages.js`, `ouverture.js`, `classeur.html`
+- Les documents PDF (22 fichiers) :
+  - `cours-eleve-<Chapitre>.pdf` : cours à trous, à imprimer pour les élèves
+  - `cours-prof-<Chapitre>.pdf` : le même cours complété (réponses en bleu)
+  - `exercices-<Chapitre>.pdf` : fiche d'exercices des élèves (exercices numérotés, faits dans le cahier)
+  - `exercices-corriges-<Chapitre>.pdf` : les mêmes exercices avec un corrigé détaillé
+  - `projection-<Chapitre>.pdf` : les fiches à projeter (questions flash, activités, jeux)
+  - `devoirs-impression.pdf` : les 6 fiches de devoirs à coller, deux exemplaires par feuille A4 (à couper)
+  - `devoirs-corriges.pdf` : chaque fiche de devoir suivie de son corrigé
+
+Les fichiers du même nom sont remplacés. Ne dépose rien dans le dépôt de 6e ni dans le dépôt « test ».
+Avant de déposer, change le code `prof5e` dans `reglages.js`.
+
+**Attention :** si le dépôt est public, les PDF « prof » et « corrigés » le sont aussi. Leur adresse n'est affichée nulle part pour les élèves, mais elle reste devinable.
 
 ## Espace professeur
-- Adresse : `…/#/prof` (lien « Espace professeur » en bas de chaque page).
-- Code par défaut : `prof5e`. **Change-le** dans `reglages.js` (`codeProf`), puis redépose ce fichier.
-- Le classeur n'est accessible que par là : sans le code, `classeur.html` renvoie vers l'Espace professeur.
-- Le code est mémorisé sur l'appareil. Bouton « Verrouiller » pour l'effacer.
-- Protection légère (c'est un site statique) : elle écarte les élèves, elle ne sécurise pas des données sensibles. **Attention : si le dépôt est public, les PDF `cours-prof-*.pdf` (avec les réponses) le sont aussi** — l'adresse n'est pas affichée aux élèves mais reste devinable. Si ça te gêne, ne dépose que les `cours-eleve-*` et garde les PDF prof sur ton ordinateur (les boutons « prof » du classeur ne marcheront alors pas).
+- Adresse : `…/#/prof` (lien « Espace professeur » en bas de chaque page), code dans `reglages.js`.
+- C'est la seule porte vers le classeur : sans le code, `classeur.html` renvoie vers l'Espace professeur.
+- « Ce que voient les élèves » : coche les pages vues en classe, puis télécharge `ouverture.js` et dépose-le dans GitHub.
 
-## Choisir ce que voient les élèves
-Espace professeur → « 👁 Ce que voient les élèves » : coche les pages vues en classe (fiche, exercices, contrôle…).
-Un chapitre sans page cochée apparaît « 🔒 Bientôt ». Clique « Télécharger ouverture.js » (ou « Copier »), puis dépose ce fichier dans GitHub : les élèves voient le changement après quelques minutes.
-Sur ton appareil, avec l'Espace professeur ouvert, tout reste visible (bandeau « masqué aux élèves »). Leur progression n'est jamais effacée.
+## Le classeur
+Pour chaque créneau :
+- le déroulé minuté ;
+- **Repère et documents** : boutons qui ouvrent directement la bonne page du cours (élève ou prof), de la fiche d'exercices, des corrigés et de la fiche à projeter ;
+- **École Directe** : le « Contenu de séance » et le « Travail à faire » déjà rédigés, avec un bouton « Copier » pour chacun ;
+- l'activité, les 5 questions Plickers, le devoir à donner (avec la fiche à imprimer et son corrigé).
 
-## Cours à trous (vrais PDF LaTeX)
-`cours-eleve-<Chapitre>.pdf` (à trous) et `cours-prof-<Chapitre>.pdf` (complétés, réponses en bleu). Chaque cours porte de petites mentions « Séance n » (n° du classeur). Dans le classeur, le cadre « Repère » de chaque séance a deux boutons qui ouvrent le PDF directement à la bonne page. Les numéros de pages d'exercices sont laissés en blanc (« p. …… ») à compléter à la main. Sources LaTeX : `Sources_LaTeX.zip` (compiler deux fois avec `pdflatex`).
+Après chaque cours, indique « Fait », « Pas tout fini » ou « Annulé » : la suite se recalcule, ainsi que les textes pour École Directe.
 
-## Contrôles sur papier avec QR codes
-Espace professeur → « 📝 Contrôle sur papier » (même principe qu'en 6e) :
-1. Coche les compétences (types d'exercices du site), choisis la classe, colle la liste des élèves, coche la version aménagée si besoin.
-2. « Préparer le contrôle » : durée automatique (≈ 20/30/45 min) ajustable avec − / +, vérification que chaque copie tient sur une page A4.
-3. « Imprimer les sujets » : une page par élève (prénom sur une bande à détacher, code anonyme + QR). « Corrigé » et « Fichier pour la correction assistée » (à envoyer à Claude avec le scan des copies anonymes).
-4. Colle les résultats (`CODE C1=TB C2=MF…`), vérifie le tableau, puis imprime les étiquettes QR (planche 21 étiquettes L7160). Le QR ouvre « Mon contrôle » : bilan, corrigé de son sujet, lien vers les exercices à refaire.
-Rien n'est stocké sur un serveur : les contrôles sont mémorisés sur l'appareil du professeur, les sujets sont recalculés à partir du code. Le QR contient l'adresse du site (affichée dans la carte) : vérifie-la avant d'imprimer. Pour qu'un élève puisse refaire les exercices, la page correspondante doit être ouverte (Ouverture).
+## Les cours
+Mise en page LaTeX (encadrés, couleurs et polices comme ton modèle). Pas de nom ni de prénom sur les cours. Une petite mention « Séance n » indique où commence chaque séance. Les cours ne renvoient plus à un cahier d'activités : chaque « S'entraîner » donne les numéros de la fiche d'exercices du chapitre. Les sources LaTeX sont dans `Sources_LaTeX.zip`.
 
-## Hors site (non publics)
-`Cours_a_trous.zip` (dossiers `eleve/` et `prof/`), `Devoirs_a_coller.pdf` (fiches + corrigés).
+## Les contrôles sur papier, avec QR code
+Espace professeur → « Contrôle sur papier » (même principe qu'en 6e) :
+1. Coche les compétences, indique la classe, colle la liste des élèves, coche la version aménagée si besoin.
+2. « Préparer le contrôle » : durée automatique (≈ 20, 30 ou 45 min), ajustable avec − et +, et vérification que chaque copie tient sur une page A4.
+3. « Imprimer les sujets » : une page par élève, avec en haut son nom et prénom, juste en dessous un code et un QR code. Tu disposes aussi d'un « Corrigé » et d'un « Fichier pour la correction assistée ».
+4. Colle les résultats (`CODE C1=TB C2=MF…`), vérifie le tableau, puis imprime les étiquettes QR (planche de 21 étiquettes L7160). Le QR ouvre « Mon contrôle » : le bilan de l'élève, le corrigé de son sujet et les exercices à refaire.
+
+Rien n'est stocké sur un serveur : les contrôles restent sur l'appareil du professeur, et chaque sujet est recalculé à partir de son code.

@@ -86,7 +86,7 @@ function paperHTML(html) {
   // une ligne qui ne contient qu'une case remonte à la fin de la consigne : gain de place
   d.querySelectorAll('p').forEach((pp) => {
     const prev = pp.previousElementSibling;
-    if (!prev || prev.tagName !== 'P' || !pp.querySelector('.blank') || pp.querySelector('svg, img, table') || pp.textContent.trim().length > 16) return;
+    if (!prev || prev.tagName !== 'P' || !pp.querySelector('.blank') || pp.querySelector('svg, img, table, .frac') || pp.textContent.trim().length > 16) return;
     prev.append(' ', ...pp.childNodes); pp.remove();
   });
   return d.innerHTML.replace(/Écris ta réponse sous la forme 3\/8\./g, 'Écris ta réponse sous la forme d\'une fraction.');
@@ -155,8 +155,7 @@ function sheetHTML(c, i) {
   const qs = ctlQuestions(c.id, n, ver, c.k, ctlPlan(c), ctlSalt(c, n));
   const date = new Date(c.d).toLocaleDateString('fr-FR');
   return `<div class="ctl-sheet${ver === 'a' ? ' ver-a' : ''}" data-code="${code}">
-    <div class="ctl-band"><span>Prénom : <b>${esc(name)}</b></span><span>${[c.c, c.t, date].filter(Boolean).map(esc).join(' · ')}</span></div>
-    <div class="ctl-cut">✂ — — — à détacher (ou à replier) avant de rendre la copie — — —</div>
+    <div class="ctl-band"><span>Nom et prénom : <b>${esc(name)}</b></span><span>${[c.c, date].filter(Boolean).map(esc).join(' · ')}</span></div>
     <div class="ctl-head">
       <div class="ctl-code">${window.qrSVG ? qrSVG(code, 'M') : ''}<b>${code}</b></div>
       <div class="ctl-title"><b>${esc(c.t)}</b><br><span class="small">Écris tes réponses dans les cases.</span></div>
@@ -345,7 +344,7 @@ function setupControles() {
   }).join('');
   host.innerHTML = `<div class="card" id="ctl-card">
     <h2>📝 Contrôle sur papier, par compétences</h2>
-    <p class="small">Chaque compétence = un type d'exercice du site. Chaque élève reçoit <b>son propre sujet</b> (mêmes exercices que sur le site, nombres différents), avec son prénom sur une bande à détacher, un <b>code anonyme</b> et un QR code. Après correction, tu imprimes une étiquette QR par élève : elle ouvre son bilan, son corrigé et des exercices.</p>
+    <p class="small">Chaque compétence = un type d'exercice du site. Chaque élève reçoit <b>son propre sujet</b> (mêmes exercices que sur le site, nombres différents), avec son nom en haut, puis juste en dessous un <b>code</b> et un QR code. Après correction, tu imprimes une étiquette QR par élève : elle ouvre son bilan, son corrigé et des exercices.</p>
     <h3>1. Compétences évaluées</h3>
     <div id="ctl-comps">${comps}</div>
     <p id="ctl-sel" class="small"></p>
@@ -367,7 +366,7 @@ function setupControles() {
     <div id="ctl-plan"></div>
     <p class="small muted">Adresse inscrite dans les QR codes : <code id="ctl-url"></code> (vérifie que c'est bien l'adresse de ton site, sinon ouvre cette page depuis la bonne adresse avant d'imprimer les étiquettes).</p>
     <details class="howto small"><summary>Comment corriger avec l'IA</summary><ol class="steps-form">
-      <li>Avant de scanner, détache (ou replie) les bandes avec les prénoms : les copies ne portent plus que leur code.</li>
+      <li>Avant de scanner, replie (ou cache) le haut des copies, là où est écrit le nom : la copie n'est plus identifiée que par son code et son QR.</li>
       <li>Scanne la pile avec ton téléphone (un seul PDF) et envoie-le à Claude avec le <b>fichier pour la correction assistée</b>.</li>
       <li>Claude répond une ligne par copie (<code>ABC-07 C1=TB(111) C2=MS(110)…</code>) : colle-la plus bas, vérifie, puis imprime les étiquettes.</li>
     </ol><p>Les copies scannées sont anonymes. Fais valider cet usage par ton établissement.</p></details>
